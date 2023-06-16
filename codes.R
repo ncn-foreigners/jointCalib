@@ -224,3 +224,26 @@ abline(h =  median(y1), col = "blue")
 sqrt((apply(results_sim, 2, mean)-median(y1))^2 + apply(results_sim, 2, var))
 
 
+### NMAR inny case
+set.seed(1234)
+n <- 8000
+x1 <- rnorm(n)
+x2 <- rnorm(n, 2)
+y <- -5 + x1 + 0.5*x2 + rnorm(n)
+R <- 500
+res <- rep(NA, R)
+for (r in 1:R) {
+  pi <- plogis(-0.5 + 0.5*x1 + 0.7*y)
+  flag <- rbinom(n,1,pi)
+  d <- rep(n/sum(flag), n)
+  totals <- c(n, sum(x1), sum(x2))
+  
+  ww <- gencalib(Xs = cbind(1, x1, x2)[flag == 1,],
+                 Zs = cbind(1, x1, y)[flag == 1,],
+                 d = d[flag == 1],
+                 total = totals,
+                 method = "raking")
+  if (is.null(ww)) next
+  res[r] <- weighted.mean(y[flag == 1], ww*d[flag==1])
+}
+
