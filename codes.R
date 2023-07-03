@@ -1,6 +1,7 @@
 library(survey)
 library(laeken)
 library(sampling)
+library(gmm)
 
 source("functions.R")
 
@@ -32,12 +33,13 @@ p_quantiles <- seq(0.1, 0.9, 0.1)
 tot_qualtiles <- quantile(x, p_quantiles)
 
 ## calibrate weights
-w_res <- calib_quantiles(X_q = sample_b$x,  ## do odtworzenia rzędów kwantyli dla x
+w_res <- calib_quantiles(X_q = cbind(sample_b$x, sample_b$x),  ## do odtworzenia rzędów kwantyli dla x
                          X = cbind(sample_b$x, sample_b$x2), ## to do totali
+                         #Z = , ## zmienne instrumentalne 
                          d = sample_b$w_b,  ## waga wejściowa
                          N=N,  ## wielkosc populacji
                          totals = c(sum(x), sum(x2)), ## wartosci globalne dla totali
-                         totals_q = tot_qualtiles, ## kwantyle z populacji
+                         totals_q = list(tot_qualtiles, tot_qualtiles), ## kwantyle z populacji
                          method = "linear",
                          backend = "sampling")
 
@@ -244,6 +246,23 @@ for (r in 1:R) {
                  total = totals,
                  method = "raking")
   if (is.null(ww)) next
-  res[r] <- weighted.mean(y[flag == 1], ww*d[flag==1])
+  res[r] <- laeken::weightedMedian(y[flag == 1], ww*d[flag==1])
 }
 
+## gmm
+
+
+ipw <- function(tet, x)
+{
+  Xs <- x$Xs
+  Zs <- x$Zs
+  d <- x$d
+  tot <- x$totals
+  tot_m <- matrix(rep(tot, NROW(d)), ncol = NROW(tot))
+  pi <- plogis(as.numeric(Zs %*% tet))
+  f <- d*Xs/pi - tot_m
+  
+  return(f)
+}
+
+gmm(g = ipw, t0 = rep(0,NCOL(Zs3)), x=list(Xs = Xs_cal, Zs = Zs3, d = d, totals = totals/NROW(d)))
