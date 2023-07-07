@@ -22,6 +22,8 @@ Z4 <- (X2+X4+20)^2
 ps <- 1/(1+exp(gamma[1]*X1+gamma[2]*X2+gamma[3]*X3+gamma[4]*X4)) 
 Y <- rnorm(n,mean=mu)
 Y_q_true <- quantile(Y, seq(0.1, 0.9,0.1))
+
+
 ## Non-probability sample
 results <- list()
 R <- 5000
