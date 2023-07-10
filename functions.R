@@ -25,7 +25,7 @@ calib_quantiles_create_matrix <- function(X_q, N, totals_q) {
   return(A)
 }
 
-calib_quantiles <- function(X, X_q, d, N, totals, totals_q, 
+calib_quantiles <- function(X=NULL, X_q, d, N, totals=NULL, totals_q, 
                             backend = c("sampling", "laeken"), 
                             method = c("raking", "linear", "logit"), 
                             ...) {
@@ -39,9 +39,16 @@ calib_quantiles <- function(X, X_q, d, N, totals, totals_q,
     quantiles <- as.numeric(gsub("%", "", quantiles))/100
   }
   ## totals_q
-  T_mat <- c(N, quantiles, totals)
-  A <- calib_quantiles_create_matrix(X_q, N, totals_q)
-  X <- cbind(1, A, X)
+  if (is.null(X)) {
+    T_mat <- c(N, quantiles)
+    A <- calib_quantiles_create_matrix(X_q, N, totals_q)
+    X <- cbind(1, A)
+  } else {
+    T_mat <- c(N, quantiles, totals)
+    A <- calib_quantiles_create_matrix(X_q, N, totals_q)
+    X <- cbind(1, A, X)  
+  }
+  
   
   if (backend == "sampling") {
     w_res <- sampling::calib(Xs = X, d = d, total = T_mat, method = method, ...)  
