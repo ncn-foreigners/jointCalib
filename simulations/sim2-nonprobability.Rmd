@@ -232,22 +232,131 @@ results[, c("estimator", "type") := tstrsplit(estimator, "_")]
 results <- results[pop_true_vals, on = c("y", "estimator")]
 results[, type:= factor(type, c("naive", "cal", "qcal1", "qcal2"))]
 results[, estimator:= factor(estimator, c("m", "q25", "q50", "q75"), c("Mean", "Q25", "Q50", "Q75"))]
+pop_true_vals[, estimator2:= factor(estimator, c("m", "q25", "q50", "q75"), c("Mean", "Q25", "Q50", "Q75"))]
 
-results[, bias:= (value - true)/true] |> 
-  ggplot(data = _, aes(x = type, y = bias)) +
+results |> 
+  ggplot(data = _, aes(x = type, y = value)) +
   #geom_jitter(alpha = 0.05, shape = 1) + 
   geom_violin(alpha = 0.8, draw_quantiles = c(0.25, 0.5, 0.75)) + 
   stat_summary(fun = mean, geom = "point") + 
   facet_grid(estimator ~ y, scales = "free_y")  + 
-  #facet_wrap(y ~ estimator, ncol = 4, scales = "free_y") + 
-  scale_y_continuous(labels = percent) + 
-  geom_hline(yintercept = 0, linetype= "dashed") +
+  geom_hline(data = pop_true_vals[, .(y, estimator=estimator2, true)], 
+             aes(yintercept = true), linetype = "dashed", color = "red") + 
   labs(x = "Estimator", y = "RelBias")
 ```
+
+
+
 ```{r}
-results[, .(bias=mean(value)-mean(true), var = var(value)), .(y, estimator, type)][
+results[, .(mean = mean(value), bias=mean(value)-mean(true), var = var(value)), .(y, estimator, type)][
   , ":="(mse = bias^2+var, rmse = sqrt(bias^2+var))][order(y, estimator)]
 ```
 
 ## Estimated population totals and quantiles
 
+```{r}
+n_reps <- 500
+results_y3_sample <- results_y2_sample <- results_y1_sample <- matrix(data=0, nrow = n_reps, ncol = (1+length(p_quantiles))*4+1)
+```
+
+```{r}
+for (r in 1:n_reps) {
+  set.seed(r)
+  sample_nonprob <- pop_data[which(sampling::UPpoisson(pop_data$pA_1)==1),]
+  sample_nonprob$w_naive <- N/n_1
+  sample_prob <- pop_data[syspps(pop_data$pB_1, n_1), ] ## bottleneck
+  sample_prob_svy <- svydesign(ids=~1, probs =~pB_1, data = sample_prob)
+
+  q_est <- svyquantile( ~ x2 + x3 + x4, sample_prob_svy, p_quantiles)
+  x_totals <- svytotal( ~ x1 + x2 + x3 + x4, sample_prob_svy) |> as.numeric()
+  N_hat <- sum(weights(sample_prob_svy))
+  
+  w_res <- calib_quantiles(X_q = with(sample_nonprob, cbind(x2, x3, x4)),  
+                            d = sample_nonprob$w_naive,  
+                            N=N_hat,  
+                            totals_q = list(q_est$x2[, 1], q_est$x3[, 1], q_est$x4[, 1]), 
+                            method = "raking",
+                            backend = "sampling")
+
+
+  w_res2 <- calib_quantiles(X_q = with(sample_nonprob, cbind(x2, x3, x4)),
+                           X =  with(sample_nonprob, cbind(x1, x2, x3, x4)),
+                           d = sample_nonprob$w_naive,
+                           N=N_hat,
+                           totals = x_totals,
+                           totals_q = list(q_est$x2[, 1], q_est$x3[, 1], q_est$x4[, 1]),
+                           method = "raking",
+                           backend = "sampling")
+  
+  w_res_st <- calib(Xs = with(sample_nonprob, cbind(x1, x2, x3, x4)), 
+                    d = sample_nonprob$w_naive, 
+                    total = x_totals, 
+                    method = "raking")
+  
+  sample_nonprob$w_cal_q1 <- w_res$w
+  sample_nonprob$w_cal_q2 <- w_res2$w
+  sample_nonprob$w_cal_s <- sample_nonprob$w_naive*w_res_st
+  
+  results_y1_sample[r, 1] <- r
+  results_y1_sample[r, 2] <- with(sample_nonprob, mean(y1))
+  results_y1_sample[r, 3] <- with(sample_nonprob, weighted.mean(y1, w_cal_s))
+  results_y1_sample[r, 4] <- with(sample_nonprob, weighted.mean(y1, w_cal_q1))
+  results_y1_sample[r, 5] <- with(sample_nonprob, weighted.mean(y1, w_cal_q2))
+  results_y1_sample[r, 6:8] <- with(sample_nonprob, quantile(y1, p_quantiles))
+  results_y1_sample[r, 9:11] <- with(sample_nonprob, weightedQuantile(y1, w_cal_s, p_quantiles))
+  results_y1_sample[r, 12:14] <- with(sample_nonprob, weightedQuantile(y1, w_cal_q1, p_quantiles))
+  results_y1_sample[r, 15:17] <- with(sample_nonprob, weightedQuantile(y1, w_cal_q2, p_quantiles))
+
+  results_y2_sample[r, 1] <- r
+  results_y2_sample[r, 2] <- with(sample_nonprob, mean(y2))
+  results_y2_sample[r, 3] <- with(sample_nonprob, weighted.mean(y2, w_cal_s))
+  results_y2_sample[r, 4] <- with(sample_nonprob, weighted.mean(y2, w_cal_q1))
+  results_y2_sample[r, 5] <- with(sample_nonprob, weighted.mean(y2, w_cal_q2))
+  results_y2_sample[r, 6:8] <- with(sample_nonprob, quantile(y2, p_quantiles))
+  results_y2_sample[r, 9:11] <- with(sample_nonprob, weightedQuantile(y2, w_cal_s, p_quantiles))
+  results_y2_sample[r, 12:14] <- with(sample_nonprob, weightedQuantile(y2, w_cal_q1, p_quantiles))
+  results_y2_sample[r, 15:17] <- with(sample_nonprob, weightedQuantile(y2, w_cal_q2, p_quantiles))
+  
+  results_y3_sample[r, 1] <- r
+  results_y3_sample[r, 2] <- with(sample_nonprob, mean(y3))
+  results_y3_sample[r, 3] <- with(sample_nonprob, weighted.mean(y3, w_cal_s))
+  results_y3_sample[r, 4] <- with(sample_nonprob, weighted.mean(y3, w_cal_q1))
+  results_y3_sample[r, 5] <- with(sample_nonprob, weighted.mean(y3, w_cal_q2))
+  results_y3_sample[r, 6:8] <- with(sample_nonprob, quantile(y3, p_quantiles))
+  results_y3_sample[r, 9:11] <- with(sample_nonprob, weightedQuantile(y3, w_cal_s, p_quantiles))
+  results_y3_sample[r, 12:14] <- with(sample_nonprob, weightedQuantile(y3, w_cal_q1, p_quantiles))
+  results_y3_sample[r, 15:17] <- with(sample_nonprob, weightedQuantile(y3, w_cal_q2, p_quantiles))
+  
+}
+
+```
+
+Combine results
+
+```{r}
+results_sample <- rbind(results_y1_sample, results_y2_sample, results_y3_sample) |> as.data.frame() |> setDT()
+setnames(results_sample, names(results_sample), 
+         c("iter", "m_naive", "m_cal", "m_qcal1", "m_qcal2",
+           paste(paste0("q", rep(c(25, 50, 75), times = 4)), rep(c("naive", "cal", "qcal1", "qcal2"), each = 3), sep="_")))
+results_sample[, y:=rep(c("y1", "y2", "y3"), each = n_reps)]
+results_sample <- melt(results_sample, id.vars = c("iter", "y"), value.name = "value", variable.name = "estimator") 
+results_sample[, c("estimator", "type") := tstrsplit(estimator, "_")]
+results_sample <- results_sample[pop_true_vals, on = c("y", "estimator")]
+results_sample[, type:= factor(type, c("naive", "cal", "qcal1", "qcal2"))]
+results_sample[, estimator:= factor(estimator, c("m", "q25", "q50", "q75"), c("Mean", "Q25", "Q50", "Q75"))]
+
+results_sample |> 
+  ggplot(data = _, aes(x = type, y = value)) +
+  #geom_jitter(alpha = 0.05, shape = 1) + 
+  geom_violin(alpha = 0.8, draw_quantiles = c(0.25, 0.5, 0.75)) + 
+  stat_summary(fun = mean, geom = "point") + 
+  facet_grid(estimator ~ y, scales = "free_y")  + 
+    geom_hline(data = pop_true_vals[, .(y, estimator=estimator2, true)], 
+             aes(yintercept = true), linetype = "dashed", color = "red") + 
+  labs(x = "Estimator", y = "RelBias")
+```
+
+```{r}
+results_sample[, .(mean = mean(value), bias=mean(value)-mean(true), var = var(value)), .(y, estimator, type)][
+  , ":="(mse = bias^2+var, rmse = sqrt(bias^2+var))][order(y, estimator)]
+```

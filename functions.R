@@ -37,6 +37,8 @@ calib_quantiles <- function(X=NULL, X_q, d, N, totals=NULL, totals_q,
   quantiles <- names(totals_q_vec)
   if (all(grepl("%", quantiles))) {
     quantiles <- as.numeric(gsub("%", "", quantiles))/100
+  } else {
+    quantiles <- as.numeric(quantiles)
   }
   ## totals_q
   if (is.null(X)) {
