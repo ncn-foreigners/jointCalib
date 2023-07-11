@@ -27,30 +27,14 @@ library(survey)
 library(data.table)
 library(ggplot2)
 library(scales)
+library(Rcpp)
 source("../functions.R") ## to be replaced by package
 ```
 
 PPS sampling function
 
 ```{r}
-syspps <- function(x,n){ 
-  N <- length(x)
-  U <- sample(N, N)
-  xx <- x[U]
-  z <- rep(0, N)
-  for (i in 1:N) z[i] <- n * sum(xx[1:i]) / sum(x)
-  r <- runif(1)
-  s <-  numeric(n)
-  j <- 1
-  for (i in 1:N) {
-    if (z[i] >= r) {
-      s[j] <- U[i]
-      r <- r + 1
-      j <- j + 1
-    }
-  }
-  return(s[order(s)])
-}
+sourceCpp("syspps.cpp")
 ```
 
 
@@ -99,11 +83,11 @@ Design:
 
 ```{r}
 seed_for_sim <- 2023-07-10
-n_reps <- 1000
+n_reps <- 2000
 ```
 
 ```{r sim-data}
-set.seed(seed_for_sim)
+set.seed(seed_for_sim+1)
 N <- 20000
 n_1 <- 1000
 n_2 <- 1000
@@ -279,8 +263,7 @@ for (r in 1:n_reps) {
   set.seed(r)
   sample_nonprob <- pop_data[which(sampling::UPpoisson(pop_data$pA_1)==1),]
   sample_nonprob$w_naive <- N/n_1
-  #sample_prob <- pop_data[syspps(pop_data$pB_1, n_1), ] ## bottleneck
-  sample_prob <- pop_data[UPsystematic(pop_data$pB_1) == 1, ] ## bottleneck
+  sample_prob <- pop_data[syspps_cpp(pop_data$pB_1, n_1), ] 
   sample_prob_svy <- svydesign(ids=~1, probs =~pB_1, data = sample_prob)
 
   q_est <- svyquantile( ~ x2 + x3 + x4, sample_prob_svy, p_quantiles)
