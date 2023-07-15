@@ -29,6 +29,7 @@ library(scales)
 library(Rcpp)
 library(xtable)
 library(glue)
+library(nonprobsvy)
 source("../functions.R") ## to be replaced by package
 ```
 
