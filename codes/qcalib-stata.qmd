@@ -50,10 +50,10 @@ end
 
 ```{stata, echo=FALSE, cleanlog=FALSE}
 clear all
-set seed seed_for_sim
+set seed 2023-7-15
 set obs 100000
 gen x1 = rnormal(1,1)
-gen x2 = rexp(1)
+gen x2 = rexponential(1)
 gen alp = rnormal()
 gen epsilon = rnormal()
 gen y11 = 1 + x1 + x2 + alp + epsilon

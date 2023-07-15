@@ -28,6 +28,7 @@ library(ggplot2)
 library(scales)
 library(Rcpp)
 library(xtable)
+library(glue)
 source("../functions.R") ## to be replaced by package
 ```
 
@@ -222,35 +223,90 @@ results_df <- rbindlist(results) |>
   {\(x) x[, c("y", "estimator"):=tstrsplit(estimator, "_")]}() |> 
   {\(x) x[, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))]}()
 
-results_summary <- results_df[, .(m = mean(value), var = var(value)), keyby=.(data, y, type, estimator)]
-results_summary[pop_true_vals, true := i.true, on = c("y", "type")]
+results_df[pop_true_vals, true := i.true, on = c("y", "type")]
+
+
+results_summary <- results_df[, .(m = mean(value), var = var(value), true = mean(true)), 
+                              keyby=.(data, y, type, estimator)]
+
 results_summary[, bias:=m-true]
 results_summary[, mse:=bias^2+var]
 results_summary[, rmse:=sqrt(mse)]
 results_summary[estimator%in% c("cal", "qcal1", "qcal2", "naive") & type == "q50" & data == "bd2", 
                 .(data, y,type, estimator, bias, rmse, bias_rel =bias/true*100)]
 ```
+
 ```{r}
 results_df[type == "mean"][, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))] |> 
   ggplot(data=_,aes(x = estimator, y= value)) +
-  geom_hline(data=pop_true_vals[type == "mean"], aes(yintercept = true), linetype="dashed") + 
-  geom_boxplot() + facet_grid(y~data, 
-                              scales = "free_y") -> p1
+  #geom_hline(yintercept = 0, linetype="dashed", color = "red") + 
+  geom_jitter(alpha = 0.05, shape = 1) + 
+  geom_violin(alpha = 0.8, draw_quantiles = c(0.25, 0.5, 0.75), scale = "width") +
+  stat_summary(fun = mean, geom = "point") + 
+  geom_hline(data=pop_true_vals[type == "mean"], aes(yintercept = true), linetype="dashed", color = "red") + 
+  facet_grid(y~data, scales = "free_y") +
+  labs(x = "Estimator", y = "Value") -> p1
 
 p1
 
 ggsave(plot =p1, filename = "../figs/sim-nonprob-cases-mean.pdf", width = 6, height = 8)
+ggsave(plot =p1, filename = "../figs/sim-nonprob-cases-mean.png", width = 6, height = 8)
+
+results_df[type == "mean"][, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))] |> 
+  ggplot(data=_,aes(x = estimator, y= (value-true)/true)) +
+  #geom_hline(data=pop_true_vals[type == "mean"], aes(yintercept = true), linetype="dashed", color = "red") + 
+  geom_jitter(alpha = 0.05, shape = 1) + 
+  geom_violin(alpha = 0.8, draw_quantiles = c(0.25, 0.5, 0.75), scale = "width") +
+  stat_summary(fun = mean, geom = "point") + 
+  facet_grid(y~data, scales = "free_y") +
+  scale_y_continuous(labels = percent)  +
+  geom_hline(yintercept = 0, linetype="dashed", color = "red") + 
+  labs(x = "Estimator", y = "Relative bias") -> p1
+
+p1
+
+ggsave(plot =p1, filename = "../figs/sim-nonprob-cases-mean-relbias.pdf", width = 6, height = 8)
+ggsave(plot =p1, filename = "../figs/sim-nonprob-cases-mean-relbias.png", width = 6, height = 8)
 ```
 
 ```{r}
-results_df[type == "q50"][, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))] |> 
+for (q in c("q25", "q50", "q75")) {
+  results_df[type == q][, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))] |> 
   ggplot(data=_,aes(x = estimator, y= value)) +
-  geom_hline(data=pop_true_vals[type == "q50" & y %in% c("y11", "y12")], 
-             aes(yintercept = true), linetype="dashed") + 
-  geom_boxplot() + facet_grid(y~data, 
-                              scales = "free_y") -> p2
+  #geom_hline(yintercept = 0, linetype="dashed", color = "red") + 
+  geom_jitter(alpha = 0.05, shape = 1) + 
+  geom_violin(alpha = 0.8, draw_quantiles = c(0.25, 0.5, 0.75), scale = "width") + 
+  geom_hline(data=pop_true_vals[type == q & y %in% c("y11", "y12")], 
+             aes(yintercept = true), linetype="dashed", color = "red") + 
+  stat_summary(fun = mean, geom = "point") + 
+  facet_grid(y~data, scales = "free_y")  +
+  labs(x = "Estimator", y = "Value")  -> p2
 
-p2
 
-ggsave(plot =p1, filename = "../figs/sim-nonprob-cases-q50.pdf", width = 6, height = 8)
+ggsave(plot =p2, filename = glue("../figs/sim-nonprob-cases-{q}.pdf"), width = 6, height = 4)
+ggsave(plot =p2, filename = glue("../figs/sim-nonprob-cases-{q}.png"), width = 6, height = 4)
+
+results_df[type == q][, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))] |> 
+  ggplot(data=_,aes(x = estimator, y= (value-true)/true)) +
+  #geom_hline(data=pop_true_vals[type == "mean"], aes(yintercept = true), linetype="dashed", color = "red") + 
+  geom_jitter(alpha = 0.05, shape = 1) + 
+  geom_violin(alpha = 0.8, draw_quantiles = c(0.25, 0.5, 0.75), scale = "width") +
+  geom_hline(yintercept = 0, linetype="dashed", color = "red") + 
+  stat_summary(fun = mean, geom = "point") + 
+  facet_grid(y~data, scales = "free_y") +
+  scale_y_continuous(labels = percent)  +
+  labs(x = "Estimator", y = "Relative bias") -> p2
+
+
+ggsave(plot =p2, filename = glue("../figs/sim-nonprob-cases-{q}-relbias.pdf"), width = 6, height = 4)
+ggsave(plot =p2, filename = glue("../figs/sim-nonprob-cases-{q}-relbias.png"), width = 6, height = 4)
+
+}
+
+
 ```
+
+```{r}
+saveRDS(object = results_df, file = "../results/sim-yang2021-svymeth.rds")
+```
+
