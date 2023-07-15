@@ -16,7 +16,7 @@ lang: en
 ---
 
 
-## Libraries and functions
+# Libraries and functions
 
 Load libraries and functions 
 
@@ -28,6 +28,7 @@ library(data.table)
 library(ggplot2)
 library(scales)
 library(Rcpp)
+library(xtable)
 source("../functions.R") ## to be replaced by package
 ```
 
@@ -38,7 +39,7 @@ sourceCpp("syspps.cpp")
 ```
 
 
-## Simulate data
+# Simulate data
 
 + population size $N=20,000$
 + probability sample $B$ is of size $1000$
@@ -82,7 +83,7 @@ Design:
 2. estimated population totals and quantiles
 
 ```{r}
-seed_for_sim <- 2023-07-10
+seed_for_sim <- 2023-07-14
 n_reps <- 2000
 ```
 
@@ -111,12 +112,9 @@ y2 <- 2+x1+x2+x3+x4+sigma05*e
 y3 <- 2+x1+x2+x3+x4+sigma08*e
 
 theta_A1 <- stats::uniroot(f = function(s) sum(plogis(s + 0.1*x1+0.2*x2+0.3*x3+0.2*x4))-n_1, c(-20,0), tol = etol)$root
-theta_A2 <- stats::uniroot(f = function(s) sum(plogis(s + 0.1*x1+0.2*x2+0.3*x3+0.2*x4))-n_2, c(-20,0), tol = etol)$root
 
 pA_1 <- plogis(theta_A1 + 0.1*x1+0.2*x2+0.3*x3+0.2*x4)
 w_pA_1 <- 1/pA_1
-pA_2 <- plogis(theta_A2 + 0.1*x1+0.2*x2+0.3*x3+0.2*x4)
-w_pA_2 <- 1/pA_2
 
 s_B <- stats::uniroot(f = function(s) max(s+x3)/min(s+x3) - 50, c(0, 100), tol = etol)$root
 pB_1 <- inclusionprobabilities(s_B + x3, n_1)
@@ -127,6 +125,8 @@ w_pB_2 <- 1/pB_2
 pop_data <- data.frame(x1,x2,x3,x4,y1,y2,y3,pA_1,pA_2,w_pA_1,w_pA_2,pB_1,pB_2,w_pB_1,w_pB_2) |> setDT()
 head(pop_data)
 ```
+
+# Simulation
 
 ## Known population totals and quantiles
 
@@ -240,15 +240,36 @@ results |>
   #geom_jitter(alpha = 0.05, shape = 1) + 
   geom_violin(alpha = 0.8, draw_quantiles = c(0.25, 0.5, 0.75)) + 
   stat_summary(fun = mean, geom = "point") + 
-  facet_grid(estimator ~ y, scales = "free_y")  + 
+  facet_grid(y ~ estimator, scales = "free_y")  + 
   geom_hline(data = pop_true_vals[, .(y, estimator=estimator2, true)], 
              aes(yintercept = true), linetype = "dashed", color = "red") + 
-  labs(x = "Estimator", y = "Value")
+  labs(x = "Estimator", y = "Value") -> p1
+
+p1
+ggsave(plot = p1, filename = "../figs/sim-nonprob-known.pdf", width = 8, height = 6)
 ```
 
 ```{r}
 results[, .(mean = mean(value), bias=mean(value)-mean(true), var = var(value)), .(y, estimator, type)][
-  , ":="(mse = bias^2+var, rmse = sqrt(bias^2+var))][order(y, estimator)]
+  , ":="(mse = bias^2+var, rmse = sqrt(bias^2+var))][order(y, estimator)][
+    , .(y, 
+        characteristic=estimator,
+        estimator=factor(type, c("naive", "cal", "qcal1", "qcal2"), c("Naive", "Cal", "QCal1", "QCal2")), 
+        bias, var, rmse)] |> 
+  melt(id.vars = c("y", "characteristic", "estimator")) |> 
+  transform(y = paste(y, variable, sep = "_")) |> 
+  transform(variable = NULL) |> 
+  dcast(... ~ y, value.var = "value") |> 
+  {\(x) x[, .(characteristic, estimator, 
+              y1_bias, y1_var, y1_rmse, y2_bias, y2_var, y2_rmse, 
+              y3_bias, y3_var, y3_rmse)]}() -> results_sim_known
+results_sim_known
+```
+
+```{r}
+results_sim_known |> 
+  xtable() |> 
+  print.xtable(include.rownames = F)
 ```
 
 ## Estimated population totals and quantiles
@@ -262,8 +283,8 @@ results_y3_sample <- results_y2_sample <- results_y1_sample <- matrix(data=0, nr
 for (r in 1:n_reps) {
   set.seed(r)
   sample_nonprob <- pop_data[which(sampling::UPpoisson(pop_data$pA_1)==1),]
-  sample_nonprob$w_naive <- N/n_1
   sample_prob <- pop_data[syspps_cpp(pop_data$pB_1, n_1), ] 
+  sample_nonprob$w_naive <- sum(1/sample_prob$pB_1)/n_1
   sample_prob_svy <- svydesign(ids=~1, probs =~pB_1, data = sample_prob)
 
   q_est <- svyquantile( ~ x2 + x3 + x4, sample_prob_svy, p_quantiles)
@@ -351,13 +372,34 @@ results_sample |>
   #geom_jitter(alpha = 0.05, shape = 1) + 
   geom_violin(alpha = 0.8, draw_quantiles = c(0.25, 0.5, 0.75)) + 
   stat_summary(fun = mean, geom = "point") + 
-  facet_grid(estimator ~ y, scales = "free_y")  + 
+  facet_grid(y ~ estimator, scales = "free_y")  + 
     geom_hline(data = pop_true_vals[, .(y, estimator=estimator2, true)], 
              aes(yintercept = true), linetype = "dashed", color = "red") + 
-  labs(x = "Estimator", y = "RelBias")
+  labs(x = "Estimator", y = "Value") -> p2
+
+p2
+ggsave(plot = p2, filename = "../figs/sim-nonprob-estimated.pdf", width = 8, height = 6)
 ```
 
 ```{r}
 results_sample[, .(mean = mean(value), bias=mean(value)-mean(true), var = var(value)), .(y, estimator, type)][
-  , ":="(mse = bias^2+var, rmse = sqrt(bias^2+var))][order(y, estimator)]
+  , ":="(mse = bias^2+var, rmse = sqrt(bias^2+var))][order(y, estimator)][
+    , .(y, 
+        characteristic=estimator,
+        estimator=factor(type, c("naive", "cal", "qcal1", "qcal2"), c("Naive", "Cal", "QCal1", "QCal2")), 
+        bias, var, rmse)] |> 
+  melt(id.vars = c("y", "characteristic", "estimator")) |> 
+  transform(y = paste(y, variable, sep = "_")) |> 
+  transform(variable = NULL) |> 
+  dcast(... ~ y, value.var = "value") |> 
+  {\(x) x[, .(characteristic, estimator, y1_bias, y1_var, y1_rmse, y2_bias, y2_var, y2_rmse, y3_bias, y3_var, y3_rmse)]}() -> results_sim_estimated
+
+results_sim_estimated
 ```
+
+```{r}
+results_sim_estimated |> 
+  xtable() |> 
+  print.xtable(include.rownames = F)
+```
+

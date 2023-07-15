@@ -1,0 +1,75 @@
+---
+title: "A minimal implementation in stata"
+format: html
+---
+
+```{r, echo=FALSE, message=FALSE}
+# Statamarkdown: https://github.com/hemken/Statamarkdown
+# devtools::install_github("Hemken/Statamarkdown")
+library(Statamarkdown)
+```
+
+```{stata, collectcode=TRUE}
+sysuse auto
+```
+
+Create quantile mat in stata
+
+
+```{stata}
+capture program drop calib_quantiles_create_matrix
+program define calib_quantiles_create_matrix, rclass
+
+    args X_q N totals_q
+    tempname A_q totals_q_k
+    local K = colsof(`X_q')
+    mata: st_view(X_q=.,.,"`X_q'")
+    
+    forvalues k=1/`K' {
+        scalar `totals_q_k' = `totals_q'[1,`k']
+        mata: `A_q' = J(rows(`X_q'),rows(`totals_q_k'),0)
+
+        quietly sort `X_q'
+        gen x_sorted = `X_q'
+        sort x_sorted
+
+        forvalues i=1/rows(`totals_q_k') {
+            gen poz = cond(x_sorted <= `totals_q_k'[`i',1], 1, 0)
+            gen n_poz = sum(poz)
+            gen L = x_sorted[`n_poz']
+            gen U = x_sorted[`n_poz' + 1]
+            gen B = (`totals_q_k'[`i',1] - L) / (U - L)
+            replace `A_q' = cond(`X_q' < L, 1/`N', 0)
+            replace `A_q' = cond(`X_q' == U, B/`N', 0)
+        }
+        mat `A' = (`A', `A_q')
+    }
+    return matrix A = `A'
+end
+```
+
+```{stata, echo=FALSE, cleanlog=FALSE}
+clear all
+set seed seed_for_sim
+set obs 100000
+gen x1 = rnormal(1,1)
+gen x2 = rexp(1)
+gen alp = rnormal()
+gen epsilon = rnormal()
+gen y11 = 1 + x1 + x2 + alp + epsilon
+gen y12 = 0.5*(x1-1.5)^2 + x2^2 + alp + epsilon
+gen y21 = rbinomial(1, invlogit(1 + x1 + x2 + alp))
+gen y22 = rbinomial(1, invlogit(0.5*(x1-1.5)^2 + x2^2 + alp))
+gen p1 = invlogit(x2)
+gen p2 = invlogit(-3+(x1-1.5)^2+(x2-2)^2)
+qui sum p1, detail
+local p25 = r(p25)
+local p50 = r(p50)
+local p75 = r(p75)
+di "25th percentile: " `p25`'
+di "50th percentile: " `p50`'
+di "75th percentile: " `p75`'
+```
+
+
+

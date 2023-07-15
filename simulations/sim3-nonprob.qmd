@@ -1,0 +1,256 @@
+---
+title: "Simulation 3 - non-probability sample (known population totals)"
+format: 
+  html:
+    self-contained: true
+    table-of-contents: true
+    number-sections: true
+    df-print: kable
+editor: source
+execute: 
+  eval: true
+  warning: false
+  message: false
+toc-title: Contents
+lang: en
+---
+
+# Libraries and functions
+
+Load libraries and functions 
+
+```{r}
+library(sampling)
+library(laeken)
+library(survey)
+library(data.table)
+library(ggplot2)
+library(scales)
+library(Rcpp)
+library(xtable)
+source("../functions.R") ## to be replaced by package
+```
+
+# Simulate data
+
+```{r}
+seed_for_sim <- 2023-07-14
+```
+
+```{r}
+set.seed(seed_for_sim)
+N <- 100000
+n <- 1000
+x1 <- rnorm(N,1,1)
+x2 <- rexp(N,1)
+alp <- rnorm(N)
+epsilon <- rnorm(N)
+y11 <- 1 + x1 + x2 + alp + epsilon
+y12 <- 0.5*(x1-1.5)^2 + x2^2 + alp + epsilon
+y21 <- rbinom(N,1,plogis(1 + x1 + x2 + alp))
+y22 <- rbinom(N,1,plogis(0.5*(x1-1.5)^2 + x2^2 + alp))
+p1 <- plogis(x2)
+p2 <- plogis(-3+(x1-1.5)^2+(x2-2)^2)
+pop_data <- data.frame(x1,x2,y11,y12,y21,y22,p1,p2) |> setDT()
+p_quantiles <- seq(0.25, 0.75, 0.25)
+#p_quantiles <- seq(0.1, 0.9, 0.1)
+```
+
+```{r}
+pop_true_vals <- pop_data[, lapply(.SD, 
+                                   function(x) data.frame(mean=mean(x), 
+                                                          q25=quantile(x, 0.25), 
+                                                          q50=quantile(x, 0.5), 
+                                                          q75=quantile(x, 0.75))), 
+                          .SDcols = c("y11", "y12", "y21", "y22")] |> 
+  melt(value.name = "true") |> 
+  {\(x) x[, c("y", "type") := tstrsplit(variable, "\\.")][, .(y, type, true)]}()
+pop_true_vals
+```
+
+Simulation
+
+```{r}
+results <- list()
+n_reps <- 1000
+```
+
+```{r}
+for (r in 1:n_reps) {
+  set.seed(r)
+  if (r %% 50 == 0) cat("iteracja: ", r, "\n")
+  sample_prob <- pop_data[sample(1:N, n),]
+  sample_prob$w <- N/n
+  sample_prob_svy <- svydesign(ids=~1, weights = ~w, data = sample_prob)
+  q_est <- svyquantile( ~ x1 + x2, sample_prob_svy, p_quantiles)
+  x_totals <- svytotal( ~ x1 + x2, sample_prob_svy) |> as.numeric()
+  
+  sample_bd1 <- pop_data[rbinom(N,1,pop_data$p1)==1, ]
+  sample_bd1$w_naive <- N/nrow(sample_bd1)
+  sample_bd2 <- pop_data[rbinom(N,1,pop_data$p2)==1, ]
+  sample_bd2$w_naive <- N/nrow(sample_bd2)
+  
+  ## linear inclusion probability
+  w_res <- calib_quantiles(X_q = with(sample_bd1, cbind(x1,x2)),
+                           d = sample_bd1$w_naive,
+                           N = N,
+                           totals_q = list(q_est$x1[, 1], q_est$x2[, 1]),
+                           method = "raking",
+                           backend = "sampling")
+  
+  
+  w_res2 <- calib_quantiles(X_q = with(sample_bd1, cbind(x1,x2)),
+                            X =  with(sample_bd1, cbind(x1,x2)),
+                            d = sample_bd1$w_naive,
+                            N = N,
+                            totals = x_totals,
+                            totals_q = list(q_est$x1[, 1], q_est$x2[, 1]),
+                            method = "raking",
+                            backend = "sampling")
+    
+  w_res_st <- calib(Xs = with(sample_bd1, cbind(x1,x2)),
+                    d = sample_bd1$w_naive,
+                    total = x_totals,
+                    method = "raking")
+  
+  ## non-linear inclusion probability
+  w_res_2 <- calib_quantiles(X_q = with(sample_bd2, cbind(x1, x2)),
+                             d = sample_bd2$w_naive,
+                             N = N,
+                             totals_q = list(q_est$x1[, 1], q_est$x2[, 1]),
+                             method = "raking",
+                             backend = "sampling")
+  
+  
+  w_res2_2 <- calib_quantiles(X_q = with(sample_bd2, cbind(x1, x2)),
+                              X =  with(sample_bd2, cbind(x1, x2)),
+                              d = sample_bd2$w_naive,
+                              N = N,
+                              totals = x_totals,
+                              totals_q = list(q_est$x1[, 1], q_est$x2[, 1]),
+                              method = "raking",
+                              backend = "sampling")
+    
+  w_res_st_2 <- calib(Xs = with(sample_bd2, cbind(x1, x2)),
+                      d = sample_bd2$w_naive,
+                      total = x_totals,
+                      method = "raking")
+  
+  
+  sample_bd1[, ":="(w_cal_q1 =w_res$w, w_cal_q2 =w_res2$w, w_cal_s = w_naive*w_res_st)]
+  sample_bd2[, ":="(w_cal_q1 =w_res_2$w, w_cal_q2 = w_res2_2$w, w_cal_s = w_naive*w_res_st_2)]
+  
+  
+  res1 <- sample_bd1[, .(r=r, data="bd1", type = "mean", 
+                 y11_naive=mean(y11), y11_cal=weighted.mean(y11, w_cal_s),
+                 y11_qcal1=weighted.mean(y11, w_cal_q1), y11_qcal2=weighted.mean(y11, w_cal_q2),
+                 
+                 y12_naive=mean(y12), y12_cal=weighted.mean(y12, w_cal_s),
+                 y12_qcal1=weighted.mean(y12, w_cal_q1), y12_qcal2=weighted.mean(y12, w_cal_q2),
+                 
+                 y21_naive=mean(y21), y21_cal=weighted.mean(y21, w_cal_s),
+                 y21_qcal1=weighted.mean(y21, w_cal_q1), y21_qcal2=weighted.mean(y21, w_cal_q2),
+                 
+                 y22_naive=mean(y22), y22_cal=weighted.mean(y22, w_cal_s),
+                 y22_qcal1=weighted.mean(y22, w_cal_q1), y22_qcal2=weighted.mean(y22, w_cal_q2))]
+  
+  
+  res2 <- sample_bd2[, .(r=r, data="bd2", type = "mean",
+                 y11_naive=mean(y11), y11_cal=weighted.mean(y11, w_cal_s),
+                 y11_qcal1=weighted.mean(y11, w_cal_q1), y11_qcal2=weighted.mean(y11, w_cal_q2),
+                 
+                 y12_naive=mean(y12), y12_cal=weighted.mean(y12, w_cal_s),
+                 y12_qcal1=weighted.mean(y12, w_cal_q1), y12_qcal2=weighted.mean(y12, w_cal_q2),
+                 
+                 y21_naive=mean(y21), y21_cal=weighted.mean(y21, w_cal_s),
+                 y21_qcal1=weighted.mean(y21, w_cal_q1), y21_qcal2=weighted.mean(y21, w_cal_q2),
+                 
+                 y22_naive=mean(y22), y22_cal=weighted.mean(y22, w_cal_s),
+                 y22_qcal1=weighted.mean(y22, w_cal_q1), y22_qcal2=weighted.mean(y22, w_cal_q2))]
+  
+  res3 <- sample_bd1[, .(r=r, data="bd1", type = "q25",
+                 y11_naive=quantile(y11,0.25), y11_cal=weightedQuantile(y11, w_cal_s,0.25),
+                 y11_qcal1=weightedQuantile(y11, w_cal_q1,0.25), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.25),
+                 y12_naive=quantile(y12,0.25), y12_cal=weightedQuantile(y12, w_cal_s,0.25),
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.25), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.25))]
+  
+  res4 <- sample_bd2[, .(r=r, data="bd2", type = "q25",
+                 y11_naive=quantile(y11,0.25), y11_cal=weightedQuantile(y11, w_cal_s,0.25),
+                 y11_qcal1=weightedQuantile(y11, w_cal_q1,0.25), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.25),
+                 y12_naive=quantile(y12,0.25), y12_cal=weightedQuantile(y12, w_cal_s,0.25),
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.25), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.25))]
+  
+  res5 <- sample_bd1[, .(r=r, data="bd1", type = "q50",
+                 y11_naive=quantile(y11,0.50), y11_cal=weightedQuantile(y11, w_cal_s,0.50),
+                 y11_qcal1=weightedQuantile(y11, w_cal_q1,0.50), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.50),
+                 y12_naive=quantile(y12,0.50), y12_cal=weightedQuantile(y12, w_cal_s,0.50),
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.50), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.50))]
+  
+  res6 <- sample_bd2[, .(r=r, data="bd2", type = "q50",
+                 y11_naive=quantile(y11,0.50), y11_cal=weightedQuantile(y11, w_cal_s,0.50),
+                 y11_qcal1=weightedQuantile(y11, w_cal_q1,0.50), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.50),
+                 y12_naive=quantile(y12,0.50), y12_cal=weightedQuantile(y12, w_cal_s,0.50),
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.50), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.50))]
+  
+  
+  res7 <- sample_bd1[, .(r=r, data="bd1", type = "q75",
+                 y11_naive=quantile(y11,0.75), y11_cal=weightedQuantile(y11, w_cal_s,0.75),
+                 y11_qcal1=weightedQuantile(y11, w_cal_q1,0.75), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.75),
+                 y12_naive=quantile(y12,0.75), y12_cal=weightedQuantile(y12, w_cal_s,0.75),
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.75), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.75))]
+  
+  res8 <- sample_bd2[, .(r=r, data="bd2", type = "q75",
+                 y11_naive=quantile(y11,0.75), y11_cal=weightedQuantile(y11, w_cal_s,0.75),
+                 y11_qcal1=weightedQuantile(y11, w_cal_q1,0.75), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.75),
+                 y12_naive=quantile(y12,0.75), y12_cal=weightedQuantile(y12, w_cal_s,0.75),
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.75), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.75))]
+  
+  
+  
+  results[[r]] <- rbind(res1,res2, res3, res4, res5, res6, res7, res8, fill = T)
+}
+
+
+```
+
+Results
+
+```{r}
+results_df <- rbindlist(results) |> 
+  melt(id.vars = c("r", "data", "type"), value.name = "value", variable.name = "estimator") |> 
+  na.omit() |> 
+  {\(x) x[, c("y", "estimator"):=tstrsplit(estimator, "_")]}() |> 
+  {\(x) x[, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))]}()
+
+results_summary <- results_df[, .(m = mean(value), var = var(value)), keyby=.(data, y, type, estimator)]
+results_summary[pop_true_vals, true := i.true, on = c("y", "type")]
+results_summary[, bias:=m-true]
+results_summary[, mse:=bias^2+var]
+results_summary[, rmse:=sqrt(mse)]
+results_summary[estimator%in% c("cal", "qcal1", "qcal2", "naive") & type == "q50" & data == "bd2", 
+                .(data, y,type, estimator, bias, rmse, bias_rel =bias/true*100)]
+```
+```{r}
+results_df[type == "mean"][, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))] |> 
+  ggplot(data=_,aes(x = estimator, y= value)) +
+  geom_hline(data=pop_true_vals[type == "mean"], aes(yintercept = true), linetype="dashed") + 
+  geom_boxplot() + facet_grid(y~data, 
+                              scales = "free_y") -> p1
+
+p1
+
+ggsave(plot =p1, filename = "../figs/sim-nonprob-cases-mean.pdf", width = 6, height = 8)
+```
+
+```{r}
+results_df[type == "q50"][, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))] |> 
+  ggplot(data=_,aes(x = estimator, y= value)) +
+  geom_hline(data=pop_true_vals[type == "q50" & y %in% c("y11", "y12")], 
+             aes(yintercept = true), linetype="dashed") + 
+  geom_boxplot() + facet_grid(y~data, 
+                              scales = "free_y") -> p2
+
+p2
+
+ggsave(plot =p1, filename = "../figs/sim-nonprob-cases-q50.pdf", width = 6, height = 8)
+```
