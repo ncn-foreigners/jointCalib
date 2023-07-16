@@ -40,7 +40,7 @@ seed_for_sim <- 2023-07-14
 ```
 
 ```{r}
-set.seed(seed_for_sim)
+set.seed(seed_for_sim+1)
 N <- 100000
 n <- 1000
 x1 <- rnorm(N,1,1)
@@ -92,7 +92,10 @@ for (r in 1:n_reps) {
   sample_bd2 <- pop_data[rbinom(N,1,pop_data$p2)==1, ]
   sample_bd2$w_naive <- N/nrow(sample_bd2)
   
+  ##########################################
   ## linear inclusion probability
+  ##########################################
+  ## calibration with quantiles only
   w_res <- calib_quantiles(X_q = with(sample_bd1, cbind(x1,x2)),
                            d = sample_bd1$w_naive,
                            N = N,
@@ -100,7 +103,7 @@ for (r in 1:n_reps) {
                            method = "raking",
                            backend = "sampling")
   
-  
+  ## calibration with quantiles and totals only
   w_res2 <- calib_quantiles(X_q = with(sample_bd1, cbind(x1,x2)),
                             X =  with(sample_bd1, cbind(x1,x2)),
                             d = sample_bd1$w_naive,
@@ -109,13 +112,65 @@ for (r in 1:n_reps) {
                             totals_q = list(q_est$x1[, 1], q_est$x2[, 1]),
                             method = "raking",
                             backend = "sampling")
-    
+  ## calibration with totals only  
   w_res_st <- calib(Xs = with(sample_bd1, cbind(x1,x2)),
                     d = sample_bd1$w_naive,
                     total = x_totals,
                     method = "raking")
+  ## ipw 
+  ipw <- nonprob(selection = ~ x1 + x2,
+                 target = ~ y11,
+                 svydesign = sample_prob_svy,
+                 data = sample_bd1)
+  ## mi for y11
+  mi_y11 <- nonprob(outcome = y11 ~ x1 + x2,
+                   svydesign = sample_prob_svy,
+                    data = sample_bd1,
+                   method_outcome = "nn")
+  ## mi for y12
+  mi_y12 <- nonprob(outcome = y12 ~ x1 + x2,
+                   svydesign = sample_prob_svy,
+                   data = sample_bd1,
+                   method_outcome = "nn")
+  ## mi for y21
+  mi_y21 <- nonprob(outcome = y21 ~ x1 + x2,
+                   svydesign = sample_prob_svy,
+                    data = sample_bd1,
+                   method_outcome = "nn")
+  ## mi for y22
+  mi_y22 <- nonprob(outcome = y22 ~ x1 + x2,
+                   svydesign = sample_prob_svy,
+                   data = sample_bd1,
+                      method_outcome = "nn")
   
+  ## dr for y11
+  dr_y11 <- nonprob(selection = ~ x1 + x2,
+                   outcome = y11 ~ x1 + x2,
+                   svydesign = sample_prob_svy,
+                   data = sample_bd1)
+  ## dr for y12
+  dr_y12 <- nonprob(selection = ~ x1 + x2,
+                   outcome = y12 ~ x1 + x2, 
+                   svydesign = sample_prob_svy,
+                   data = sample_bd1)
+  
+  ## dr for y21
+  dr_y21 <- nonprob(selection = ~ x1 + x2,
+                       outcome = y21 ~ x1 + x2,
+                       svydesign = sample_prob_svy,
+                       data = sample_bd1,
+                       family_outcome = "binomial")
+  ## dr for y22
+  dr_y22 <- nonprob(selection = ~ x1 + x2,
+                       outcome = y22 ~ x1 + x2,
+                       svydesign = sample_prob_svy,
+                       data = sample_bd1,
+                       family_outcome = "binomial")
+  
+  ############################################
   ## non-linear inclusion probability
+  ############################################
+  
   w_res_2 <- calib_quantiles(X_q = with(sample_bd2, cbind(x1, x2)),
                              d = sample_bd2$w_naive,
                              N = N,
@@ -139,79 +194,148 @@ for (r in 1:n_reps) {
                       method = "raking")
   
   
-  sample_bd1[, ":="(w_cal_q1 =w_res$w, w_cal_q2 =w_res2$w, w_cal_s = w_naive*w_res_st)]
-  sample_bd2[, ":="(w_cal_q1 =w_res_2$w, w_cal_q2 = w_res2_2$w, w_cal_s = w_naive*w_res_st_2)]
-  
-  
+  ipw_2 <- nonprob(selection = ~ x1 + x2,
+                 target = ~ y11,
+                 svydesign = sample_prob_svy,
+                 data = sample_bd2)
+  ## mi for y11
+  mi_y11_2 <- nonprob(outcome = y11 ~ x1 + x2,
+                      svydesign = sample_prob_svy,
+                      data = sample_bd2,
+                      method_outcome = "nn")
+  ## mi for y12
+  mi_y12_2 <- nonprob(outcome = y12 ~ x1 + x2,
+                      svydesign = sample_prob_svy,
+                      data = sample_bd2,
+                      method_outcome = "nn")
+  ## mi for y21
+  mi_y21_2 <- nonprob(outcome = y21 ~ x1 + x2,
+                      svydesign = sample_prob_svy,
+                      data = sample_bd2,
+                      method_outcome = "nn")
+  ## mi for y22
+   mi_y22_2 <- nonprob(outcome = y22 ~ x1 + x2,
+                      svydesign = sample_prob_svy,
+                      data = sample_bd2,
+                      method_outcome = "nn")
+  ## dr for y11
+   dr_y11_2 <- nonprob(selection = ~ x1 + x2,
+                       outcome = y11 ~ x1 + x2,
+                       svydesign = sample_prob_svy,
+                       data = sample_bd2)
+  ## dr for y12
+  dr_y12_2 <- nonprob(selection = ~ x1 + x2,
+                       outcome = y12 ~ x1 + x2,
+                       svydesign = sample_prob_svy,
+                       data = sample_bd2)
+  ## dr for y21
+  dr_y21_2 <- nonprob(selection = ~ x1 + x2,
+                       outcome = y21 ~ x1 + x2,
+                       svydesign = sample_prob_svy,
+                       data = sample_bd2,
+                       family_outcome = "binomial")
+  ## dr for y22
+  dr_y22_2 <- nonprob(selection = ~ x1 + x2,
+                       outcome = y22 ~ x1 + x2,
+                       svydesign = sample_prob_svy,
+                       data = sample_bd2,
+                       family_outcome = "binomial")
+  ## add weights
+  sample_bd1[, ":="(w_cal_q1 =w_res$w, w_cal_q2 =w_res2$w, w_cal_s = w_naive*w_res_st,
+                    w_ipw = ipw$weights, w_dr=dr_y11$weights)]
+  sample_bd2[, ":="(w_cal_q1 =w_res_2$w, w_cal_q2 = w_res2_2$w, w_cal_s = w_naive*w_res_st_2,
+                    w_ipw = ipw_2$weights, w_dr=dr_y11_2$weights)]
+  ################################################################
+  ## summary of results
+  ################################################################
   res1 <- sample_bd1[, .(r=r, data="bd1", type = "mean", 
-                 y11_naive=mean(y11), y11_cal=weighted.mean(y11, w_cal_s),
-                 y11_qcal1=weighted.mean(y11, w_cal_q1), y11_qcal2=weighted.mean(y11, w_cal_q2),
+                 y11_naive=mean(y11), y11_cal=weighted.mean(y11, w_cal_s), 
+                 y11_qcal1=weighted.mean(y11, w_cal_q1),  y11_qcal2=weighted.mean(y11, w_cal_q2),
+                 y11_ipw=weighted.mean(y11, w_ipw), y11_dr=dr_y11$output$mean,y11_mi=mi_y11$output$mean, 
                  
                  y12_naive=mean(y12), y12_cal=weighted.mean(y12, w_cal_s),
                  y12_qcal1=weighted.mean(y12, w_cal_q1), y12_qcal2=weighted.mean(y12, w_cal_q2),
+                 y12_ipw=weighted.mean(y12, w_ipw), y12_dr=dr_y12$output$mean, y12_mi=mi_y12$output$mean, 
                  
                  y21_naive=mean(y21), y21_cal=weighted.mean(y21, w_cal_s),
                  y21_qcal1=weighted.mean(y21, w_cal_q1), y21_qcal2=weighted.mean(y21, w_cal_q2),
+                 y21_mi=mi_y21$output$mean, y21_ipw=weighted.mean(y21, w_ipw), y21_dr=dr_y21$output$mean,
                  
                  y22_naive=mean(y22), y22_cal=weighted.mean(y22, w_cal_s),
-                 y22_qcal1=weighted.mean(y22, w_cal_q1), y22_qcal2=weighted.mean(y22, w_cal_q2))]
+                 y22_qcal1=weighted.mean(y22, w_cal_q1), y22_qcal2=weighted.mean(y22, w_cal_q2),
+                 y22_mi=mi_y22$output$mean,y22_ipw=weighted.mean(y22, w_ipw), y22_dr=dr_y22$output$mean)]
   
   
   res2 <- sample_bd2[, .(r=r, data="bd2", type = "mean",
                  y11_naive=mean(y11), y11_cal=weighted.mean(y11, w_cal_s),
                  y11_qcal1=weighted.mean(y11, w_cal_q1), y11_qcal2=weighted.mean(y11, w_cal_q2),
+                 y11_ipw=weighted.mean(y11, w_ipw), y11_dr=dr_y11_2$output$mean, y11_mi=mi_y11_2$output$mean, 
                  
                  y12_naive=mean(y12), y12_cal=weighted.mean(y12, w_cal_s),
                  y12_qcal1=weighted.mean(y12, w_cal_q1), y12_qcal2=weighted.mean(y12, w_cal_q2),
+                 y12_ipw=weighted.mean(y12, w_ipw), y12_dr=dr_y12_2$output$mean, y12_mi=mi_y12_2$output$mean, 
                  
                  y21_naive=mean(y21), y21_cal=weighted.mean(y21, w_cal_s),
                  y21_qcal1=weighted.mean(y21, w_cal_q1), y21_qcal2=weighted.mean(y21, w_cal_q2),
+                 y21_mi=mi_y21_2$output$mean, y21_ipw=weighted.mean(y21, w_ipw), y21_dr=dr_y21_2$output$mean, 
                  
                  y22_naive=mean(y22), y22_cal=weighted.mean(y22, w_cal_s),
-                 y22_qcal1=weighted.mean(y22, w_cal_q1), y22_qcal2=weighted.mean(y22, w_cal_q2))]
+                 y22_qcal1=weighted.mean(y22, w_cal_q1), y22_qcal2=weighted.mean(y22, w_cal_q2),
+                 y22_mi=mi_y22_2$output$mean, y22_ipw=weighted.mean(y22, w_ipw), y22_dr=dr_y22_2$output$mean)]
   
   res3 <- sample_bd1[, .(r=r, data="bd1", type = "q25",
                  y11_naive=quantile(y11,0.25), y11_cal=weightedQuantile(y11, w_cal_s,0.25),
                  y11_qcal1=weightedQuantile(y11, w_cal_q1,0.25), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.25),
+                 y11_ipw=weightedQuantile(y11, w_ipw,0.25), y11_dr=weightedQuantile(y11, w_dr,0.25),
                  y12_naive=quantile(y12,0.25), y12_cal=weightedQuantile(y12, w_cal_s,0.25),
-                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.25), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.25))]
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.25), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.25),
+                 y12_ipw=weightedQuantile(y12, w_ipw,0.25), y12_dr=weightedQuantile(y12, w_dr,0.25))]
   
   res4 <- sample_bd2[, .(r=r, data="bd2", type = "q25",
                  y11_naive=quantile(y11,0.25), y11_cal=weightedQuantile(y11, w_cal_s,0.25),
                  y11_qcal1=weightedQuantile(y11, w_cal_q1,0.25), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.25),
+                 y11_ipw=weightedQuantile(y11, w_ipw,0.25), y11_dr=weightedQuantile(y11, w_dr,0.25),
                  y12_naive=quantile(y12,0.25), y12_cal=weightedQuantile(y12, w_cal_s,0.25),
-                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.25), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.25))]
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.25), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.25),
+                 y12_ipw=weightedQuantile(y12, w_ipw,0.25), y12_dr=weightedQuantile(y12, w_dr,0.25))]
   
   res5 <- sample_bd1[, .(r=r, data="bd1", type = "q50",
                  y11_naive=quantile(y11,0.50), y11_cal=weightedQuantile(y11, w_cal_s,0.50),
                  y11_qcal1=weightedQuantile(y11, w_cal_q1,0.50), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.50),
+                 y11_ipw=weightedQuantile(y11, w_ipw,0.50), y11_dr=weightedQuantile(y11, w_dr,0.50),
                  y12_naive=quantile(y12,0.50), y12_cal=weightedQuantile(y12, w_cal_s,0.50),
-                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.50), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.50))]
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.50), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.50),
+                 y12_ipw=weightedQuantile(y12, w_ipw,0.50), y12_dr=weightedQuantile(y12, w_dr,0.50))]
   
   res6 <- sample_bd2[, .(r=r, data="bd2", type = "q50",
                  y11_naive=quantile(y11,0.50), y11_cal=weightedQuantile(y11, w_cal_s,0.50),
                  y11_qcal1=weightedQuantile(y11, w_cal_q1,0.50), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.50),
+                 y11_ipw=weightedQuantile(y11, w_ipw,0.50), y11_dr=weightedQuantile(y11, w_dr,0.50),
                  y12_naive=quantile(y12,0.50), y12_cal=weightedQuantile(y12, w_cal_s,0.50),
-                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.50), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.50))]
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.50), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.50),
+                 y12_ipw=weightedQuantile(y12, w_ipw,0.50), y12_dr=weightedQuantile(y12, w_dr,0.50))]
   
   
   res7 <- sample_bd1[, .(r=r, data="bd1", type = "q75",
                  y11_naive=quantile(y11,0.75), y11_cal=weightedQuantile(y11, w_cal_s,0.75),
                  y11_qcal1=weightedQuantile(y11, w_cal_q1,0.75), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.75),
+                 y11_ipw=weightedQuantile(y11, w_ipw,0.75), y11_dr=weightedQuantile(y11, w_dr,0.75),
                  y12_naive=quantile(y12,0.75), y12_cal=weightedQuantile(y12, w_cal_s,0.75),
-                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.75), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.75))]
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.75), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.75),
+                 y12_ipw=weightedQuantile(y12, w_ipw,0.75), y12_dr=weightedQuantile(y12, w_dr,0.75))]
   
   res8 <- sample_bd2[, .(r=r, data="bd2", type = "q75",
                  y11_naive=quantile(y11,0.75), y11_cal=weightedQuantile(y11, w_cal_s,0.75),
                  y11_qcal1=weightedQuantile(y11, w_cal_q1,0.75), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.75),
+                 y11_ipw=weightedQuantile(y11, w_ipw,0.75), y11_dr=weightedQuantile(y11, w_dr,0.75),
                  y12_naive=quantile(y12,0.75), y12_cal=weightedQuantile(y12, w_cal_s,0.75),
-                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.75), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.75))]
+                 y12_qcal1=weightedQuantile(y12, w_cal_q1,0.75), y12_qcal2=weightedQuantile(y12, w_cal_q2,0.75),
+                 y12_ipw=weightedQuantile(y12, w_ipw,0.75), y12_dr=weightedQuantile(y12, w_dr,0.75))]
   
   
   
   results[[r]] <- rbind(res1,res2, res3, res4, res5, res6, res7, res8, fill = T)
 }
-
 
 ```
 
@@ -222,11 +346,11 @@ results_df <- rbindlist(results) |>
   melt(id.vars = c("r", "data", "type"), value.name = "value", variable.name = "estimator") |> 
   na.omit() |> 
   {\(x) x[, c("y", "estimator"):=tstrsplit(estimator, "_")]}() |> 
-  {\(x) x[, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"))]}()
+  {\(x) x[, estimator:=factor(estimator, c("naive", "cal", "ipw", "mi", "dr", "qcal1", "qcal2"))]}()
 
 results_df[pop_true_vals, true := i.true, on = c("y", "type")]
-results_df[, estimator:=factor(estimator, c("naive", "cal", "qcal1", "qcal2"),
-                               c("Naive", "Cal", "QCal1", "Qcal2"))]
+results_df[, estimator:=factor(estimator, c("naive", "cal", "ipw", "mi", "dr", "qcal1", "qcal2"),
+                               c("Naive", "Cal", "IPW", "MI", "DR", "QCal1", "QCal2"))]
 
 results_summary <- results_df[, .(m = mean(value), var = var(value), true = mean(true)), 
                               keyby=.(data, y, type, estimator)]
@@ -234,8 +358,8 @@ results_summary <- results_df[, .(m = mean(value), var = var(value), true = mean
 results_summary[, bias:=m-true]
 results_summary[, mse:=bias^2+var]
 results_summary[, rmse:=sqrt(mse)]
-results_summary[estimator%in% c("Naive", "Cal", "QCal1", "Qcal2") & type == "q50" & data == "bd2", 
-                .(data, y,type, estimator, bias, rmse, bias_rel =bias/true*100)]
+results_summary[estimator%in% c("MI", "QCal1", "Qcal2") & type == "mean", 
+                .(data, y,type, estimator, bias, rmse, bias_rel =bias/true*100)] |> View()
 ```
 
 Plots
