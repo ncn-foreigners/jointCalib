@@ -1,0 +1,162 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+## Introduction
+
+
+
+## Joint calibration for totals and quantiles
+
+In the notation we follow Yang et al. (2021) paper. Let $\boldsymbol{h}(\boldsymbol{X}, \boldsymbol{A})$ be a multi-dimensional function of $\boldsymbol{X}$ and $\boldsymbol{A}$ defined previously. Let $\boldsymbol{h}_i$ be $\boldsymbol{h}_i(\boldsymbol{X}, \boldsymbol{A})$. 
+
+We can calculate population quantity $\boldsymbol{H} = \sum_{i=1}^N\boldsymbol{h}_i$, we may also observe estimated $\hat{\boldsymbol{H}}=\sum_{i \in A} \pi_i^{-1}\boldsymbol{h}_i$ when population totals are not possible to obtain. This case is more common as publication of quantiles for continouos variables based on administrative data are sparse. For instance, Statistics Poland publishes median income once two years.  
+
+We modify the original pseudo-weights  $d_i=N_i/n_i$ or other set of weights, to a new set of weights $\omega_i$ by minimizing the following distance function
+
+$$
+\sum_{i \in B}G(\omega_i, d_i) = \sum_{i \in B}d_i\left(\frac{\omega_i}{d_i} - 1\right)^2,
+$$
+subject to the calibration constraints $N^{-1}\sum_{i in B}\omega_i\boldsymbol{h}_i = \boldsymbol{H}$. In case of this distance function we construct an analytical form of the weights $\omega_i$
+
+$$
+\omega_i = d_i + \left(\boldsymbol{H} - \sum_{k \in B}d_k \boldsymbol{h}_k\right)^T
+\left(\sum_{k in B}d_k\boldsymbol{h}_k\boldsymbol{h}_k^T\right)d_i\boldsymbol{h}_k,
+$$
+
+for all $i \in B$. We may follow Yang et al. and call these weights generalized regression pseudo-weights.
+
+So $H$ matrix will be as follows
+
+$$
+\boldsymbol{H} =
+\begin{bmatrix}
+N \\
+\tau_1 = \sum_{i \in N} x_{i1}, \\
+\tau_2 = \sum_{i \in N} x_{i2}, \\
+... \\
+\tau_p = \sum_{i \in N} x_{ip}, \\
+\alpha_{1}^{X_1} \\
+\alpha_{2}^{X_1} \\
+...\\
+\alpha_{k}^{X_1} \\
+... \\
+\alpha_{1}^{X_p} \\
+\alpha_{2}^{X_p} \\
+...\\
+\alpha_{k}^{X_p} \\
+\end{bmatrix} = 
+\begin{bmatrix}
+N \\
+\boldsymbol{\tau} \\
+\boldsymbol{\alpha}^{X_1} \\
+\boldsymbol{\alpha}^{X_2} \\
+...\\
+\boldsymbol{\alpha}^{X_p} \\
+\end{bmatrix} =
+\begin{bmatrix}
+N \\
+\boldsymbol{\tau} \\
+\boldsymbol{\alpha} \\
+\end{bmatrix},
+$$
+
+where $\alpha_k^{X_p}$ is the corresponding quantile of $X_p$ variable, $\boldsymbol{\tau}=\operatorname{colvec}(\tau_1, \tau_2,..,\tau_p)$, $\boldsymbol{\alpha}^{X_p} = \operatorname{colvec}(\alpha_1^{X_p}, ..., \alpha_k^{X_p})$ and $\boldsymbol{\alpha} = \operatorname{colvec}(\boldsymbol{\alpha}^{X_1},...,\boldsymbol{\alpha}^{X_p})$.
+
+Note, that dimensions of $\boldsymbol{H}$ may be large depending on how many qunatiles are provided in the calibration constraints.
+
+## Simulation 1
+
+## Simulation 2
+
+We use the simulation example in Kim and Wang (2019) to compare various estimators similarly as Yang et al. (2021). We generate
+$\left\{\mathbf{X}_{i}=\left(X_{1 i}, X_{2 i}\right), \mathbf{Y}_{i}=\left(Y_{1 i}, Y_{2 i}\right): i=1, \ldots, N\right\}$ with size $N=100,000$, where $Y_{1 i}$ is a continuous
+outcome and $Y_{2 i}$ is a binary outcome. From the finite population, we select a big data Sample $B$ where the
+inclusion indicator $\delta_{B i} \sim \operatorname{Ber}\left(p_{i}\right)$ with $p_{i}$ the inclusion probability for unit $i$ with the sample size around 70,000 . We obtain a representative Sample $A$ of size $n=1,000$ using simple random sampling. The parameters of interest are the population mean $N^{-1} \sum_{i=1}^{N} \mathbf{Y}_{i}$ and population mean of $Y_2$.
+
+For generating the finite population, we consider linear models generating $Y_{11},Y_{21}$
+
+$$
+\begin{array}{c}
+Y_{11i}=1+X_{1 i}+X_{2 i}+\alpha_{i}+\varepsilon_{i} \\ 
+P\left(Y_{21i}=1 \mid X_{1 i}, X_{2 i} ; \alpha_{i}\right)=\operatorname{logit}\left(1+X_{1 i}+X_{2 i}+\alpha_{i}\right),
+\end{array}
+$$
+
+and non-linear models $Y_{12}, Y_{22}$
+
+$$
+\begin{array}{c}
+Y_{21i}=0.5\left(X_{1 i}-1.5\right)^{2}+X_{2 i}^{2}+\alpha_{i}+\varepsilon_{i} \\
+P\left(Y_{22i}=1 \mid X_{1 i}, X_{2 i} ; \alpha_{i}\right)=\operatorname{logit}\left\{0.5\left(X_{1 i}-1.5\right)^{2}+X_{2 i}^{2}+\alpha_{i}\right\},
+\end{array}
+$$
+
+where \(X_{1 i} \sim \mathcal{N}(1,1), X_{2 i} \sim \operatorname{Exp}(1), \alpha_{i} \sim \mathcal{N}(0,1), \varepsilon_{i} \sim \mathcal{N}(0,1)\), and \(X_{1 i}, X_{2 i}, \alpha_{i}\) and \(\varepsilon_{i}\) are
+mutually independent. The variables \(\alpha_{i}\) induce the dependence of \(Y_{1 i}\) and \(Y_{2 i}\) even adjusting for \(X_{1 i}\) and
+\(X_{2 i}\). For the big-data inclusion probability, we also consider a logistic linear model  $p_{1}, p_{2}$
+
+$$
+\operatorname{logit}\left(p_{1i}\right)=X_{2 i}
+$$
+
+and non-linear logistic regression
+
+$$
+\operatorname{logit}\left(p_{2i}\right)=-3+\left(X_{1 i}-1.5\right)^{2}+\left(X_{2 i}-2\right)^{2}\
+$$
+
+We compare the following estimators
+
+1. $\hat{\mu}_{HT}$ the Horvitz-Thompson estimator assuming $Y_i$ were observed in sample $A$ for the purpose of the benchmark
+2. $\hat{\mu}_{IPW}$ -- we use $X_1$ and $X_2$ assuming logistic linear regression with calibration constraints (covariate balancing)
+3. $\hat{\mu}_{DR}$ -- we use $X_1$ and $X_2$ assuming linear regression and logistic linear regression (IPW with calibration constraints)
+5. $\hat{\mu}_{KNN}$ -- mass imputation based on $X_1$ and $X_2$ with $k=$ neighbours
+6. $\hat{\mu}_{CAL}$ -- calibration using only totals of $\boldsymbol{\tau}$
+8. $\hat{\mu}_{QCAL1}$ -- calibration using only quantiles for $\boldsymbol{\alpha}^{\boldsymbol{X}}$ 
+9. $\hat{\mu}_{QCAL1}$ -- calibration using totals and quantiles $\boldsymbol{H}$.
+
+For the simulation study we set $\alpha=\{0.25, 0.5, 0.75\}$  for $X_1$ and $X_2$.
+
+
+
+## List of symbols
+
++ $N$ - population size, 
++ $\hat{N}$ - estimated population size
++ $n_{A}$ - size of probability sample
++ $n_{B}$ - size of non-probability sample
++ $\pi_i$ - probability of inclusion into probability sample
++ $p_i$ - probability of inclision into non-probability sample
++ $d_i=1/\pi_i$ - design weight for probability sample
++ $w_i$ - calibrated $d$ weight 
++ $d_i^*$ - pseudo-weight for non-probability sample, it can be $N/n_{B}$ or other defined in the literature
++ $\omega_i$ - calibrated pseudo-weight for non-probability sample
++ $i = \{1,2, ..., N\}$ - unit index
++ $p = \{1,2,..., P\}$ - number of variables, $P$ denotes numer of variables
++ $k = \{1,2, ..., K\}$ - $k^{th}$ quantile e.g $\alpha_1=0.25$, $\alpha_2=0.5$ and $\alpha_3=0.75$, where $K$ denotes number of quantiles defined in the study
++ $\alpha_k^{X_p}$ -- $k^{th}$ quantile of variable $X_p$
++ $\tau_p$ -- known total for variable $X_p$, 
++ $\hat{\tau}_p$ -- estimated total for variable $X_p$, 
++ $X_p$ - auxiliary variable
++ $Y$ - target variable
++ $Q_{X_p, \alpha}$ -- known population total
++ $\hat{Q}_{X_p, \alpha}$ -- estimated population total
++ $H(z)$ -- heavyside function 
++ $F^{-1}()$
++ $\operatorname{colvec}()$ - column vector contatanation
++ $\mu$ - target quantity (mean)
++ $\hat{\mu}$ - estimator of the target quantity (e.g. $\hat{\mu}_{IPW}$ is estimator of $\mu$ based on IPW)
++ $\xi_{\alpha}$ - target quantile (e.g. median) 
++ $\hat{\xi}_{\alpha}$ -- estimator of the target quantile
+
+# list of abreviations
+
++ HT -- Horvitz-Thompson estimator
++ IPW -- inverse probability weighting estimator
++ MI -- mass imputation estimator
++ DR -- doubly robust estimator
++ CAL -- calibration estimator
++ QCAL -- quantile calibrated estimator
