@@ -160,15 +160,12 @@ wq2 = DescrStatsW(data=apiclus1["api99"], weights=apiclus1["w_cal"])
 # Calibraion for quantiles in Stata using `svyset` (`regress`)
 
 ```{stata}
-clear
+import delimited using "your_file.csv", clear
 set more off
 
 * Define the constants
 global N = 6194
 global api99_med_pop = 650
-
-* Assuming apiclus1 is your dataset
-use "apiclus1.dta", clear
 
 * Create a copy of api99 as a temporary variable
 gen api99_copy = api99
