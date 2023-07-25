@@ -1,0 +1,210 @@
+---
+title: "Calibration for totals and quantiles in R, Python and Stata"
+author: "Maciej Beręsewicz"
+format: 
+  html:
+    self-contained: true
+    table-of-contents: true
+    number-sections: true
+    df-print: kable
+editor: source
+execute: 
+  eval: true
+  warning: false
+  message: false
+toc-title: Contents
+lang: en
+---
+
+# Calibration for quantiles in R 
+
+Minimal example using base R and `survey` package.
+
+```{r}
+library(survey)
+```
+
+Read the data (this is a csv file created based on `apiclus1` from `data(api)`).
+
+```{r}
+apiclus1 <- read.csv("apiclus1-example.csv")
+head(apiclus1)
+```
+
+Say we calibrate to the following quantities
+
++ N = 6194
++ stypeH = 755
++ stypeM=1018
++ api99=3914069
++ api99_med = 650 (this is set arbitrary)
+
+So we need to create new variabl `api99_med` 
+
+```{r}
+N <- 6194
+api99_med_pop <- 670 ## arbitrary 
+api99_sorted <- sort(apiclus1$api99) ## sort data and store in new vector
+pos <- which(api99_sorted <= api99_med_pop) ## check with are lower or equal to pop median
+n_pos <- NROW(pos) ## count cases
+Q_L <- api99_sorted[n_pos] ## select lower 
+Q_U <- api99_sorted[n_pos + 1] ## select upper
+Q_B <- (api99_med_pop - Q_L) / (Q_U - Q_L) ## interpolation B
+```
+
+Add new variable to the dataset `apiclus1`.
+
+```{r}
+apiclus1$api99_med <- numeric(nrow(apiclus1)) ## create vector with 0
+apiclus1$api99_med[apiclus1$api99 < Q_L] <- 1/N 
+apiclus1$api99_med[apiclus1$api99 == Q_U] <- Q_B/N
+head(apiclus1[, c("api99", "api99_med")])
+```
+
+Calibration using `survey::calibrate`.
+
+```{r}
+pop.totals<-c(`(Intercept)`=N, stypeH=755, stypeM=1018, api99=3914069, api99_med=0.50) ## vector of totals
+pop.totals
+```
+
+Declare design and calibrate
+```{r}
+dclus1<-svydesign(id=~dnum, weights=~pw, data=apiclus1, fpc=~fpc) ## definition of design
+dclus1g3 <- calibrate(dclus1,  formula = ~stype+api99+api99_med,  population = pop.totals) ## calibration
+```
+
+Compare results
+
+```{r}
+c(before = svyquantile(~api99, dclus1, quantile = 0.5)$api99[1],
+  after = svyquantile(~api99, dclus1g3, quantile = 0.5)$api99[1])
+```
+
+```{r}
+c(before = svytotal(~api99_med, dclus1), after = svytotal(~api99_med, dclus1g3))
+```
+
+Note that in small sample sizes quantiles may not be reproduced excatly due to rounding
+
+
+# Calibraion for quantiles in Python using `pandas` and `samplics`
+
+Under `samplics-0.4.8`
+
+```{bash, eval = FALSE} 
+pip install samplics
+pip install statsmodels
+pip install np
+pip install pandas
+```
+
+```{python}
+from statsmodels.stats.weightstats import DescrStatsW
+import numpy as np
+import pandas as pd
+from samplics.weighting import SampleWeight
+from samplics.estimation import TaylorEstimator
+```
+
+```{python}
+apiclus1 = pd.read_csv("apiclus1-example.csv")
+apiclus1["pop"] = 1
+apiclus1["stypeH"] = 0
+apiclus1["stypeM"] = 0
+apiclus1.loc[apiclus1['stype'] == 'H', 'stypeH'] = 1
+apiclus1.loc[apiclus1['stype'] == 'M', 'stypeM'] = 1
+apiclus1.head()
+```
+
+```{python}
+N = 6194
+api99_med_pop = 670
+api99_sorted = np.sort(apiclus1['api99'])
+pos = np.where(api99_sorted <= api99_med_pop)
+n_pos = pos[0].shape[0]
+Q_L = api99_sorted[n_pos]
+Q_U = api99_sorted[n_pos + 1]
+Q_B = (api99_med_pop - Q_L) / (Q_U - Q_L)
+apiclus1['api99_med'] = 0
+apiclus1.loc[apiclus1['api99'] < Q_L, 'api99_med'] = 1/N 
+apiclus1.loc[apiclus1['api99'] == Q_U, 'api99_med'] = Q_B/N
+apiclus1[["api99", "api99_med"]].head()
+```
+
+Declare population totals
+
+```{python}
+pop_totals = {"pop": 6194, "stypeH" : 755, "stypeM" : 1018, "api99": 3914069, "api99_med": 0.5}
+```
+
+Calibration using `samplics` (linear function)
+
+```{python}
+apiclus1["w_cal"] = SampleWeight().calibrate(
+    apiclus1["pw"], apiclus1[["pop", "stypeH", "stypeM", "api99", "api99_med"]], 
+    pop_totals)
+```
+
+Weighted quantiles are not implemented so we use `DescrStatsW` from `statsmodels.stats.weightstats`.
+
+```{python}
+wq1 = DescrStatsW(data=apiclus1["api99"], weights=apiclus1["pw"])
+wq2 = DescrStatsW(data=apiclus1["api99"], weights=apiclus1["w_cal"])
+
+{"Before": wq1.quantile(probs=0.5, return_pandas=False)[0],
+ "After": wq2.quantile(probs=0.5, return_pandas=False)[0]}
+```
+
+
+# Calibraion for quantiles in Stata using `svyset` (`regress`)
+
+```{stata}
+clear
+set more off
+
+* Define the constants
+global N = 6194
+global api99_med_pop = 650
+
+* Assuming apiclus1 is your dataset
+use "apiclus1.dta", clear
+
+* Create a copy of api99 as a temporary variable
+gen api99_copy = api99
+
+* Sort the temporary variable
+sort api99_copy
+
+* Define new variable pos to store the values that are lower or equal to api99_med_pop
+gen pos = (api99_copy <= $api99_med_pop)
+
+* Count the number of cases where pos is true
+egen n_pos = total(pos)
+
+* Define Q_L and Q_U based on n_pos
+gen Q_L = api99_copy if _n == n_pos
+gen Q_U = api99_copy if _n == n_pos + 1
+
+* Replace missing Q_L and Q_U with respective preceding and following values 
+replace Q_L = Q_L[_n-1] if _n > 1 & missing(Q_L)
+replace Q_U = Q_U[_n+1] if _n < _N & missing(Q_U)
+
+* Interpolation B
+gen Q_B = ($api99_med_pop - Q_L) / (Q_U - Q_L)
+
+* Create a new variable api99_med with 0
+gen api99_med = 0
+
+* Update api99_med according to conditions
+replace api99_med = 1/$N if api99 < Q_L
+replace api99_med = Q_B/$N if api99 == Q_U
+
+* Drop the temporary variables
+drop api99_copy Q_L Q_U pos n_pos Q_B
+
+* Show the first few rows
+list in 1/5
+
+```
+

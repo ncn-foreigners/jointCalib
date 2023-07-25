@@ -20,20 +20,20 @@ lang: en
 Load libraries and functions 
 
 ```{r}
-library(sampling)
-library(laeken)
-library(survey)
 library(data.table)
 library(ggplot2)
 library(scales)
-library(Rcpp)
 library(xtable)
 library(glue)
-library(nonprobsvy)
-source("../functions.R") ## to be replaced by package
 ```
 
 
+Reporting of results for the paper
+
+```{r}
+results_df <- readRDS("../results/sim-yang2021-svymeth.rds")
+head(results_df)
+```
 
 Plots
 
@@ -52,6 +52,7 @@ ys <- c(
 
 
 ```
+
 
 ```{r}
 results_df[type == "mean"] |> 
@@ -120,16 +121,9 @@ ggsave(plot =p2, filename = glue("../figs/sim-nonprob-cases-{q}-relbias.png"), w
 
 ```
 
-```{r}
-saveRDS(object = results_df, file = "../results/sim-yang2021-svymeth.rds")
-```
 
-Reporting of results for the paper
 
-```{r}
-results_df <- readRDS("../results/sim-yang2021-svymeth.rds")
-head(results_df)
-```
+Table with results
 
 ```{r}
 results_df[, .(m = mean(value), v=var(value), true = mean(true)), 
@@ -147,10 +141,10 @@ results_df[, .(m = mean(value), v=var(value), true = mean(true)),
             data = NULL) |> 
   dcast(... ~ variable, value.var = "value") |> 
   {\(x) x[, .(type, y=y1, estimator, 
-              ll_bias=var_1_bd1_bias*100, ll_var=var_1_bd1_v*100, ll_rmse=sqrt(var_1_bd1_bias^2+var_1_bd1_v*100),
-              ln_bias=var_1_bd2_bias*100, ln_var=var_1_bd2_v*100, ln_rmse=sqrt(var_1_bd2_bias^2+var_1_bd2_v*100),
-              nl_bias=var_2_bd1_bias*100, nl_var=var_2_bd1_v*100, nl_rmse=sqrt(var_2_bd1_bias^2+var_2_bd1_v*100),
-              nn_bias=var_2_bd2_bias*100, nn_var=var_2_bd2_v*100, nn_rmse=sqrt(var_2_bd2_bias^2+var_2_bd2_v*100))]}() |> 
+              ll_bias=var_1_bd1_bias*100, ll_se=sqrt(var_1_bd1_v)*100, ll_rmse=sqrt(var_1_bd1_bias^2+var_1_bd1_v*100),
+              ln_bias=var_1_bd2_bias*100, ln_se=sqrt(var_1_bd2_v)*100, ln_rmse=sqrt(var_1_bd2_bias^2+var_1_bd2_v*100),
+              nl_bias=var_2_bd1_bias*100, nl_se=sqrt(var_2_bd1_v)*100, nl_rmse=sqrt(var_2_bd1_bias^2+var_2_bd1_v*100),
+              nn_bias=var_2_bd2_bias*100, nn_se=sqrt(var_2_bd2_v)*100, nn_rmse=sqrt(var_2_bd2_bias^2+var_2_bd2_v*100))]}() |> 
   {\(x) x[order(type, y, estimator)]}() |> 
   xtable(digits = 2) |> 
   print.xtable(include.rownames = F)

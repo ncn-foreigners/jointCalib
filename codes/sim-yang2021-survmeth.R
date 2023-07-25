@@ -16,7 +16,7 @@ source("codes/functions.R") ## to be replaced by package
 seed_for_sim <- 2023-07-14
 set.seed(seed_for_sim+1)
 
-n_reps <- 100 ## number of simulations for the paper
+n_reps <- 1000 ## number of simulations for the paper
 
 N <- 100000
 n <- 1000
@@ -68,9 +68,9 @@ for (r in 1:n_reps) {
   sample_bd2$w_naive <- N/nrow(sample_bd2)
   
   ##########################################
-  ## linear inclusion probability
+  ## linear inclusion probability (BD1)
   ##########################################
-  ## calibration with quantiles only
+  ## calibration with quantiles only (QCAL1)
   w_res <- calib_quantiles(X_q = with(sample_bd1, cbind(x1,x2)),
                            d = sample_bd1$w_naive,
                            N = N,
@@ -78,7 +78,7 @@ for (r in 1:n_reps) {
                            method = "raking",
                            backend = "sampling")
   
-  ## calibration with quantiles and totals only
+  ## calibration with quantiles and totals (QCAL2)
   w_res2 <- calib_quantiles(X_q = with(sample_bd1, cbind(x1,x2)),
                             X =  with(sample_bd1, cbind(x1,x2)),
                             d = sample_bd1$w_naive,
@@ -87,7 +87,7 @@ for (r in 1:n_reps) {
                             totals_q = list(q_est$x1[, 1], q_est$x2[, 1]),
                             method = "raking",
                             backend = "sampling")
-  ## calibration with totals only  
+  ## calibration with totals only (CAL)
   w_res_st <- calib(Xs = with(sample_bd1, cbind(x1,x2)),
                     d = sample_bd1$w_naive,
                     total = x_totals,
@@ -151,7 +151,7 @@ for (r in 1:n_reps) {
   ############################################
   ## non-linear inclusion probability
   ############################################
-  
+  ## calibration with quantiles only (QCAL1)
   w_res_2 <- calib_quantiles(X_q = with(sample_bd2, cbind(x1, x2)),
                              d = sample_bd2$w_naive,
                              N = N,
@@ -159,7 +159,7 @@ for (r in 1:n_reps) {
                              method = "raking",
                              backend = "sampling")
   
-  
+  ## calibration with quantiles only (QCAL2)
   w_res2_2 <- calib_quantiles(X_q = with(sample_bd2, cbind(x1, x2)),
                               X =  with(sample_bd2, cbind(x1, x2)),
                               d = sample_bd2$w_naive,
@@ -169,12 +169,13 @@ for (r in 1:n_reps) {
                               method = "raking",
                               backend = "sampling")
   
+  ## calibration with quantiles only (CAL)
   w_res_st_2 <- calib(Xs = with(sample_bd2, cbind(x1, x2)),
                       d = sample_bd2$w_naive,
                       total = x_totals,
                       method = "raking")
   
-  
+  ## ipw
   ipw_2 <- nonprob(selection = ~ x1 + x2,
                    target = ~ y11,
                    svydesign = sample_prob_svy,
@@ -227,17 +228,25 @@ for (r in 1:n_reps) {
                       data = sample_bd2,
                       family_outcome = "binomial")
   ## add weights
-  sample_bd1[, ":="(w_cal_q1 =w_res$w, w_cal_q2 =w_res2$w, w_cal_s = w_naive*w_res_st,
-                    w_ipw = ipw$weights, w_dr=dr_y11$weights)]
-  sample_bd2[, ":="(w_cal_q1 =w_res_2$w, w_cal_q2 = w_res2_2$w, w_cal_s = w_naive*w_res_st_2,
-                    w_ipw = ipw_2$weights, w_dr=dr_y11_2$weights)]
+  sample_bd1[, ":="(w_cal_q1 =w_res$w,  ## QCAL1 weights
+                    w_cal_q2 =w_res2$w,  ## QCAL2 weights
+                    w_cal_s = w_naive*w_res_st, ## CAL weights
+                    w_ipw = ipw$weights,  ## IPW weighs
+                    w_dr=dr_y11$weights)] ## DR (IPW) weights
+  sample_bd2[, ":="(w_cal_q1 =w_res_2$w,  ## QCAL1 weights
+                    w_cal_q2 = w_res2_2$w,  ## QCAL2 weights
+                    w_cal_s = w_naive*w_res_st_2, ## CAL weights
+                    w_ipw = ipw_2$weights,  ## IPW weighs
+                    w_dr=dr_y11_2$weights)] ## DR (IPW) weights
   ################################################################
   ## summary of results
   ################################################################
+  
+  ## results for means
   res1 <- sample_bd1[, .(r=r, data="bd1", type = "mean", 
                          y11_naive=mean(y11), y11_cal=weighted.mean(y11, w_cal_s), 
                          y11_qcal1=weighted.mean(y11, w_cal_q1),  y11_qcal2=weighted.mean(y11, w_cal_q2),
-                         y11_ipw=weighted.mean(y11, w_ipw), y11_dr=dr_y11$output$mean,y11_mi=mi_y11$output$mean, 
+                         y11_ipw=weighted.mean(y11, w_ipw), y11_dr=dr_y11$output$mean, y11_mi=mi_y11$output$mean, 
                          
                          y12_naive=mean(y12), y12_cal=weighted.mean(y12, w_cal_s),
                          y12_qcal1=weighted.mean(y12, w_cal_q1), y12_qcal2=weighted.mean(y12, w_cal_q2),
@@ -269,6 +278,7 @@ for (r in 1:n_reps) {
                          y22_qcal1=weighted.mean(y22, w_cal_q1), y22_qcal2=weighted.mean(y22, w_cal_q2),
                          y22_mi=mi_y22_2$output$mean, y22_ipw=weighted.mean(y22, w_ipw), y22_dr=dr_y22_2$output$mean)]
   
+  ## results for quartiles
   res3 <- sample_bd1[, .(r=r, data="bd1", type = "q25",
                          y11_naive=quantile(y11,0.25), y11_cal=weightedQuantile(y11, w_cal_s,0.25),
                          y11_qcal1=weightedQuantile(y11, w_cal_q1,0.25), y11_qcal2=weightedQuantile(y11, w_cal_q2,0.25),
