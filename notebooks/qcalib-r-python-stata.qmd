@@ -1,5 +1,5 @@
 ---
-title: "Calibration for totals and quantiles in R, Python and Stata"
+title: "A minimal example of calibration for totals/means and quantiles in R, Python and Stata"
 author: "Maciej Beręsewicz"
 format: 
   html:
@@ -15,6 +15,12 @@ execute:
 toc-title: Contents
 lang: en
 ---
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(engine.path = list(
+  python = "/Library/Frameworks/Python.framework/Versions/3.10/bin/python3.10"
+))
+```
 
 # Calibration for quantiles in R 
 
@@ -81,6 +87,8 @@ c(before = svyquantile(~api99, dclus1, quantile = 0.5)$api99[1],
   after = svyquantile(~api99, dclus1g3, quantile = 0.5)$api99[1])
 ```
 
+Check `api99_med` variable if it sums up to 0.5
+
 ```{r}
 c(before = svytotal(~api99_med, dclus1), after = svytotal(~api99_med, dclus1g3))
 ```
@@ -104,7 +112,6 @@ from statsmodels.stats.weightstats import DescrStatsW
 import numpy as np
 import pandas as pd
 from samplics.weighting import SampleWeight
-from samplics.estimation import TaylorEstimator
 ```
 
 ```{python}
@@ -136,6 +143,7 @@ Declare population totals
 
 ```{python}
 pop_totals = {"pop": 6194, "stypeH" : 755, "stypeM" : 1018, "api99": 3914069, "api99_med": 0.5}
+pop_totals
 ```
 
 Calibration using `samplics` (linear function)
@@ -156,10 +164,18 @@ wq2 = DescrStatsW(data=apiclus1["api99"], weights=apiclus1["w_cal"])
  "After": wq2.quantile(probs=0.5, return_pandas=False)[0]}
 ```
 
+Check `api99_med` variable if it sums up to 0.5
+
+```{python}
+wq1 = DescrStatsW(data=apiclus1["api99_med"], weights=apiclus1["pw"])
+wq2 = DescrStatsW(data=apiclus1["api99_med"], weights=apiclus1["w_cal"])
+
+{"Before": wq1.sum, "After": wq2.sum}
+```
 
 # Calibraion for quantiles in Stata using `svyset` (`regress`)
 
-```{stata}
+```{stata, eval = FALSE}
 import delimited using "your_file.csv", clear
 set more off
 
