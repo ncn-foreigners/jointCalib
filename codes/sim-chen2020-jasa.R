@@ -14,7 +14,7 @@ sourceCpp("codes/syspps.cpp")
 
 seed_for_sim <- 2023-07-14
 set.seed(seed_for_sim+1)
-n_reps <- 1000
+n_reps <- 10
 
 
 # generate data according to the paper ------------------------------------

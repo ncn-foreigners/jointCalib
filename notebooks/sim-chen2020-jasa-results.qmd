@@ -15,6 +15,17 @@ toc-title: Contents
 lang: en
 ---
 
+# Libraries and functions
+
+Load libraries and functions 
+
+```{r}
+library(data.table)
+library(ggplot2)
+library(scales)
+library(xtable)
+library(glue)
+```
 
 
 # Simulation results
