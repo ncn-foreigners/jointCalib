@@ -151,7 +151,7 @@ df <- data.frame(x,y1,y2,y3,y4,p1,p2,p3,p4) |> setDT()
 quants <- seq(0.1, 0.9, 0.1)
 
 results <- list()
-R <- 3000
+R <- 1000
 for (r in 1:R) {
   set.seed(r)
   if (r %% 100 == 0) cat("iteration:", r, "\n")
@@ -163,27 +163,15 @@ for (r in 1:R) {
 }
 
 pop_true <- df[, lapply(.SD, mean), .SDcols = patterns("y")] |> melt(value.var = "value", variable.name = "y")
+pop_quants <- df[, lapply(.SD, quantile, p=0.5), 
+                 .SDcols = patterns("y")] |> melt(value.var = "value", variable.name = "y")
 
 results_all <- rbindlist(results, idcol = "r") |> 
   melt(id.vars = c("r", "w", "p", "m"), value.var = "value", variable.name = "y") 
 
 results_all[pop_true, true:=i.value, on = "y"]
+results_all[pop_true, q50:=i.value, on = "y"]
 
 saveRDS(results_all, file = "results/sim-haziza2016-jos.rds")
+fwrite(x = results_all, file = "results/sim-haziza2016-jos.csv.gz")
 
-
-results_all |> 
-  ggplot(data = _, aes(x = p, y = value, fill = w)) +
-  geom_violin(position="dodge", draw_quantiles = c(0.25, 0.5, 0.75), scale = "width") +
-  geom_hline(data = pop_true, aes(yintercept = value), color = "red", linetype="dashed") + 
-  scale_fill_viridis_d() + 
-  facet_grid(y ~ m, scales = "free_y")
-
-
-results_all[, .(e=mean(value),v=var(value), true = mean(true)), .(w,p,m,y)][
-  , rmse:=sqrt((e-true)^2+v)]  -> res
-
-ggplot(data = res, aes(x = p, y = rmse, fill = w)) +
-  geom_col(position = "dodge", color = "black") + 
-  scale_fill_viridis_d() + 
-  facet_grid(y ~ m, scales = "free_y")
