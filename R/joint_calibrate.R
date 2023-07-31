@@ -11,7 +11,7 @@
 #' @param pop_totals a vector of population totals for \code{X}
 #' @param pop_quantiles a vector of population quantiles for \code{X_q}
 #' @param backend specify an R package to perform calibration
-#' @param method specify distance function for calibrarion
+#' @param method specify distance function for calibration
 #' @param ... arguments passed either to \code{sampling::calib} or \code{laeken::calibWeights}
 #'
 #' @references
