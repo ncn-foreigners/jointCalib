@@ -98,6 +98,8 @@ function(X = NULL,
   stopifnot("X and pop_totals have different dimensions" = ncol(X) == NROW(pop_totals))
   stopifnot("X_q and pop_quantiles have different dimensions"= ncol(X_q) == length(pop_quantiles))
   stopifnot("At least one element of pop_quantiles is empty (length of 0)" = all(lengths(pop_quantiles) > 0))
+  stopifnot("X contains constant" = all(apply(X, 2, sd) > 0))
+  stopifnot("X_q contains constant" = all(apply(X_1, 2, sd) > 0))
   stopifnot("Ony `sampling` and `laeken` are possible backends" = backend %in% c("sampling", "laeken"))
   stopifnot("Ony `raking`, `linear` and `logit` are possible" = method %in% c("linear", "raking", "logit"))
 
