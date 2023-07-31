@@ -2,7 +2,7 @@
 #' @author Maciej Beręsewicz
 #'
 #' @description
-#' \code{calib_quantiles} allows to specify matrix of X variables for calibration of totals (intercept should not be included) and matrix of X_q variables for calibration of quantiles.
+#' \code{joint_calibrate} allows to specify matrix of X variables for calibration of totals (intercept should not be included) and matrix of X_q variables for calibration of quantiles.
 #'
 #' @param X matrix of variables for calibration of totals
 #' @param X_q matrix of variables for calibration of quantiles
@@ -34,7 +34,7 @@
 #' \dontrun{
 #'
 #' }
-calib_quantiles <-
+joint_calibrate <-
 function(X = NULL,
          X_q = NULL,
          d = NULL,
