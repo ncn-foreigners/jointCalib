@@ -16,7 +16,54 @@ You can install the development version of `jointCalib` from GitHub with:
 remotes::install_github("ncn-foreigners/jointCalib")
 ```
 
-## Examples -- TBA
+## Examples 
+
+### Example 1 
+
+Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
+
+```r
+library(jointCalib)
+```
+
+```r
+N <- 1000
+x <- runif(N, 0, 80)
+y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
+p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
+probs <- seq(0.1, 0.9, 0.1)
+quants_known <- quantile(x, probs)
+totals_known <- sum(x)
+df <- data.frame(x, y, p)
+df_resp <- df[df$p == 1, ]
+df_resp$d <- N/nrow(df_resp)
+y_quant_true <- quantile(y, probs)
+```
+
+example 1a: calibrate only quantiles (deciles)
+
+```r
+result1 <- joint_calib(X_q = as.matrix(df_resp$x),
+                      d = df_resp$d,
+                      N = N,
+                      pop_quantiles = list(quants_known),
+                      method = "linear",
+                      backend = "sampling")
+```
+
+example 1b: calibrate with quantiles (deciles) and totals
+
+```r
+result2 <- joint_calib(X_q = as.matrix(df_resp$x),
+                       X = as.matrix(df_resp$x),
+                       d = df_resp$d,
+                       N = N,
+                       pop_quantiles = list(quants_known),
+                       pop_totals = totals_known,
+                       method = "linear",
+                       backend = "sampling")
+```
+
 
 ## Funding
 
