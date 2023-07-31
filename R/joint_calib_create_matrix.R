@@ -5,7 +5,7 @@ NULL
 #'
 #' \loadmathjax
 #' @description
-#' \code{joint_calib_create_matrix} is function that creates an \mjseqn{A = [a_{ij}]} matrix for calibration of quantiles based on Harms and Duchesne (2006):
+#' \code{joint_calib_create_matrix} is function that creates an \mjseqn{A = [a_{ij}]} matrix for calibration of quantiles using a slightly modified Heavyside function based on Harms and Duchesne (2006)
 #'
 #' \mjsdeqn{a_{i j}=
 #' \begin{cases}

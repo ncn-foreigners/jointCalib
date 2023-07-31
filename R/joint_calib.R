@@ -35,52 +35,52 @@
 #' @examples
 #' \dontrun{
 #' ## generate data based on Haziza and Lesage (2016)
-# set.seed(123)
-# N <- 1000
-# x <- runif(N, 0, 80)
-# y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
-# p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
-# probs <- seq(0.1, 0.9, 0.1)
-# quants_known <- quantile(x, probs)
-# totals_known <- sum(x)
-# df <- data.frame(x, y, p)
-# df_resp <- df[df$p == 1, ]
-# df_resp$d <- N/nrow(df_resp)
-# y_quant_true <- quantile(y, probs)
+#' set.seed(123)
+#' N <- 1000
+#' x <- runif(N, 0, 80)
+#' y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
+#' p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
+#' probs <- seq(0.1, 0.9, 0.1)
+#' quants_known <- quantile(x, probs)
+#' totals_known <- sum(x)
+#' df <- data.frame(x, y, p)
+#' df_resp <- df[df$p == 1, ]
+#' df_resp$d <- N/nrow(df_resp)
+#' y_quant_true <- quantile(y, probs)
 #' ## standard calibration for comparison
-# result0 <- sampling::calib(Xs = cbind(1, df_resp$x),
-#                            d = df_resp$d,
-#                            total = c(N, totals_known),
-#                            method = "linear")
-# y_quant_hat0 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result0*df_resp$d)
-# ## example 1: calibrate only quantiles (deciles)
-# result1 <- joint_calib(X_q = as.matrix(df_resp$x),
-#                       d = df_resp$d,
-#                       N = N,
-#                       pop_quantiles = list(quants_known),
-#                       method = "linear",
-#                       backend = "sampling")
-# ## estimate quantiles
-# y_quant_hat1 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result1$w)
+#' result0 <- sampling::calib(Xs = cbind(1, df_resp$x),
+#'                            d = df_resp$d,
+#'                            total = c(N, totals_known),
+#'                            method = "linear")
+#' y_quant_hat0 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result0*df_resp$d)
+#' ## example 1: calibrate only quantiles (deciles)
+#' result1 <- joint_calib(X_q = as.matrix(df_resp$x),
+#'                       d = df_resp$d,
+#'                       N = N,
+#'                       pop_quantiles = list(quants_known),
+#'                       method = "linear",
+#'                       backend = "sampling")
+#' ## estimate quantiles
+#' y_quant_hat1 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result1$w)
 #'
 #' ## compare with known
-# data.frame(standard = y_quant_hat0, est=y_quant_hat1, true=y_quant_true)
+#' data.frame(standard = y_quant_hat0, est=y_quant_hat1, true=y_quant_true)
 #'
 #' ## example 2: calibrate with quantiles (deciles) and totals
 #'
-# result2 <- joint_calib(X_q = as.matrix(df_resp$x),
-#                        X = as.matrix(df_resp$x),
-#                        d = df_resp$d,
-#                        N = N,
-#                        pop_quantiles = list(quants_known),
-#                        pop_totals = totals_known,
-#                        method = "linear",
-#                        backend = "sampling")
+#' result2 <- joint_calib(X_q = as.matrix(df_resp$x),
+#'                        X = as.matrix(df_resp$x),
+#'                        d = df_resp$d,
+#'                        N = N,
+#'                        pop_quantiles = list(quants_known),
+#'                        pop_totals = totals_known,
+#'                        method = "linear",
+#'                        backend = "sampling")
 #' ## estimate quantiles
-# y_quant_hat2 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result2$w)
+#' y_quant_hat2 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result2$w)
 #'
 #' ## compare with known
-# data.frame(standard = y_quant_hat0, est1=y_quant_hat1, est2=y_quant_hat2, true=y_quant_true)
+#' data.frame(standard = y_quant_hat0, est1=y_quant_hat1, est2=y_quant_hat2, true=y_quant_true)
 #' }
 #'
 #' @export
@@ -98,8 +98,8 @@ function(X = NULL,
   stopifnot("X and pop_totals have different dimensions" = ncol(X) == NROW(pop_totals))
   stopifnot("X_q and pop_quantiles have different dimensions"= ncol(X_q) == length(pop_quantiles))
   stopifnot("At least one element of pop_quantiles is empty (length of 0)" = all(lengths(pop_quantiles) > 0))
-  stopifnot("X contains constant" = all(apply(X, 2, sd) > 0))
-  stopifnot("X_q contains constant" = all(apply(X_1, 2, sd) > 0))
+  stopifnot("X contains constant" = all(base::apply(X, 2, stats::sd) > 0))
+  stopifnot("X_q contains constant" = all(base::apply(X_q, 2, stats::sd) > 0))
   stopifnot("Ony `sampling` and `laeken` are possible backends" = backend %in% c("sampling", "laeken"))
   stopifnot("Ony `raking`, `linear` and `logit` are possible" = method %in% c("linear", "raking", "logit"))
 

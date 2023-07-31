@@ -50,15 +50,52 @@ Returns a list with containing:\cr
 \examples{
 \dontrun{
 ## generate data based on Haziza and Lesage (2016)
+set.seed(123)
+N <- 1000
+x <- runif(N, 0, 80)
+y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
+p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
+probs <- seq(0.1, 0.9, 0.1)
+quants_known <- quantile(x, probs)
+totals_known <- sum(x)
+df <- data.frame(x, y, p)
+df_resp <- df[df$p == 1, ]
+df_resp$d <- N/nrow(df_resp)
+y_quant_true <- quantile(y, probs)
 ## standard calibration for comparison
+result0 <- sampling::calib(Xs = cbind(1, df_resp$x),
+                           d = df_resp$d,
+                           total = c(N, totals_known),
+                           method = "linear")
+y_quant_hat0 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result0*df_resp$d)
+## example 1: calibrate only quantiles (deciles)
+result1 <- joint_calib(X_q = as.matrix(df_resp$x),
+                      d = df_resp$d,
+                      N = N,
+                      pop_quantiles = list(quants_known),
+                      method = "linear",
+                      backend = "sampling")
+## estimate quantiles
+y_quant_hat1 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result1$w)
 
 ## compare with known
+data.frame(standard = y_quant_hat0, est=y_quant_hat1, true=y_quant_true)
 
 ## example 2: calibrate with quantiles (deciles) and totals
 
+result2 <- joint_calib(X_q = as.matrix(df_resp$x),
+                       X = as.matrix(df_resp$x),
+                       d = df_resp$d,
+                       N = N,
+                       pop_quantiles = list(quants_known),
+                       pop_totals = totals_known,
+                       method = "linear",
+                       backend = "sampling")
 ## estimate quantiles
+y_quant_hat2 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result2$w)
 
 ## compare with known
+data.frame(standard = y_quant_hat0, est1=y_quant_hat1, est2=y_quant_hat2, true=y_quant_true)
 }
 
 }
