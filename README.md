@@ -11,7 +11,7 @@ which allows to calibrate weights to known (or estimated) totals and quantiles j
 
 You can install the development version of `jointCalib` from GitHub with:
 
-```{r}
+```r
 # install.packages("remotes")
 remotes::install_github("ncn-foreigners/jointCalib")
 ```
