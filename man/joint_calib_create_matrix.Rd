@@ -52,7 +52,6 @@ x <- cbind(x1, x2)
 quants <- list(quantile(x1, 0.5), quantile(x2, c(0.1, 0.75, 0.9)))
 B <- joint_calib_create_matrix(x, N, quants)
 }
-
 }
 \references{
 Harms, T. and Duchesne, P. (2006). On calibration estimation for quantiles.

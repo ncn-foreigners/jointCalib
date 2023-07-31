@@ -2,7 +2,7 @@
 #' @author Maciej Beręsewicz
 #'
 #' @description
-#' \code{joint_calibrate} allows to specify matrix of X variables for calibration of totals (intercept should not be included) and matrix of X_q variables for calibration of quantiles.
+#' \code{joint_calib} allows to specify matrix of X variables for calibration of totals (intercept should not be included) and matrix of X_q variables for calibration of quantiles.
 #'
 #' @param X matrix of variables for calibration of totals
 #' @param X_q matrix of variables for calibration of quantiles
@@ -22,6 +22,8 @@
 #' Harms, T. and Duchesne, P. (2006). On calibration estimation for quantiles.
 #' Survey Methodology, 32(1), 37.
 #'
+#' Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
+#'
 #' @returns Returns a list with containing:\cr
 #' \itemize{
 #' \item{\code{w} -- final weight}
@@ -32,9 +34,57 @@
 #'
 #' @examples
 #' \dontrun{
+#' ## generate data based on Haziza and Lesage (2016)
+# set.seed(123)
+# N <- 1000
+# x <- runif(N, 0, 80)
+# y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
+# p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
+# probs <- seq(0.1, 0.9, 0.1)
+# quants_known <- quantile(x, probs)
+# totals_known <- sum(x)
+# df <- data.frame(x, y, p)
+# df_resp <- df[df$p == 1, ]
+# df_resp$d <- N/nrow(df_resp)
+# y_quant_true <- quantile(y, probs)
+#' ## standard calibration for comparison
+# result0 <- sampling::calib(Xs = cbind(1, df_resp$x),
+#                            d = df_resp$d,
+#                            total = c(N, totals_known),
+#                            method = "linear")
+# y_quant_hat0 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result0*df_resp$d)
+# ## example 1: calibrate only quantiles (deciles)
+# result1 <- joint_calib(X_q = as.matrix(df_resp$x),
+#                       d = df_resp$d,
+#                       N = N,
+#                       pop_quantiles = list(quants_known),
+#                       method = "linear",
+#                       backend = "sampling")
+# ## estimate quantiles
+# y_quant_hat1 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result1$w)
 #'
+#' ## compare with known
+# data.frame(standard = y_quant_hat0, est=y_quant_hat1, true=y_quant_true)
+#'
+#' ## example 2: calibrate with quantiles (deciles) and totals
+#'
+# result2 <- joint_calib(X_q = as.matrix(df_resp$x),
+#                        X = as.matrix(df_resp$x),
+#                        d = df_resp$d,
+#                        N = N,
+#                        pop_quantiles = list(quants_known),
+#                        pop_totals = totals_known,
+#                        method = "linear",
+#                        backend = "sampling")
+#' ## estimate quantiles
+# y_quant_hat2 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result2$w)
+#'
+#' ## compare with known
+# data.frame(standard = y_quant_hat0, est1=y_quant_hat1, est2=y_quant_hat2, true=y_quant_true)
 #' }
-joint_calibrate <-
+#'
+#' @export
+joint_calib <-
 function(X = NULL,
          X_q = NULL,
          d = NULL,
@@ -51,14 +101,13 @@ function(X = NULL,
   stopifnot("Ony `sampling` and `laeken` are possible backends" = backend %in% c("sampling", "laeken"))
   stopifnot("Ony `raking`, `linear` and `logit` are possible" = method %in% c("linear", "raking", "logit"))
 
-
-  ## quantiles
+  ## processing quantiles
   totals_q_vec <- unlist(pop_quantiles)
   quantiles <- names(totals_q_vec)
   if (all(grepl("%", quantiles))) {
     quantiles <- as.numeric(gsub("%", "", quantiles))/100
   }
-  ## pop_quantiles
+  ## create pop_totals
   T_mat <- c(N, quantiles, pop_totals)
   A <- joint_calib_create_matrix(X_q, N, pop_quantiles)
   X <- cbind(1, A, X)

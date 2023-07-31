@@ -51,7 +51,7 @@ NULL
 #' quants <- list(quantile(x1, 0.5), quantile(x2, c(0.1, 0.75, 0.9)))
 #' B <- joint_calib_create_matrix(x, N, quants)
 #' }
-#'
+#' @export
 joint_calib_create_matrix <-
 function(X_q, N, pop_quantiles) {
 
