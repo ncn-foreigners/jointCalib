@@ -27,28 +27,28 @@ expect_silent(
 
 ## check if sum up to N
 expect_equal(
-  sum(result1$w),
+  sum(result1$g*df_resp$d),
   N
 )
 
 ## check the difference with quantiles
 
 expect_equal(
-  colSums(result1$Xs*result1$w)[-1],
+  colSums(result1$Xs*result1$g*df_resp$d)[-1],
   probs
 )
 
 ## check with quantiles
 expect_true(
   {
-    quants_estimated <- laeken::weightedQuantile(x = df_resp$x, probs = probs, weights = result1$w)
+    quants_estimated <- laeken::weightedQuantile(x = df_resp$x, probs = probs, weights = result1$g*df_resp$d)
     sum(( quants_estimated - quants_known$x)^2)/length(quants_known$x) < 0.01
   }
 )
 
 ## check for nonnegative weights
 expect_true(
-  all(result1$w > 0)
+  all(result1$g > 0)
 )
 
 
@@ -69,26 +69,26 @@ expect_silent(
 
 ## check if sum up to N
 expect_equal(
-  sum(result2$w),
+  sum(result2$g*df_resp$d),
   N
 )
 
 ## check the difference with quantiles
 
 expect_equal(
-  unname(colSums(result2$Xs*result2$w)[2:10]),
+  unname(colSums(result2$Xs*result2$g*df_resp$d)[2:10]),
   probs
 )
 
 ## check with quantiles
 expect_true(
   {
-    quants_estimated <- laeken::weightedQuantile(x = df_resp$x, probs = probs, weights = result2$w)
+    quants_estimated <- laeken::weightedQuantile(x = df_resp$x, probs = probs, weights = result2$g*df_resp$d)
     sum(( quants_estimated - quants_known$x)^2)/length(quants_known$x) < 0.01
   }
 )
 
 ## check for nonnegative weights
 expect_true(
-  all(result2$w > 0)
+  all(result2$g > 0)
 )

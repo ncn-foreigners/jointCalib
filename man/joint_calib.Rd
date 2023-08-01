@@ -14,9 +14,12 @@ joint_calib(
   pop_totals = NULL,
   pop_quantiles = NULL,
   subset = NULL,
-  control = NULL,
+  bounds = c(0, 10),
+  maxit = 50,
+  tol = 1e-08,
   backend = c("sampling", "laeken", "survey"),
-  method = c("raking", "linear", "logit"),
+  method = c("raking", "linear", "logit", "sinh"),
+  control = NULL,
   ...
 )
 }
@@ -39,18 +42,24 @@ joint_calib(
 
 \item{subset}{a formula for subset of data}
 
-\item{control}{a list of control parameters (currently not supported)}
+\item{bounds}{a numeric vector of length two giving bounds for the g-weights}
+
+\item{maxit}{a numeric value giving the maximum number of iterations}
+
+\item{tol}{the desired accuracy for the iterative procedure (for \code{sampling} and \code{laeken}) or Tolerance in matching population total for \code{survey::grake} (see help for survey::grake)}
 
 \item{backend}{specify an R package to perform calibration}
 
 \item{method}{specify distance function for calibration}
+
+\item{control}{a list of control parameters (currently not supported)}
 
 \item{...}{arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights} or \code{survey::calibrate}}
 }
 \value{
 Returns a list with containing:\cr
 \itemize{
-\item{\code{w} -- final weight}
+\item{\code{g} -- g-weight}
 \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles)}
 \item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles})}
 \item{\code{diff} -- difference between \code{colSums(Xs*w)} and \code{totals}}
@@ -79,7 +88,14 @@ result0 <- sampling::calib(Xs = cbind(1, df_resp$x),
                            d = df_resp$d,
                            total = c(N, totals_known),
                            method = "linear")
-y_quant_hat0 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result0*df_resp$d)
+
+y_quant_hat0 <- laeken::weightedQuantile(x = df_resp$y,
+                                         probs = probs,
+                                         weights = result0*df_resp$d)
+x_quant_hat0 <- laeken::weightedQuantile(x = df_resp$x,
+                                         probs = probs,
+                                         weights = result0*df_resp$d)
+
 ## example 1: calibrate only quantiles (deciles)
 result1 <- joint_calib(formula_quantiles = ~x,
                        data = df_resp,
@@ -89,13 +105,17 @@ result1 <- joint_calib(formula_quantiles = ~x,
                        method = "linear",
                        backend = "sampling")
 ## estimate quantiles
-y_quant_hat1 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result1$w)
+y_quant_hat1 <- laeken::weightedQuantile(x = df_resp$y,
+                                         probs = probs,
+                                         weights = result1$g*df_resp$d)
+x_quant_hat1 <- laeken::weightedQuantile(x = df_resp$x,
+                                         probs = probs,
+                                         weights = result1$g*df_resp$d)
 
 ## compare with known
 data.frame(standard = y_quant_hat0, est=y_quant_hat1, true=y_quant_true)
 
 ## example 2: calibrate with quantiles (deciles) and totals
-
 result2 <- joint_calib(formula_totals = ~x,
                        formula_quantiles = ~x,
                        data = df_resp,
@@ -106,12 +126,46 @@ result2 <- joint_calib(formula_totals = ~x,
                        method = "linear",
                        backend = "sampling")
 ## estimate quantiles
-y_quant_hat2 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result2$w)
+y_quant_hat2 <- laeken::weightedQuantile(x = df_resp$y,
+                                         probs = probs,
+                                         weights = result2$g*df_resp$d)
+x_quant_hat2 <- laeken::weightedQuantile(x = df_resp$x,
+                                         probs = probs,
+                                         weights = result2$g*df_resp$d)
 
 ## compare with known
-data.frame(standard = y_quant_hat0, est1=y_quant_hat1, est2=y_quant_hat2, true=y_quant_true)
-}
+data.frame(standard = y_quant_hat0, est1=y_quant_hat1,
+           est2=y_quant_hat2, true=y_quant_true)
 
+## example 3: calibrate wigh quantiles (deciles) and totals with
+## hyperbolic sinus (sinh) and survey package
+
+result3 <- joint_calib(formula_totals = ~x,
+                       formula_quantiles = ~x,
+                       data = df_resp,
+                       dweights = df_resp$d,
+                       N = N,
+                       pop_quantiles = quants_known,
+                       pop_totals = totals_known,
+                       method = "sinh",
+                       backend = "survey")
+
+## estimate quantiles
+y_quant_hat3 <- laeken::weightedQuantile(x = df_resp$y,
+                                         probs = probs,
+                                         weights = result3$g*df_resp$d)
+x_quant_hat3 <- laeken::weightedQuantile(x = df_resp$x,
+                                         probs = probs,
+                                         weights = result3$g*df_resp$d)
+
+## compare with known
+data.frame(standard = y_quant_hat0, est1=y_quant_hat1,
+           est2=y_quant_hat2, est3=y_quant_hat3, true=y_quant_true)
+## compare with known X
+data.frame(standard = x_quant_hat0, est1=x_quant_hat1,
+           est2=x_quant_hat2, est3=x_quant_hat3, true = quants_known$x)
+
+}
 }
 \references{
 Deville, J. C., and Särndal, C. E. (1992). Calibration estimators in survey sampling.
@@ -125,7 +179,7 @@ Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for uni
 \seealso{
 \code{\link[sampling:calib]{sampling::calib()}} -- for standard calibration.
 \code{\link[laeken:calibWeights]{laeken::calibWeights()}} -- for standard calibration.
-\code{\link[survey:calibrate]{survey::calibrate()}} -- for standard calibration.
+\code{\link[survey:calibrate]{survey::calibrate()}} -- for standard and more advanced calibration.
 }
 \author{
 Maciej Beręsewicz

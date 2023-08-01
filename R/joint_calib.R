@@ -15,6 +15,9 @@
 #' @param subset a formula for subset of data
 #' @param backend specify an R package to perform calibration
 #' @param method specify distance function for calibration
+#' @param bounds a numeric vector of length two giving bounds for the g-weights
+#' @param maxit a numeric value giving the maximum number of iterations
+#' @param tol the desired accuracy for the iterative procedure (for `sampling` and `laeken`) or Tolerance in matching population total for `survey::grake` (see help for survey::grake)
 #' @param control a list of control parameters (currently not supported)
 #' @param ... arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights} or \code{survey::calibrate}
 #'
@@ -30,7 +33,7 @@
 #'
 #' @returns Returns a list with containing:\cr
 #' \itemize{
-#' \item{\code{w} -- final weight}
+#' \item{\code{g} -- g-weight}
 #' \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles)}
 #' \item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles})}
 #' \item{\code{diff} -- difference between \code{colSums(Xs*w)} and \code{totals}}
@@ -56,7 +59,14 @@
 #'                            d = df_resp$d,
 #'                            total = c(N, totals_known),
 #'                            method = "linear")
-#' y_quant_hat0 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result0*df_resp$d)
+#'
+#' y_quant_hat0 <- laeken::weightedQuantile(x = df_resp$y,
+#'                                          probs = probs,
+#'                                          weights = result0*df_resp$d)
+#' x_quant_hat0 <- laeken::weightedQuantile(x = df_resp$x,
+#'                                          probs = probs,
+#'                                          weights = result0*df_resp$d)
+#'
 #' ## example 1: calibrate only quantiles (deciles)
 #' result1 <- joint_calib(formula_quantiles = ~x,
 #'                        data = df_resp,
@@ -66,13 +76,17 @@
 #'                        method = "linear",
 #'                        backend = "sampling")
 #' ## estimate quantiles
-#' y_quant_hat1 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result1$w)
+#' y_quant_hat1 <- laeken::weightedQuantile(x = df_resp$y,
+#'                                          probs = probs,
+#'                                          weights = result1$g*df_resp$d)
+#' x_quant_hat1 <- laeken::weightedQuantile(x = df_resp$x,
+#'                                          probs = probs,
+#'                                          weights = result1$g*df_resp$d)
 #'
 #' ## compare with known
 #' data.frame(standard = y_quant_hat0, est=y_quant_hat1, true=y_quant_true)
 #'
 #' ## example 2: calibrate with quantiles (deciles) and totals
-#'
 #' result2 <- joint_calib(formula_totals = ~x,
 #'                        formula_quantiles = ~x,
 #'                        data = df_resp,
@@ -83,16 +97,50 @@
 #'                        method = "linear",
 #'                        backend = "sampling")
 #' ## estimate quantiles
-#' y_quant_hat2 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result2$w)
+#' y_quant_hat2 <- laeken::weightedQuantile(x = df_resp$y,
+#'                                          probs = probs,
+#'                                          weights = result2$g*df_resp$d)
+#' x_quant_hat2 <- laeken::weightedQuantile(x = df_resp$x,
+#'                                          probs = probs,
+#'                                          weights = result2$g*df_resp$d)
 #'
 #' ## compare with known
-#' data.frame(standard = y_quant_hat0, est1=y_quant_hat1, est2=y_quant_hat2, true=y_quant_true)
-#' }
+#' data.frame(standard = y_quant_hat0, est1=y_quant_hat1,
+#'            est2=y_quant_hat2, true=y_quant_true)
 #'
+#' ## example 3: calibrate wigh quantiles (deciles) and totals with
+#' ## hyperbolic sinus (sinh) and survey package
+#'
+#' result3 <- joint_calib(formula_totals = ~x,
+#'                        formula_quantiles = ~x,
+#'                        data = df_resp,
+#'                        dweights = df_resp$d,
+#'                        N = N,
+#'                        pop_quantiles = quants_known,
+#'                        pop_totals = totals_known,
+#'                        method = "sinh",
+#'                        backend = "survey")
+#'
+#' ## estimate quantiles
+#' y_quant_hat3 <- laeken::weightedQuantile(x = df_resp$y,
+#'                                          probs = probs,
+#'                                          weights = result3$g*df_resp$d)
+#' x_quant_hat3 <- laeken::weightedQuantile(x = df_resp$x,
+#'                                          probs = probs,
+#'                                          weights = result3$g*df_resp$d)
+#'
+#' ## compare with known
+#' data.frame(standard = y_quant_hat0, est1=y_quant_hat1,
+#'            est2=y_quant_hat2, est3=y_quant_hat3, true=y_quant_true)
+#' ## compare with known X
+#' data.frame(standard = x_quant_hat0, est1=x_quant_hat1,
+#'            est2=x_quant_hat2, est3=x_quant_hat3, true = quants_known$x)
+#'
+#' }
 #' @seealso
 #' [sampling::calib()] -- for standard calibration.
 #' [laeken::calibWeights()] -- for standard calibration.
-#' [survey::calibrate()] -- for standard calibration.
+#' [survey::calibrate()] -- for standard and more advanced calibration.
 #'
 #' @export
 joint_calib <-
@@ -105,9 +153,12 @@ function(formula_totals = NULL,
          pop_totals = NULL,
          pop_quantiles = NULL,
          subset = NULL,
-         control = NULL,
+         bounds = c(0, 10),
+         maxit = 50,
+         tol = 1e-8,
          backend = c("sampling", "laeken", "survey"),
-         method = c("raking", "linear", "logit"),
+         method = c("raking", "linear", "logit", "sinh"),
+         control = NULL,
          ...) {
 
   ## processing
@@ -119,8 +170,11 @@ function(formula_totals = NULL,
   if (missing(method)) method <- "linear"
 
 
-  stopifnot("Ony `sampling` and `laeken` are possible backends" = backend %in% c("sampling", "laeken", "survey"))
-  stopifnot("Ony `raking`, `linear` and `logit` are possible" = method %in% c("linear", "raking", "logit"))
+  stopifnot("Ony `survey`, `sampling` and `laeken` are possible backends" = backend %in% c("sampling", "laeken", "survey"))
+  stopifnot("Ony `raking`, `linear`, logit` and `sinh` are possible" = method %in% c("linear", "raking", "logit", "sinh", "truncated"))
+
+  stopifnot("`sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
+  stopifnot("`truncated` is only possible with `survey`" = !(method == "truncated" & backend != "sampling"))
 
   subset <- parse(text = deparse(substitute(subset)))
 
@@ -175,11 +229,52 @@ function(formula_totals = NULL,
   X <- cbind(1, A, X)
 
   if (backend == "sampling") {
-    w_res <- sampling::calib(Xs = X, d = dweights, total = T_mat, method = method, ...)
+    if (method %in% c("linear", "raking")) {
+      gweights <- sampling::calib(Xs = X,
+                               d = dweights,
+                               total = T_mat,
+                               method = method,
+                               max_iter = maxit,
+                               ...)
+    } else {
+      gweights <- sampling::calib(Xs = X,
+                               d = dweights,
+                               total = T_mat,
+                               method = method,
+                               bounds = bounds,
+                               max_iter = maxit,
+                               ...)
+    }
   }
   if (backend == "laeken") {
-    w_res <- laeken::calibWeights(X=X, d= dweights, totals = T_mat, method = method, ...)
+    gweights <- laeken::calibWeights(X=X,
+                                  d= dweights,
+                                  totals = T_mat,
+                                  method = method,
+                                  bounds=bounds,
+                                  maxit = maxit,
+                                  tol = tol,
+                                  ...)
   }
-  w <- w_res*dweights
-  return(list(w=w, Xs = X, totals = T_mat, diff = colSums(X*w) - T_mat))
+  if (backend == "survey") {
+    method <- switch(method,
+                     "linear" = survey::cal.linear,
+                     "raking" = survey::cal.raking,
+                     "logit" = survey::cal.logit,
+                     "sinh" = survey::cal.sinh)
+    gweights <- survey::grake(mm = X,
+                           ww = dweights,
+                           calfun = method,
+                           population = T_mat,
+                           bounds = list(lower = bounds[1], upper = bounds[2]),
+                           epsilon = tol,
+                           maxit = maxit,
+                           verbose = FALSE,
+                           variance = NULL)
+  }
+  gweights <- as.numeric(gweights)
+  return(list(g=gweights,
+              Xs = X,
+              totals = T_mat,
+              diff = colSums(X*dweights*gweights) - T_mat))
 }
