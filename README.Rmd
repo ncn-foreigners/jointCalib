@@ -92,7 +92,7 @@ result1 <- joint_calib(formula_quantiles = ~x,
                       pop_quantiles = quants_known,
                       method = "linear",
                       backend = "sampling")
-summary(result1$w)
+summary(result1$g)
 ```
 
 example 1b: calibrate only quantiles (deciles)
@@ -107,7 +107,7 @@ result2 <- joint_calib(formula_totals = ~x,
                        pop_totals = totals_known,
                        method = "linear",
                        backend = "sampling")
-summary(result2$w)
+summary(result2$g)
 ```
 
 We can restrict weights to specific range using `logit`.
@@ -122,9 +122,10 @@ result3 <- joint_calib(formula_totals = ~x,
                        pop_totals = totals_known,
                        method = "logit",
                        backend = "sampling", 
-                       bounds = c(0.5, 2))
+                       maxit = 500,
+                       bounds = c(0, 2))
 
-summary(result3$w/df_resp$d)
+summary(result3$g)
 ```
 
 
@@ -164,6 +165,6 @@ g1 <- grake(mm = as.matrix(cbind(1, A)),
             verbose = FALSE,
             maxit = 50,
             variance = NULL)
-summary(g1*df_resp$d)
+summary(as.numeric(g1))
 ```
 

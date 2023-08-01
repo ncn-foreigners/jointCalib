@@ -25,6 +25,8 @@ NULL
 #' @param X_q matrix of variables for calibration of quantiles.
 #' @param N population size for calibration of quantiles.
 #' @param pop_quantiles a vector of population quantiles for \code{X_q}.
+#' @param interpolation type of interpolation: \code{logit} or \code{linear}
+#' @param logit_const constant for \code{logit} interpolation
 #'
 #' @references
 #'
@@ -57,24 +59,41 @@ NULL
 #' }
 #' @export
 joint_calib_create_matrix <-
-function(X_q, N, pop_quantiles) {
+function(X_q, N, pop_quantiles,
+         interpolation = c("logit", "linear"),
+         logit_const = -1000) {
 
-  A <- list()
-  for (k in 1:NCOL(X_q)) {
-    totals_q_k  <-   pop_quantiles[[k]]
-    A_q <- matrix(0, nrow=NROW(X_q), ncol = NROW(pop_quantiles[[k]]))
-    x_sorted <- sort(X_q[, k])
-    for (i in 1:NROW(totals_q_k)) {
-      poz <- which(x_sorted <= totals_q_k[i])
-      n_poz <- NROW(poz)
-      L <- x_sorted[n_poz]
-      U <- x_sorted[n_poz + 1]
-      B <- (totals_q_k[i] - L) / (U - L)
-      A_q[X_q[, k] < L, i] <- 1/N
-      A_q[X_q[, k] == U, i] <- B/N
-    }
-    A[[k]] <- A_q
-  }
-  A <- Reduce("cbind", A)
+  if (missing(interpolation)) interpolation <- "logit"
+
+  A <- switch(interpolation,
+              linear = {
+                A <- list()
+                for (k in 1:NCOL(X_q)) {
+                  totals_q_k  <-   pop_quantiles[[k]]
+                  A_q <- matrix(0, nrow=NROW(X_q), ncol = NROW(pop_quantiles[[k]]))
+                  x_sorted <- sort(X_q[, k])
+                  for (i in 1:NROW(totals_q_k)) {
+                    poz <- which(x_sorted <= totals_q_k[i])
+                    n_poz <- NROW(poz)
+                    L <- x_sorted[n_poz]
+                    U <- x_sorted[n_poz + 1]
+                    B <- (totals_q_k[i] - L) / (U - L)
+                    A_q[X_q[, k] < L, i] <- 1/N
+                    A_q[X_q[, k] == U, i] <- B/N
+                  }
+                  A[[k]] <- A_q
+                }
+                A <- Reduce("cbind", A)
+                A
+              },
+              logit = {
+                A <- lapply(1:length(pop_quantiles), FUN = function(x) {
+                  sapply(unname(pop_quantiles[[x]]), FUN = function(y) stats::plogis(logit_const*(X_q[, x]-y))/N)
+                })
+
+                A <- Reduce("cbind", A)
+                A
+              })
+
   return(A)
 }

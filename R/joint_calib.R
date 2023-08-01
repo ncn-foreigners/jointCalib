@@ -158,7 +158,8 @@ function(formula_totals = NULL,
          tol = 1e-8,
          backend = c("sampling", "laeken", "survey"),
          method = c("raking", "linear", "logit", "sinh"),
-         control = NULL,
+         control = list(interpolation = "linear",
+                        logit_const = -1000),
          ...) {
 
   ## processing
@@ -225,7 +226,8 @@ function(formula_totals = NULL,
   }
   ## create pop_totals
   T_mat <- c(N, quantiles, pop_totals)
-  A <- joint_calib_create_matrix(X_q, N, pop_quantiles)
+  A <- joint_calib_create_matrix(X_q, N, pop_quantiles,
+                                 interpolation = control$interpolation)
   X <- cbind(1, A, X)
 
   if (backend == "sampling") {

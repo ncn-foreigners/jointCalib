@@ -19,7 +19,7 @@ joint_calib(
   tol = 1e-08,
   backend = c("sampling", "laeken", "survey"),
   method = c("raking", "linear", "logit", "sinh"),
-  control = NULL,
+  control = list(interpolation = "linear", logit_const = -1000),
   ...
 )
 }
