@@ -35,13 +35,15 @@ N^{-1} \beta_{x_{j}, r}\left(Q_{x_j, \alpha}\right), & x_{i j}=U_{x_{j}, r}\left
 \mjseqn{i=1,...,r}, \mjseqn{j=1,...,k}, \mjseqn{t \in \mathbb{R}}.
 }
 \examples{
-\dontrun{
+\donttest{
 # Create matrix for one variable and 3 quantiles
 set.seed(123)
 N <- 1000
 x <- as.matrix(rnorm(N))
 quants <- list(quantile(x, c(0.25,0.5,0.75)))
 A <- joint_calib_create_matrix(x, N, quants)
+head(A)
+colSums(A)
 
 # Create matrix for two variables and different number of quantiles
 
@@ -51,6 +53,8 @@ x2 <- rchisq(N, 1)
 x <- cbind(x1, x2)
 quants <- list(quantile(x1, 0.5), quantile(x2, c(0.1, 0.75, 0.9)))
 B <- joint_calib_create_matrix(x, N, quants)
+head(B)
+colSums(B)
 }
 }
 \references{

@@ -32,8 +32,8 @@ x <- runif(N, 0, 80)
 y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
 p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
 probs <- seq(0.1, 0.9, 0.1)
-quants_known <- quantile(x, probs)
-totals_known <- sum(x)
+quants_known <- list(x=quantile(x, probs))
+totals_known <- c(x=sum(x))
 df <- data.frame(x, y, p)
 df_resp <- df[df$p == 1, ]
 df_resp$d <- N/nrow(df_resp)
@@ -43,10 +43,11 @@ y_quant_true <- quantile(y, probs)
 example 1a: calibrate only quantiles (deciles)
 
 ```r
-result1 <- joint_calib(X_q = as.matrix(df_resp$x),
-                      d = df_resp$d,
+result1 <- joint_calib(formula_quantiles = ~x,
+                      data=df_resp,
+                      dweights=df_resp$d,
                       N = N,
-                      pop_quantiles = list(quants_known),
+                      pop_quantiles = quants_known,
                       method = "linear",
                       backend = "sampling")
 ```
@@ -54,11 +55,12 @@ result1 <- joint_calib(X_q = as.matrix(df_resp$x),
 example 1b: calibrate with quantiles (deciles) and totals
 
 ```r
-result2 <- joint_calib(X_q = as.matrix(df_resp$x),
-                       X = as.matrix(df_resp$x),
-                       d = df_resp$d,
+result2 <- joint_calib(formula_totals = ~x,
+                       formula_quantiles = ~x,
+                       data = df_resp,
+                       dweights = df_resp$d,
                        N = N,
-                       pop_quantiles = list(quants_known),
+                       pop_quantiles = quants_known,
                        pop_totals = totals_known,
                        method = "linear",
                        backend = "sampling")

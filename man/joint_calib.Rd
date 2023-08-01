@@ -5,42 +5,54 @@
 \title{Function to calibrate totals and quantiles jointly}
 \usage{
 joint_calib(
-  X = NULL,
-  X_q = NULL,
-  d = NULL,
+  formula_totals = NULL,
+  formula_quantiles = NULL,
+  data = NULL,
+  design = NULL,
+  dweights = NULL,
   N = NULL,
   pop_totals = NULL,
   pop_quantiles = NULL,
-  backend = c("sampling", "laeken"),
+  subset = NULL,
+  control = NULL,
+  backend = c("sampling", "laeken", "survey"),
   method = c("raking", "linear", "logit"),
   ...
 )
 }
 \arguments{
-\item{X}{matrix of variables for calibration of totals}
+\item{formula_totals}{a formula with variables for calibration of totals}
 
-\item{X_q}{matrix of variables for calibration of quantiles}
+\item{formula_quantiles}{a formula with variables for calibration of quantiles}
 
-\item{d}{initial weights for calibration (e.g. design weights)}
+\item{data}{a data.frame with variables}
+
+\item{design}{a svydesign object (currently not supported)}
+
+\item{dweights}{initial d-weights for calibration (e.g. design-weights)}
 
 \item{N}{population size for calibration of quantiles}
 
-\item{pop_totals}{a vector of population totals for \code{X}}
+\item{pop_totals}{a named vector of population totals for \code{X}, should be provided exactly as in \code{survey} package (see \code{survey::calibrate})}
 
-\item{pop_quantiles}{a vector of population quantiles for \code{X_q}}
+\item{pop_quantiles}{a named list of of population quantiles for \code{X_q}}
+
+\item{subset}{a formula for subset of data}
+
+\item{control}{a list of control parameters (currently not supported)}
 
 \item{backend}{specify an R package to perform calibration}
 
 \item{method}{specify distance function for calibration}
 
-\item{...}{arguments passed either to \code{sampling::calib} or \code{laeken::calibWeights}}
+\item{...}{arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights} or \code{survey::calibrate}}
 }
 \value{
 Returns a list with containing:\cr
 \itemize{
 \item{\code{w} -- final weight}
 \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles)}
-\item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and quantiles)}
+\item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles})}
 \item{\code{diff} -- difference between \code{colSums(Xs*w)} and \code{totals}}
 }
 }
@@ -48,7 +60,7 @@ Returns a list with containing:\cr
 \code{joint_calib} allows to specify matrix of X variables for calibration of totals (intercept should not be included) and matrix of X_q variables for calibration of quantiles.
 }
 \examples{
-\dontrun{
+\donttest{
 ## generate data based on Haziza and Lesage (2016)
 set.seed(123)
 N <- 1000
@@ -56,8 +68,8 @@ x <- runif(N, 0, 80)
 y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
 p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
 probs <- seq(0.1, 0.9, 0.1)
-quants_known <- quantile(x, probs)
-totals_known <- sum(x)
+quants_known <- list(x=quantile(x, probs))
+totals_known <- c(x=sum(x))
 df <- data.frame(x, y, p)
 df_resp <- df[df$p == 1, ]
 df_resp$d <- N/nrow(df_resp)
@@ -69,12 +81,13 @@ result0 <- sampling::calib(Xs = cbind(1, df_resp$x),
                            method = "linear")
 y_quant_hat0 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result0*df_resp$d)
 ## example 1: calibrate only quantiles (deciles)
-result1 <- joint_calib(X_q = as.matrix(df_resp$x),
-                      d = df_resp$d,
-                      N = N,
-                      pop_quantiles = list(quants_known),
-                      method = "linear",
-                      backend = "sampling")
+result1 <- joint_calib(formula_quantiles = ~x,
+                       data = df_resp,
+                       dweights = df_resp$d,
+                       N = N,
+                       pop_quantiles = quants_known,
+                       method = "linear",
+                       backend = "sampling")
 ## estimate quantiles
 y_quant_hat1 <- laeken::weightedQuantile(x = df_resp$y, probs = probs, weights = result1$w)
 
@@ -83,11 +96,12 @@ data.frame(standard = y_quant_hat0, est=y_quant_hat1, true=y_quant_true)
 
 ## example 2: calibrate with quantiles (deciles) and totals
 
-result2 <- joint_calib(X_q = as.matrix(df_resp$x),
-                       X = as.matrix(df_resp$x),
-                       d = df_resp$d,
+result2 <- joint_calib(formula_totals = ~x,
+                       formula_quantiles = ~x,
+                       data = df_resp,
+                       dweights = df_resp$d,
                        N = N,
-                       pop_quantiles = list(quants_known),
+                       pop_quantiles = quants_known,
                        pop_totals = totals_known,
                        method = "linear",
                        backend = "sampling")
@@ -107,6 +121,11 @@ Harms, T. and Duchesne, P. (2006). On calibration estimation for quantiles.
 Survey Methodology, 32(1), 37.
 
 Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
+}
+\seealso{
+\code{\link[sampling:calib]{sampling::calib()}} -- for standard calibration.
+\code{\link[laeken:calibWeights]{laeken::calibWeights()}} -- for standard calibration.
+\code{\link[survey:calibrate]{survey::calibrate()}} -- for standard calibration.
 }
 \author{
 Maciej Beręsewicz

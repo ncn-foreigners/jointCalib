@@ -34,13 +34,15 @@ NULL
 #' @return Return matrix A
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create matrix for one variable and 3 quantiles
 #' set.seed(123)
 #' N <- 1000
 #' x <- as.matrix(rnorm(N))
 #' quants <- list(quantile(x, c(0.25,0.5,0.75)))
 #' A <- joint_calib_create_matrix(x, N, quants)
+#' head(A)
+#' colSums(A)
 #'
 #' # Create matrix for two variables and different number of quantiles
 #'
@@ -50,6 +52,8 @@ NULL
 #' x <- cbind(x1, x2)
 #' quants <- list(quantile(x1, 0.5), quantile(x2, c(0.1, 0.75, 0.9)))
 #' B <- joint_calib_create_matrix(x, N, quants)
+#' head(B)
+#' colSums(B)
 #' }
 #' @export
 joint_calib_create_matrix <-
