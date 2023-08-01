@@ -7,6 +7,16 @@ A small package for joint calibration of totals and quantiles. The package combi
 
 which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://cran.r-project.org/web/packages/sampling) (`sampling::calib`) or [laeken](https://cran.r-project.org/web/packages/laeken) (`laeken::calibWeights`) package can be used.
 
+Curently supports:
+
+  + calibration of totals
+  + calibration of quantiles
+
+Further plans: 
+  + calibration for Gini and other metrices
+  + observational studies / causal inference
+  + ...
+  
 ## Installation
 
 You can install the development version of `jointCalib` from GitHub with:
