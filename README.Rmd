@@ -152,4 +152,18 @@ names(pop_totals) <- c("(Intercept)", colnames(A))
 m1_cal <- calibrate(m1, quants_formula, pop_totals)
 svytotal(quants_formula, m1_cal)
 ```
+Calibration using `grake` (low level)
+
+```{r}
+g1 <- grake(mm = as.matrix(cbind(1, A)),
+            ww = df_resp$d,
+            calfun = cal.linear,
+            population = pop_totals,
+            bounds = list(lower = -Inf, upper = Inf),
+            epsilon = 1e-7,
+            verbose = FALSE,
+            maxit = 50,
+            variance = NULL)
+summary(g1*df_resp$d)
+```
 
