@@ -60,6 +60,7 @@ procedures for unit nonresponse. Journal of Official Statistics, 32(1),
 ``` r
 library(jointCalib)
 library(survey)
+library(laeken)
 ```
 
 ``` r
@@ -75,13 +76,13 @@ df_resp <- df[df$p == 1, ]
 df_resp$d <- N/nrow(df_resp)
 y_quant_true <- quantile(y, probs)
 head(df_resp)
-#>          x          y p        d
-#> 1 17.06176 -694.23371 1 1.976285
-#> 2 31.46439 -624.73315 1 1.976285
-#> 4 17.83496   58.41928 1 1.976285
-#> 5 76.45788 2328.42838 1 1.976285
-#> 6 35.78455   78.80412 1 1.976285
-#> 7 27.65472 -155.18430 1 1.976285
+#>           x         y p        d
+#> 2  74.92869 1821.4218 1 2.070393
+#> 5  10.27340  193.4621 1 2.070393
+#> 7  69.67968  832.8965 1 2.070393
+#> 9  72.48948 1826.4118 1 2.070393
+#> 10 13.31971  381.5234 1 2.070393
+#> 11 27.76119  306.9979 1 2.070393
 ```
 
 ### Using `jointCalib` package
@@ -98,7 +99,7 @@ result1 <- joint_calib(formula_quantiles = ~x,
                       backend = "sampling")
 summary(result1$w)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>   1.206   1.518   1.670   1.976   2.612   4.213
+#>   1.216   1.611   1.931   2.070   2.629   3.499
 ```
 
 example 1b: calibrate only quantiles (deciles)
@@ -115,7 +116,26 @@ result2 <- joint_calib(formula_totals = ~x,
                        backend = "sampling")
 summary(result2$w)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>   1.134   1.539   1.668   1.976   2.538   4.292
+#>   1.081   1.637   1.960   2.070   2.575   3.602
+```
+
+We can restrict weights to specific range using `logit`.
+
+``` r
+result3 <- joint_calib(formula_totals = ~x,
+                       formula_quantiles = ~x,
+                       data = df_resp,
+                       dweights = df_resp$d,
+                       N = N,
+                       pop_quantiles = quants_known,
+                       pop_totals = totals_known,
+                       method = "logit",
+                       backend = "sampling", 
+                       bounds = c(0.5, 2))
+
+summary(result3$w/df_resp$d)
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#>  0.5695  0.7870  0.9437  1.0000  1.2332  1.7322
 ```
 
 ### Using `survey` package
@@ -128,33 +148,36 @@ colnames(A) <- paste0("quant_", gsub("\\D", "", names(quants_known$x)))
 A <- as.data.frame(A)
 df_resp <- cbind(df_resp, A)
 head(df_resp)
-#>          x          y p        d quant_10 quant_20 quant_30 quant_40 quant_50
-#> 1 17.06176 -694.23371 1 1.976285        0        0    0.001    0.001    0.001
-#> 2 31.46439 -624.73315 1 1.976285        0        0    0.000    0.000    0.001
-#> 4 17.83496   58.41928 1 1.976285        0        0    0.001    0.001    0.001
-#> 5 76.45788 2328.42838 1 1.976285        0        0    0.000    0.000    0.000
-#> 6 35.78455   78.80412 1 1.976285        0        0    0.000    0.000    0.001
-#> 7 27.65472 -155.18430 1 1.976285        0        0    0.000    0.001    0.001
-#>   quant_60 quant_70 quant_80 quant_90
-#> 1    0.001    0.001    0.001    0.001
-#> 2    0.001    0.001    0.001    0.001
-#> 4    0.001    0.001    0.001    0.001
-#> 5    0.000    0.000    0.000    0.000
-#> 6    0.001    0.001    0.001    0.001
-#> 7    0.001    0.001    0.001    0.001
+#>           x         y p        d quant_10 quant_20 quant_30 quant_40 quant_50
+#> 2  74.92869 1821.4218 1 2.070393        0    0.000    0.000    0.000    0.000
+#> 5  10.27340  193.4621 1 2.070393        0    0.001    0.001    0.001    0.001
+#> 7  69.67968  832.8965 1 2.070393        0    0.000    0.000    0.000    0.000
+#> 9  72.48948 1826.4118 1 2.070393        0    0.000    0.000    0.000    0.000
+#> 10 13.31971  381.5234 1 2.070393        0    0.001    0.001    0.001    0.001
+#> 11 27.76119  306.9979 1 2.070393        0    0.000    0.000    0.001    0.001
+#>    quant_60 quant_70 quant_80 quant_90
+#> 2     0.000    0.000    0.000    0.000
+#> 5     0.001    0.001    0.001    0.001
+#> 7     0.000    0.000    0.000    0.001
+#> 9     0.000    0.000    0.000    0.000
+#> 10    0.001    0.001    0.001    0.001
+#> 11    0.001    0.001    0.001    0.001
 m1 <- svydesign(ids = ~1, data = df_resp, weights = ~d)
 quants_formula <- as.formula(paste("~", paste(colnames(A), collapse = "+")))
+quants_formula
+#> ~quant_10 + quant_20 + quant_30 + quant_40 + quant_50 + quant_60 + 
+#>     quant_70 + quant_80 + quant_90
 svytotal(quants_formula, m1)
 #>            total     SE
-#> quant_10 0.16383 0.0165
-#> quant_20 0.29407 0.0203
-#> quant_30 0.41245 0.0219
-#> quant_40 0.53478 0.0222
-#> quant_50 0.65125 0.0212
-#> quant_60 0.73658 0.0196
-#> quant_70 0.81229 0.0174
-#> quant_80 0.88765 0.0140
-#> quant_90 0.93468 0.0110
+#> quant_10 0.17013 0.0171
+#> quant_20 0.29870 0.0208
+#> quant_30 0.41346 0.0224
+#> quant_40 0.51577 0.0228
+#> quant_50 0.62290 0.0221
+#> quant_60 0.70969 0.0207
+#> quant_70 0.78847 0.0186
+#> quant_80 0.86377 0.0156
+#> quant_90 0.92307 0.0121
 ```
 
 Calibration using `calibrate`

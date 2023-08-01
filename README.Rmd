@@ -42,9 +42,6 @@ Further plans:
 Work on this package is supported by the the National Science Center, OPUS 22 grant no. 2020/39/B/HS4/00941.
 
 
-
-
-
 ## Installation
 
 You can install the development version of `jointCalib` from GitHub with:
@@ -64,6 +61,7 @@ Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting procedure
 ```{r example1, message=FALSE}
 library(jointCalib)
 library(survey)
+library(laeken)
 ```
 
 
@@ -112,6 +110,24 @@ result2 <- joint_calib(formula_totals = ~x,
 summary(result2$w)
 ```
 
+We can restrict weights to specific range using `logit`.
+
+```{r example1-joint-logit}
+result3 <- joint_calib(formula_totals = ~x,
+                       formula_quantiles = ~x,
+                       data = df_resp,
+                       dweights = df_resp$d,
+                       N = N,
+                       pop_quantiles = quants_known,
+                       pop_totals = totals_known,
+                       method = "logit",
+                       backend = "sampling", 
+                       bounds = c(0.5, 2))
+
+summary(result3$w/df_resp$d)
+```
+
+
 ### Using `survey` package
 
 example 1a: calibrate only quantiles (deciles)
@@ -124,6 +140,7 @@ df_resp <- cbind(df_resp, A)
 head(df_resp)
 m1 <- svydesign(ids = ~1, data = df_resp, weights = ~d)
 quants_formula <- as.formula(paste("~", paste(colnames(A), collapse = "+")))
+quants_formula
 svytotal(quants_formula, m1)
 ```
 
