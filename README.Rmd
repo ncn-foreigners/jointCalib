@@ -95,6 +95,10 @@ result1 <- joint_calib(formula_quantiles = ~x,
 summary(result1$g)
 ```
 
+```{r}
+data.frame(true = quants_known$x, est = weightedQuantile(df_resp$x, result1$g*df_resp$d, probs))
+```
+
 example 1b: calibrate only quantiles (deciles)
 
 ```{r example1-joint}
@@ -108,6 +112,10 @@ result2 <- joint_calib(formula_totals = ~x,
                        method = "linear",
                        backend = "sampling")
 summary(result2$g)
+```
+
+```{r}
+data.frame(true = quants_known$x, est = weightedQuantile(df_resp$x, result2$g*df_resp$d, probs))
 ```
 
 We can restrict weights to specific range using `logit`.
@@ -128,6 +136,9 @@ result3 <- joint_calib(formula_totals = ~x,
 summary(result3$g)
 ```
 
+```{r}
+data.frame(true = quants_known$x, est = weightedQuantile(df_resp$x, result3$g*df_resp$d, probs))
+```
 
 ### Using `survey` package
 

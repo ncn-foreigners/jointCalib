@@ -158,7 +158,7 @@ function(formula_totals = NULL,
          tol = 1e-8,
          backend = c("sampling", "laeken", "survey"),
          method = c("raking", "linear", "logit", "sinh"),
-         control = list(interpolation = "linear",
+         control = list(interpolation = "logit",
                         logit_const = -1000),
          ...) {
 
