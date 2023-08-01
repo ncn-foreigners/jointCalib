@@ -28,8 +28,11 @@ Curently supports:
 - calibration of totals
 - calibration of quantiles
 
-Further plans: + calibration for Gini and other metrices + observational
-studies / causal inference + …
+Further plans:
+
+- calibration for Gini and other metrices
+- observational studies / causal inference
+- …
 
 ## Funding
 
@@ -72,13 +75,13 @@ df_resp <- df[df$p == 1, ]
 df_resp$d <- N/nrow(df_resp)
 y_quant_true <- quantile(y, probs)
 head(df_resp)
-#>           x           y p        d
-#> 1  9.271671  220.341681 1 1.964637
-#> 2  1.466811    8.032737 1 1.964637
-#> 3 77.576613 2007.248099 1 1.964637
-#> 4 16.832007  303.033492 1 1.964637
-#> 7 77.831665 2470.864340 1 1.964637
-#> 8 41.382840 -390.308461 1 1.964637
+#>          x          y p        d
+#> 1 17.06176 -694.23371 1 1.976285
+#> 2 31.46439 -624.73315 1 1.976285
+#> 4 17.83496   58.41928 1 1.976285
+#> 5 76.45788 2328.42838 1 1.976285
+#> 6 35.78455   78.80412 1 1.976285
+#> 7 27.65472 -155.18430 1 1.976285
 ```
 
 ### Using `jointCalib` package
@@ -95,7 +98,7 @@ result1 <- joint_calib(formula_quantiles = ~x,
                       backend = "sampling")
 summary(result1$w)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>   1.371   1.564   1.932   1.965   2.135   3.041
+#>   1.206   1.518   1.670   1.976   2.612   4.213
 ```
 
 example 1b: calibrate only quantiles (deciles)
@@ -112,7 +115,7 @@ result2 <- joint_calib(formula_totals = ~x,
                        backend = "sampling")
 summary(result2$w)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>   1.284   1.591   1.874   1.965   2.191   3.130
+#>   1.134   1.539   1.668   1.976   2.538   4.292
 ```
 
 ### Using `survey` package
@@ -125,33 +128,33 @@ colnames(A) <- paste0("quant_", gsub("\\D", "", names(quants_known$x)))
 A <- as.data.frame(A)
 df_resp <- cbind(df_resp, A)
 head(df_resp)
-#>           x           y p        d quant_10 quant_20 quant_30 quant_40 quant_50
-#> 1  9.271671  220.341681 1 1.964637    0.000    0.001    0.001    0.001    0.001
-#> 2  1.466811    8.032737 1 1.964637    0.001    0.001    0.001    0.001    0.001
-#> 3 77.576613 2007.248099 1 1.964637    0.000    0.000    0.000    0.000    0.000
-#> 4 16.832007  303.033492 1 1.964637    0.000    0.000    0.001    0.001    0.001
-#> 7 77.831665 2470.864340 1 1.964637    0.000    0.000    0.000    0.000    0.000
-#> 8 41.382840 -390.308461 1 1.964637    0.000    0.000    0.000    0.000    0.000
+#>          x          y p        d quant_10 quant_20 quant_30 quant_40 quant_50
+#> 1 17.06176 -694.23371 1 1.976285        0        0    0.001    0.001    0.001
+#> 2 31.46439 -624.73315 1 1.976285        0        0    0.000    0.000    0.001
+#> 4 17.83496   58.41928 1 1.976285        0        0    0.001    0.001    0.001
+#> 5 76.45788 2328.42838 1 1.976285        0        0    0.000    0.000    0.000
+#> 6 35.78455   78.80412 1 1.976285        0        0    0.000    0.000    0.001
+#> 7 27.65472 -155.18430 1 1.976285        0        0    0.000    0.001    0.001
 #>   quant_60 quant_70 quant_80 quant_90
 #> 1    0.001    0.001    0.001    0.001
 #> 2    0.001    0.001    0.001    0.001
-#> 3    0.000    0.000    0.000    0.000
 #> 4    0.001    0.001    0.001    0.001
-#> 7    0.000    0.000    0.000    0.000
-#> 8    0.001    0.001    0.001    0.001
+#> 5    0.000    0.000    0.000    0.000
+#> 6    0.001    0.001    0.001    0.001
+#> 7    0.001    0.001    0.001    0.001
 m1 <- svydesign(ids = ~1, data = df_resp, weights = ~d)
 quants_formula <- as.formula(paste("~", paste(colnames(A), collapse = "+")))
 svytotal(quants_formula, m1)
 #>            total     SE
-#> quant_10 0.14334 0.0155
-#> quant_20 0.26895 0.0197
-#> quant_30 0.38877 0.0216
-#> quant_40 0.49627 0.0222
-#> quant_50 0.59795 0.0217
-#> quant_60 0.69092 0.0205
-#> quant_70 0.76871 0.0187
-#> quant_80 0.86065 0.0154
-#> quant_90 0.93536 0.0109
+#> quant_10 0.16383 0.0165
+#> quant_20 0.29407 0.0203
+#> quant_30 0.41245 0.0219
+#> quant_40 0.53478 0.0222
+#> quant_50 0.65125 0.0212
+#> quant_60 0.73658 0.0196
+#> quant_70 0.81229 0.0174
+#> quant_80 0.88765 0.0140
+#> quant_90 0.93468 0.0110
 ```
 
 Calibration using `calibrate`
