@@ -56,12 +56,13 @@ remotes::install_github("ncn-foreigners/jointCalib")
 
 ## Examples 
 
-### Example 1 
+### Example 1  
 
 Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
 
-```{r example1}
+```{r example1, message=FALSE}
 library(jointCalib)
+library(survey)
 ```
 
 
@@ -80,6 +81,8 @@ y_quant_true <- quantile(y, probs)
 head(df_resp)
 ```
 
+### Using `jointCalib` package
+
 example 1a: calibrate only quantiles (deciles)
 
 ```{r example1-quantiles}
@@ -93,6 +96,8 @@ result1 <- joint_calib(formula_quantiles = ~x,
 summary(result1$w)
 ```
 
+example 1b: calibrate only quantiles (deciles)
+
 ```{r example1-joint}
 result2 <- joint_calib(formula_totals = ~x,
                        formula_quantiles = ~x,
@@ -104,5 +109,29 @@ result2 <- joint_calib(formula_totals = ~x,
                        method = "linear",
                        backend = "sampling")
 summary(result2$w)
+```
+
+### Using `survey` package
+
+example 1a: calibrate only quantiles (deciles)
+
+```{r example1-survey}
+A <- joint_calib_create_matrix(X_q = model.matrix(~x+0, df_resp), N = N, pop_quantiles = quants_known)
+colnames(A) <- paste0("quant_", gsub("\\D", "", names(quants_known$x)))
+A <- as.data.frame(A)
+df_resp <- cbind(df_resp, A)
+head(df_resp)
+m1 <- svydesign(ids = ~1, data = df_resp, weights = ~d)
+quants_formula <- as.formula(paste("~", paste(colnames(A), collapse = "+")))
+svytotal(quants_formula, m1)
+```
+
+Calibration using `calibrate`
+
+```{r}
+pop_totals <- c(N, probs)
+names(pop_totals) <- c("(Intercept)", colnames(A))
+m1_cal <- calibrate(m1, quants_formula, pop_totals)
+svytotal(quants_formula, m1_cal)
 ```
 
