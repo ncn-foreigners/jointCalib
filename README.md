@@ -56,6 +56,7 @@ procedures for unit nonresponse. Journal of Official Statistics, 32(1),
 
 ``` r
 library(jointCalib)
+library(survey)
 ```
 
 ``` r
@@ -71,14 +72,16 @@ df_resp <- df[df$p == 1, ]
 df_resp$d <- N/nrow(df_resp)
 y_quant_true <- quantile(y, probs)
 head(df_resp)
-#>            x          y p        d
-#> 1  42.461621  -99.00988 1 2.123142
-#> 3  63.312897  677.27806 1 2.123142
-#> 4  25.257383 -259.64998 1 2.123142
-#> 5  60.011039   10.57765 1 2.123142
-#> 7   8.078756  265.02608 1 2.123142
-#> 11 71.893616  759.56458 1 2.123142
+#>           x           y p        d
+#> 1  9.271671  220.341681 1 1.964637
+#> 2  1.466811    8.032737 1 1.964637
+#> 3 77.576613 2007.248099 1 1.964637
+#> 4 16.832007  303.033492 1 1.964637
+#> 7 77.831665 2470.864340 1 1.964637
+#> 8 41.382840 -390.308461 1 1.964637
 ```
+
+### Using `jointCalib` package
 
 example 1a: calibrate only quantiles (deciles)
 
@@ -92,8 +95,10 @@ result1 <- joint_calib(formula_quantiles = ~x,
                       backend = "sampling")
 summary(result1$w)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>   1.306   1.518   2.274   2.123   2.496   3.696
+#>   1.371   1.564   1.932   1.965   2.135   3.041
 ```
+
+example 1b: calibrate only quantiles (deciles)
 
 ``` r
 result2 <- joint_calib(formula_totals = ~x,
@@ -107,5 +112,63 @@ result2 <- joint_calib(formula_totals = ~x,
                        backend = "sampling")
 summary(result2$w)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>   1.002   1.521   2.179   2.123   2.540   3.968
+#>   1.284   1.591   1.874   1.965   2.191   3.130
+```
+
+### Using `survey` package
+
+example 1a: calibrate only quantiles (deciles)
+
+``` r
+A <- joint_calib_create_matrix(X_q = model.matrix(~x+0, df_resp), N = N, pop_quantiles = quants_known)
+colnames(A) <- paste0("quant_", gsub("\\D", "", names(quants_known$x)))
+A <- as.data.frame(A)
+df_resp <- cbind(df_resp, A)
+head(df_resp)
+#>           x           y p        d quant_10 quant_20 quant_30 quant_40 quant_50
+#> 1  9.271671  220.341681 1 1.964637    0.000    0.001    0.001    0.001    0.001
+#> 2  1.466811    8.032737 1 1.964637    0.001    0.001    0.001    0.001    0.001
+#> 3 77.576613 2007.248099 1 1.964637    0.000    0.000    0.000    0.000    0.000
+#> 4 16.832007  303.033492 1 1.964637    0.000    0.000    0.001    0.001    0.001
+#> 7 77.831665 2470.864340 1 1.964637    0.000    0.000    0.000    0.000    0.000
+#> 8 41.382840 -390.308461 1 1.964637    0.000    0.000    0.000    0.000    0.000
+#>   quant_60 quant_70 quant_80 quant_90
+#> 1    0.001    0.001    0.001    0.001
+#> 2    0.001    0.001    0.001    0.001
+#> 3    0.000    0.000    0.000    0.000
+#> 4    0.001    0.001    0.001    0.001
+#> 7    0.000    0.000    0.000    0.000
+#> 8    0.001    0.001    0.001    0.001
+m1 <- svydesign(ids = ~1, data = df_resp, weights = ~d)
+quants_formula <- as.formula(paste("~", paste(colnames(A), collapse = "+")))
+svytotal(quants_formula, m1)
+#>            total     SE
+#> quant_10 0.14334 0.0155
+#> quant_20 0.26895 0.0197
+#> quant_30 0.38877 0.0216
+#> quant_40 0.49627 0.0222
+#> quant_50 0.59795 0.0217
+#> quant_60 0.69092 0.0205
+#> quant_70 0.76871 0.0187
+#> quant_80 0.86065 0.0154
+#> quant_90 0.93536 0.0109
+```
+
+Calibration using `calibrate`
+
+``` r
+pop_totals <- c(N, probs)
+names(pop_totals) <- c("(Intercept)", colnames(A))
+m1_cal <- calibrate(m1, quants_formula, pop_totals)
+svytotal(quants_formula, m1_cal)
+#>          total SE
+#> quant_10   0.1  0
+#> quant_20   0.2  0
+#> quant_30   0.3  0
+#> quant_40   0.4  0
+#> quant_50   0.5  0
+#> quant_60   0.6  0
+#> quant_70   0.7  0
+#> quant_80   0.8  0
+#> quant_90   0.9  0
 ```
