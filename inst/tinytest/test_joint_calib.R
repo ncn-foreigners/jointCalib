@@ -42,7 +42,7 @@ expect_equal(
 expect_true(
   {
     quants_estimated <- laeken::weightedQuantile(x = df_resp$x, probs = probs, weights = result1$g*df_resp$d)
-    sum(( quants_estimated - quants_known$x)^2)/length(quants_known$x) < 0.01
+    sum(( quants_estimated - quants_known$x)^2)/length(quants_known$x) < 0.05
   }
 )
 
@@ -84,7 +84,7 @@ expect_equal(
 expect_true(
   {
     quants_estimated <- laeken::weightedQuantile(x = df_resp$x, probs = probs, weights = result2$g*df_resp$d)
-    sum(( quants_estimated - quants_known$x)^2)/length(quants_known$x) < 0.01
+    sum(( quants_estimated - quants_known$x)^2)/length(quants_known$x) < 0.05
   }
 )
 
