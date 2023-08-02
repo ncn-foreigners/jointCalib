@@ -12,7 +12,7 @@ Description: A small package that contains functions to conduct a joint calibrat
 License: GPL-3
 Encoding: UTF-8
 RdMacros: mathjaxr
-LazyData: true
+LazyData: yes
 Depends:
     R (>= 3.5.0)
 URL: https://github.com/ncn-foreigners/jointCalib
