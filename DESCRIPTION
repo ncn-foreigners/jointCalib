@@ -12,6 +12,7 @@ Description: A small package that contains functions to conduct a joint calibrat
 License: GPL-3
 Encoding: UTF-8
 RdMacros: mathjaxr
+LazyData: no
 URL: https://github.com/ncn-foreigners/jointCalib
 BugReports: https://github.com/ncn-foreigners/jointCalib/issues
 Roxygen: list(markdown = TRUE)
