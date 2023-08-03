@@ -19,7 +19,7 @@ joint_calib(
   tol = 1e-08,
   backend = c("sampling", "laeken", "survey"),
   method = c("raking", "linear", "logit", "sinh"),
-  control = list(interpolation = "logit", logit_const = -1000),
+  control = control_calib(),
   ...
 )
 }
@@ -52,7 +52,7 @@ joint_calib(
 
 \item{method}{specify distance function for calibration}
 
-\item{control}{a list of control parameters (currently not supported)}
+\item{control}{a list of control parameters (currently only for \code{joint_calib_create_matrix})}
 
 \item{...}{arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights} or \code{survey::calibrate}}
 }
