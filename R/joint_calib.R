@@ -226,7 +226,7 @@ function(formula_totals = NULL,
   ## create pop_totals
   T_mat <- c(N, quantiles, pop_totals)
   A <- joint_calib_create_matrix(X_q, N, pop_quantiles,
-                                 interpolation = control$interpolation)
+                                 control = control)
   X <- cbind(1, A, X)
 
   if (backend == "sampling") {

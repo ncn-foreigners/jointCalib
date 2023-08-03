@@ -4,13 +4,7 @@
 \alias{joint_calib_create_matrix}
 \title{Function to calibrate totals and quantiles jointly}
 \usage{
-joint_calib_create_matrix(
-  X_q,
-  N,
-  pop_quantiles,
-  interpolation = c("logit", "linear"),
-  logit_const = -1000
-)
+joint_calib_create_matrix(X_q, N, pop_quantiles, control = control_calib())
 }
 \arguments{
 \item{X_q}{matrix of variables for calibration of quantiles.}
@@ -19,9 +13,7 @@ joint_calib_create_matrix(
 
 \item{pop_quantiles}{a vector of population quantiles for \code{X_q}.}
 
-\item{interpolation}{type of interpolation: \code{logit} or \code{linear}}
-
-\item{logit_const}{constant for \code{logit} interpolation}
+\item{control}{a control parameter for creation of \code{X_q} matrix}
 }
 \value{
 Return matrix A

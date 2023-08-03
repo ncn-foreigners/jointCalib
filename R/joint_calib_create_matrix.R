@@ -25,8 +25,7 @@ NULL
 #' @param X_q matrix of variables for calibration of quantiles.
 #' @param N population size for calibration of quantiles.
 #' @param pop_quantiles a vector of population quantiles for \code{X_q}.
-#' @param interpolation type of interpolation: \code{logit} or \code{linear}
-#' @param logit_const constant for \code{logit} interpolation
+#' @param control a control parameter for creation of \code{X_q} matrix
 #'
 #' @references
 #'
@@ -59,11 +58,10 @@ NULL
 #' }
 #' @export
 joint_calib_create_matrix <-
-function(X_q, N, pop_quantiles,
-         interpolation = c("logit", "linear"),
-         logit_const = -1000) {
+function(X_q, N, pop_quantiles, control = control_calib()) {
 
-  if (missing(interpolation)) interpolation <- "logit"
+  interpolation <-   control$interpolation
+  logit_const <- control$logit_const
 
   A <- switch(interpolation,
               linear = {
