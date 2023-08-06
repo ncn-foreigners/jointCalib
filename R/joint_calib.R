@@ -224,10 +224,12 @@ function(formula_totals = NULL,
     quantiles <- as.numeric(gsub("%", "", quantiles))/100
   }
   ## create pop_totals
-  T_mat <- c(N, quantiles, pop_totals)
+  T_mat <- c(N/N, quantiles*N, pop_totals/N)
+
   A <- joint_calib_create_matrix(X_q, N, pop_quantiles,
                                  control = control)
-  X <- cbind(1, A, X)
+  X <- cbind(1/N, A*N, X/N)
+
 
   if (backend == "sampling") {
     if (method %in% c("linear", "raking")) {
@@ -276,6 +278,6 @@ function(formula_totals = NULL,
   gweights <- as.numeric(gweights)
   return(list(g=gweights,
               Xs = X,
-              totals = T_mat,
+              totals = c(N, quantiles, pop_totals),
               diff = colSums(X*dweights*gweights) - T_mat))
 }
