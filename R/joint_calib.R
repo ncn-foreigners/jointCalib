@@ -224,11 +224,13 @@ function(formula_totals = NULL,
     quantiles <- as.numeric(gsub("%", "", quantiles))/100
   }
   ## create pop_totals
-  T_mat <- c(N/N, quantiles*N, pop_totals/N)
+  #T_mat <- c(N/N, quantiles*N, pop_totals/N)
+  T_mat <- c(N, quantiles, pop_totals)
 
   A <- joint_calib_create_matrix(X_q, N, pop_quantiles,
                                  control = control)
-  X <- cbind(1/N, A*N, X/N)
+  #X <- cbind(1/N, A*N, X/N)
+  X <- cbind(1, A, X)
 
 
   if (backend == "sampling") {
