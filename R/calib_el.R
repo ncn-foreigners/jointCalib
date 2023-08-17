@@ -20,7 +20,7 @@ NULL
 #'
 #' @export
 calib_el <- function(X, d, totals, ...) {
-
+  ## transition to https://sas.uwaterloo.ca/~cbwu/Rcodes/LagrangeM2.txt needed
   n_col <- NCOL(X[, -1])
   n_row <- NROW(X)
   N <- totals[1]
