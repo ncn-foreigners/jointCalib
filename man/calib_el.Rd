@@ -4,7 +4,7 @@
 \alias{calib_el}
 \title{Weights calibration using empirical likelihood function}
 \usage{
-calib_el(X, d, totals, maxit, tol)
+calib_el(X, d, totals, maxit = 50, tol = 1e-08)
 }
 \arguments{
 \item{X}{matrix of variables for calibration of quantiles and totals}
