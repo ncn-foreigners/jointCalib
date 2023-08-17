@@ -73,8 +73,14 @@ library(laeken)
 set.seed(20230817)
 N <- 1000
 x <- runif(N, 0, 80)
-y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
-p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
+#y <- 1000+10*x+rnorm(N, 0, 300)
+#y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
+#y <- rbinom(N, 1, prob = 1/(exp(-0.5*(x-55))+1))
+y <- 1300-(x-40)^2 + rnorm(N, 0, 300)
+#p <- rbinom(N, 1, prob = 0.2+0.6*(1 + exp(-5 + x/8))^-1)
+p <- rbinom(N, 1, prob = 0.07+0.45*(x/40-1)^2+0.0025*x)
+#p <- rbinom(N, 1, prob = (1.2+0.024*x)^-1)
+#p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
 probs <- seq(0.1, 0.9, 0.1)
 quants_known <- list(x=quantile(x, probs))
 totals_known <- c(x=sum(x))
@@ -167,11 +173,20 @@ result4b <- joint_calib(formula_totals = ~ x,
                         backend = "stats")
 
 summary(result4b$g)
+
+result4c <- calib_el(X = result4b$Xs[, c(1, 11)],
+                     d = df_resp$d, 
+                     totals = c(N,totals_known),
+                     maxit = 50,
+                     tol = 1e-8)
+
+summary(result4c)
 ```
 
 ```{r}
 data.frame(true = quants_known$x, 
            est = weightedQuantile(df_resp$x, result2$g*df_resp$d, probs),
+           est_el0 = weightedQuantile(df_resp$x, result4c*df_resp$d, probs),
            est_el1 = weightedQuantile(df_resp$x, result4a$g*df_resp$d, probs),
            est_el2 = weightedQuantile(df_resp$x, result4b$g*df_resp$d, probs))
 ```
@@ -180,20 +195,22 @@ Finally, compare all method with true Y distribution where
 + `est_y1` -- weights calibrated to quantiles only,
 + `est_y2` -- weights calibrated to quantiles and totals,
 + `est_y3` -- weights calibrated to quantiles and totals using `logit` distance and range limitations,
-+ `est_y4` -- weights calibrated to quantiles only using `el`.
-+ `est_y4` -- weights calibrated to quantiles and totals using `el`.
++ `est_y4` -- weights calibrated to means only using `el`.
++ `est_y5` -- weights calibrated to quantiles only using `el`.
++ `est_y6` -- weights calibrated to quantiles and totals using `el`.
 
 ```{r results-combined}
 results_y <- data.frame(true_y = y_quant_true,
                         est_y1 = weightedQuantile(df_resp$y, result1$g * df_resp$d, probs),
                         est_y2 = weightedQuantile(df_resp$y, result2$g * df_resp$d, probs),
                         est_y3 = weightedQuantile(df_resp$y, result3$g * df_resp$d, probs),
-                        est_y4 = weightedQuantile(df_resp$y, result4a$g * df_resp$d, probs),
-                        est_y5 = weightedQuantile(df_resp$y, result4b$g * df_resp$d, probs))
+                        est_y4 = weightedQuantile(df_resp$y, result4c * df_resp$d, probs),
+                        est_y5 = weightedQuantile(df_resp$y, result4a$g * df_resp$d, probs),
+                        est_y6 = weightedQuantile(df_resp$y, result4b$g * df_resp$d, probs))
 
 results_y
 ```
-Here is the sum of squares and `el` seems to perform the best but it is mainly due to smaller difference for 90% quantile.
+Here is the sum of squares and calibration of totals and means seems to be the best.
 
 ```{r}
 apply(results_y[, -1], 2, FUN = function(x) sum((x-results_y[,1])^2))

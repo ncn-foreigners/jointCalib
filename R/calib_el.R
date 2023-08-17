@@ -20,7 +20,7 @@ NULL
 #' @return Returns a vector of empirical likelihood weights that sums to N
 #'
 #' @export
-calib_el <- function(X, d, totals, maxit, tol) {
+calib_el <- function(X, d, totals, maxit=50, tol=1e-8) {
 
   n_col <- NCOL(X[, -1])
   n_row <- NROW(X)
