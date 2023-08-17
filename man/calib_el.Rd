@@ -4,7 +4,7 @@
 \alias{calib_el}
 \title{Weights calibration using empirical likelihood function}
 \usage{
-calib_el(X, d, totals, ...)
+calib_el(X, d, totals, maxit, tol)
 }
 \arguments{
 \item{X}{matrix of variables for calibration of quantiles and totals}
@@ -13,16 +13,18 @@ calib_el(X, d, totals, ...)
 
 \item{totals}{vector of totals (where 1 element is population size)}
 
-\item{...}{arguments passed to \code{stats::constrOptim}}
+\item{maxit}{a numeric value giving the maximum number of iterations}
+
+\item{tol}{the desired accuracy for the iterative procedure}
 }
 \value{
 Returns a vector of empirical likelihood weights that sums to N
 }
 \description{
-\code{calib_el} performs calibration using empirical likelihood method. The function is taken from the supplementary materials from the publication Zhang, Han and Wu (2022)
+\code{calib_el} performs calibration using empirical likelihood method. The function is taken from Wu (2005)
 }
 \references{
-Zhang, S., Han, P., and Wu, C. (2023) Calibration Techniques Encompassing Survey Sampling, Missing Data Analysis and Causal Inference. International Statistical Review, 91: 165–192. https://doi.org/10.1111/insr.12518.
+Wu, C. (2005). Algorithms and R codes for the pseudo empirical likelihood method in survey sampling. Survey Methodology, 31(2), 239..
 }
 \author{
 Maciej Beręsewicz based on Zhang, Han and Wu (2022)

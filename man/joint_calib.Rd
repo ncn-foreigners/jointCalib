@@ -17,7 +17,7 @@ joint_calib(
   bounds = c(0, 10),
   maxit = 50,
   tol = 1e-08,
-  backend = c("sampling", "laeken", "survey", "optim"),
+  backend = c("sampling", "laeken", "survey", "stats"),
   method = c("raking", "linear", "logit", "sinh", "truncated", "el"),
   control = control_calib(),
   ...

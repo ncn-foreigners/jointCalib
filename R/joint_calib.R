@@ -156,7 +156,7 @@ function(formula_totals = NULL,
          bounds = c(0, 10),
          maxit = 50,
          tol = 1e-8,
-         backend = c("sampling", "laeken", "survey", "optim"),
+         backend = c("sampling", "laeken", "survey", "stats"),
          method = c("raking", "linear", "logit", "sinh", "truncated", "el"),
          control = control_calib(),
          ...) {
@@ -170,12 +170,12 @@ function(formula_totals = NULL,
   if (missing(method)) method <- "linear"
 
 
-  stopifnot("Ony `survey`, `sampling` and `laeken` are possible backends" = backend %in% c("sampling", "laeken", "survey", "optim"))
+  stopifnot("Ony `survey`, `sampling`, `laeken` and `stats` are possible backends" = backend %in% c("sampling", "laeken", "survey", "stats"))
   stopifnot("Ony `raking`, `linear`, logit` and `sinh` are possible" = method %in% c("linear", "raking", "logit", "sinh", "truncated", "el"))
 
   stopifnot("`sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
   stopifnot("`truncated` is only possible with `survey`" = !(method == "truncated" & backend != "sampling"))
-  stopifnot("`el` is only possible with `optim`" = !(method == "el" & backend != "optim"))
+  stopifnot("`el` is only possible with `stats`" = !(method == "el" & backend != "stats"))
 
   subset <- parse(text = deparse(substitute(subset)))
 
@@ -278,11 +278,12 @@ function(formula_totals = NULL,
                            verbose = FALSE,
                            variance = NULL)
   }
-  if (backend == "optim") {
+  if (backend == "stats") {
     gweights <- calib_el(X = X,
                          d = dweights,
                          totals = T_mat,
-                         ...)
+                         tol = tol,
+                         maxit = maxit)
   }
   gweights <- as.numeric(gweights)
   return(list(g=gweights,

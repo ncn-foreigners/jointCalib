@@ -104,7 +104,7 @@ expect_silent(
                          pop_quantiles = quants_known,
                          pop_totals = totals_known,
                          method = "el",
-                         backend = "optim")
+                         backend = "stats")
 
 )
 

@@ -22,9 +22,10 @@ A small package for joint calibration of totals and quantiles. The package combi
 
 + Deville, J. C., and Särndal, C. E. (1992). [Calibration estimators in survey sampling](https://www.tandfonline.com/doi/abs/10.1080/01621459.1992.10475217). Journal of the American statistical Association, 87(418), 376-382.
 + Harms, T. and Duchesne, P. (2006). [On calibration estimation for quantiles](https://www150.statcan.gc.ca/n1/pub/12-001-x/2006001/article/9255-eng.pdf). Survey Methodology, 32(1), 37.
-+ Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques Encompassing Survey Sampling](https://doi.org/10.1111/insr.12518.), Missing Data Analysis and Causal Inference. International Statistical Review, 91: 165–192. 
++ Wu, C. (2005) [Algorithms and R codes for the pseudo empirical likelihood method in survey sampling](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=80fa6257cd6bb693403eb5efdef231c57a9e2969#page=135), Survey Methodology, 31(2), 239.
 
-which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://cran.r-project.org/web/packages/sampling) (`sampling::calib`), [laeken](https://cran.r-project.org/web/packages/laeken) (`laeken::calibWeights`) or [survey](https://cran.r-project.org/web/packages/survey/index.html) (`survey::grake`) package can be used. One can also apply empirical likelihood using `optim::constrOptim` function.
+
+which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://cran.r-project.org/web/packages/sampling) (`sampling::calib`), [laeken](https://cran.r-project.org/web/packages/laeken) (`laeken::calibWeights`) or [survey](https://cran.r-project.org/web/packages/survey/index.html) (`survey::grake`) package can be used. One can also apply empirical likelihood using codes from Wu (2005).
 
 Currently supports:
 
@@ -152,7 +153,7 @@ result4a <- joint_calib(formula_quantiles = ~ x,
                         N = N,
                         pop_quantiles = quants_known,
                         method = "el",
-                        backend = "optim")
+                        backend = "stats")
 summary(result4a$g)
 
 result4b <- joint_calib(formula_totals = ~ x,
@@ -163,7 +164,7 @@ result4b <- joint_calib(formula_totals = ~ x,
                         pop_quantiles = quants_known,
                         pop_totals = totals_known,
                         method = "el",
-                        backend = "optim")
+                        backend = "stats")
 
 summary(result4b$g)
 ```

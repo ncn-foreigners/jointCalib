@@ -15,10 +15,10 @@ package combines the following approaches:
 - Harms, T. and Duchesne, P. (2006). [On calibration estimation for
   quantiles](https://www150.statcan.gc.ca/n1/pub/12-001-x/2006001/article/9255-eng.pdf).
   Survey Methodology, 32(1), 37.
-- Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques
-  Encompassing Survey Sampling](https://doi.org/10.1111/insr.12518.),
-  Missing Data Analysis and Causal Inference. International Statistical
-  Review, 91: 165–192.
+- Wu, C. (2005) [Algorithms and R codes for the pseudo empirical
+  likelihood method in survey
+  sampling](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=80fa6257cd6bb693403eb5efdef231c57a9e2969#page=135),
+  Survey Methodology, 31(2), 239.
 
 which allows to calibrate weights to known (or estimated) totals and
 quantiles jointly. As an backend for calibration
@@ -28,7 +28,7 @@ quantiles jointly. As an backend for calibration
 (`laeken::calibWeights`) or
 [survey](https://cran.r-project.org/web/packages/survey/index.html)
 (`survey::grake`) package can be used. One can also apply empirical
-likelihood using `optim::constrOptim` function.
+likelihood using codes from Wu (2005).
 
 Currently supports:
 
@@ -201,10 +201,10 @@ result4a <- joint_calib(formula_quantiles = ~ x,
                         N = N,
                         pop_quantiles = quants_known,
                         method = "el",
-                        backend = "optim")
+                        backend = "stats")
 summary(result4a$g)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>  0.6176  0.7085  0.8652  1.0000  0.9547  2.2884
+#>  0.6146  0.7013  0.8690  1.0000  0.9509  2.2909
 
 result4b <- joint_calib(formula_totals = ~ x,
                         formula_quantiles = ~ x,
@@ -214,11 +214,11 @@ result4b <- joint_calib(formula_totals = ~ x,
                         pop_quantiles = quants_known,
                         pop_totals = totals_known,
                         method = "el",
-                        backend = "optim")
+                        backend = "stats")
 
 summary(result4b$g)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>  0.6065  0.7247  0.8733  1.0000  1.0005  2.5797
+#>  0.5994  0.7086  0.8805  1.0000  0.9943  2.5412
 ```
 
 ``` r
@@ -226,16 +226,16 @@ data.frame(true = quants_known$x,
            est = weightedQuantile(df_resp$x, result2$g*df_resp$d, probs),
            est_el1 = weightedQuantile(df_resp$x, result4a$g*df_resp$d, probs),
            est_el2 = weightedQuantile(df_resp$x, result4b$g*df_resp$d, probs))
-#>          true       est   est_el1  est_el2
-#> 10%  7.078067  7.103456  7.015648  6.94050
-#> 20% 14.831221 14.832920 14.832920 14.83292
-#> 30% 23.146180 23.085873 23.085873 23.07136
-#> 40% 31.641911 31.658152 31.658152 31.40628
-#> 50% 39.033812 39.154276 39.154276 38.92874
-#> 60% 47.527168 47.593709 47.136099 47.13610
-#> 70% 54.984229 54.954054 55.311953 55.31195
-#> 80% 64.073167 64.062629 64.062629 64.69813
-#> 90% 71.565441 71.293602 71.293602 72.14176
+#>          true       est   est_el1   est_el2
+#> 10%  7.078067  7.103456  7.103456  7.103456
+#> 20% 14.831221 14.832920 14.832920 14.832920
+#> 30% 23.146180 23.085873 23.172026 23.172026
+#> 40% 31.641911 31.658152 31.658152 31.658152
+#> 50% 39.033812 39.154276 39.154276 39.154276
+#> 60% 47.527168 47.593709 47.593709 47.593709
+#> 70% 54.984229 54.954054 54.954054 54.954054
+#> 80% 64.073167 64.062629 64.062629 64.062629
+#> 90% 71.565441 71.293602 72.141764 72.141764
 ```
 
 Finally, compare all method with true Y distribution where
@@ -258,13 +258,13 @@ results_y <- data.frame(true_y = y_quant_true,
 results_y
 #>         true_y     est_y1     est_y2     est_y3     est_y4     est_y5
 #> 10% -289.97527 -291.79309 -292.34399 -292.34399 -291.79309 -292.34399
-#> 20% -146.15516 -154.36951 -146.90524 -146.90524 -154.36951 -146.90524
-#> 30%  -37.31173  -25.12616  -25.02487  -25.02487  -25.12616  -25.02487
+#> 20% -146.15516 -154.36951 -146.90524 -146.90524 -154.36951 -154.36951
+#> 30%  -37.31173  -25.12616  -25.02487  -25.02487  -25.12616  -25.12616
 #> 40%   71.38290   95.73374   99.44012   99.44012   95.73374   99.44012
 #> 50%  172.57996  194.32959  197.68361  197.68361  194.32959  197.68361
-#> 60%  289.64478  323.74182  326.60335  326.60335  323.74182  328.19661
+#> 60%  289.64478  323.74182  326.60335  326.60335  323.74182  326.60335
 #> 70%  437.99144  473.52287  477.95125  477.95125  473.52287  477.95125
-#> 80%  644.99052  653.93520  653.93520  653.93520  653.93520  654.96939
+#> 80%  644.99052  653.93520  653.93520  653.93520  653.93520  653.93520
 #> 90% 1223.23217 1111.48582 1111.48582 1111.48582 1111.48582 1136.33628
 ```
 
@@ -274,7 +274,7 @@ mainly due to smaller difference for 90% quantile.
 ``` r
 apply(results_y[, -1], 2, FUN = function(x) sum((x-results_y[,1])^2))
 #>   est_y1   est_y2   est_y3   est_y4   est_y5 
-#> 16277.62 17104.52 17104.52 16277.62 12308.04
+#> 16277.62 17104.52 17104.52 16277.62 12232.60
 ```
 
 ### Using `survey` package
