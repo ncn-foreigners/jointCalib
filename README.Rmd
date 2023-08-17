@@ -22,18 +22,19 @@ A small package for joint calibration of totals and quantiles. The package combi
 
 + Deville, J. C., and Särndal, C. E. (1992). [Calibration estimators in survey sampling](https://www.tandfonline.com/doi/abs/10.1080/01621459.1992.10475217). Journal of the American statistical Association, 87(418), 376-382.
 + Harms, T. and Duchesne, P. (2006). [On calibration estimation for quantiles](https://www150.statcan.gc.ca/n1/pub/12-001-x/2006001/article/9255-eng.pdf). Survey Methodology, 32(1), 37.
++ Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques Encompassing Survey Sampling](https://doi.org/10.1111/insr.12518.), Missing Data Analysis and Causal Inference. International Statistical Review, 91: 165–192. 
 
-which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://cran.r-project.org/web/packages/sampling) (`sampling::calib`), [laeken](https://cran.r-project.org/web/packages/laeken) (`laeken::calibWeights`) or [survey](https://cran.r-project.org/web/packages/survey/index.html) (`survey::grake`) package can be used.
+which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://cran.r-project.org/web/packages/sampling) (`sampling::calib`), [laeken](https://cran.r-project.org/web/packages/laeken) (`laeken::calibWeights`) or [survey](https://cran.r-project.org/web/packages/survey/index.html) (`survey::grake`) package can be used. One can also apply empirical likelihood using `optim::constrOptim` function.
 
 Currently supports:
 
   + calibration of totals,
-  + calibration of quantiles.
+  + calibration of quantiles,
+  + calibration using empirical likelihood method.
 
 Further plans: 
 
   + generalized calibration via `sampling::gencalib`,
-  + empirical likelihood,
   + calibrated / covariate balancing propensity score,
   + calibration for Gini and other metrices,
   + observational studies / causal inference
@@ -67,8 +68,8 @@ library(survey)
 library(laeken)
 ```
 
-
 ```{r example1-generate-data}
+set.seed(20230817)
 N <- 1000
 x <- runif(N, 0, 80)
 y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
@@ -134,13 +135,67 @@ result3 <- joint_calib(formula_totals = ~x,
                        method = "logit",
                        backend = "sampling", 
                        maxit = 500,
-                       bounds = c(0, 2))
+                       bounds = c(0, 3))
 
 summary(result3$g)
 ```
 
 ```{r}
 data.frame(true = quants_known$x, est = weightedQuantile(df_resp$x, result3$g*df_resp$d, probs))
+```
+Empirical likelihood method can be applied using the following code
+
+```{r example1-joint-el}
+result4a <- joint_calib(formula_quantiles = ~ x,
+                        data = df_resp,
+                        dweights = df_resp$d,
+                        N = N,
+                        pop_quantiles = quants_known,
+                        method = "el",
+                        backend = "optim")
+summary(result4a$g)
+
+result4b <- joint_calib(formula_totals = ~ x,
+                        formula_quantiles = ~ x,
+                        data = df_resp,
+                        dweights = df_resp$d,
+                        N = N,
+                        pop_quantiles = quants_known,
+                        pop_totals = totals_known,
+                        method = "el",
+                        backend = "optim")
+
+summary(result4b$g)
+```
+
+```{r}
+data.frame(true = quants_known$x, 
+           est = weightedQuantile(df_resp$x, result2$g*df_resp$d, probs),
+           est_el1 = weightedQuantile(df_resp$x, result4a$g*df_resp$d, probs),
+           est_el2 = weightedQuantile(df_resp$x, result4b$g*df_resp$d, probs))
+```
+Finally, compare all method with true Y distribution where
+
++ `est_y1` -- weights calibrated to quantiles only,
++ `est_y2` -- weights calibrated to quantiles and totals,
++ `est_y3` -- weights calibrated to quantiles and totals using `logit` distance and range limitations,
++ `est_y4` -- weights calibrated to quantiles only using `el`.
++ `est_y4` -- weights calibrated to quantiles and totals using `el`.
+
+```{r results-combined}
+results_y <- data.frame(true_y = y_quant_true,
+                        est_y1 = weightedQuantile(df_resp$y, result1$g * df_resp$d, probs),
+                        est_y2 = weightedQuantile(df_resp$y, result2$g * df_resp$d, probs),
+                        est_y3 = weightedQuantile(df_resp$y, result3$g * df_resp$d, probs),
+                        est_y4 = weightedQuantile(df_resp$y, result4a$g * df_resp$d, probs),
+                        est_y5 = weightedQuantile(df_resp$y, result4b$g * df_resp$d, probs))
+
+results_y
+```
+Here is the sum of squares and `el` seems to perform the best but it is mainly due to smaller difference for 90% quantile.
+
+```{r}
+apply(results_y[, -1], 2, FUN = function(x) sum((x-results_y[,1])^2))
 ```
 
 ### Using `survey` package
