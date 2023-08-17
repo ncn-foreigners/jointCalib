@@ -19,7 +19,7 @@
 #' @param maxit a numeric value giving the maximum number of iterations
 #' @param tol the desired accuracy for the iterative procedure (for `sampling` and `laeken`) or Tolerance in matching population total for `survey::grake` (see help for survey::grake)
 #' @param control a list of control parameters (currently only for \code{joint_calib_create_matrix})
-#' @param ... arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights} or \code{survey::calibrate}
+#' @param ... arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights}, \code{survey::calibrate} or \code{optim::constrOptim}
 #'
 #' @references
 #'
@@ -156,8 +156,8 @@ function(formula_totals = NULL,
          bounds = c(0, 10),
          maxit = 50,
          tol = 1e-8,
-         backend = c("sampling", "laeken", "survey"),
-         method = c("raking", "linear", "logit", "sinh"),
+         backend = c("sampling", "laeken", "survey", "optim"),
+         method = c("raking", "linear", "logit", "sinh", "truncated", "el"),
          control = control_calib(),
          ...) {
 
@@ -170,11 +170,12 @@ function(formula_totals = NULL,
   if (missing(method)) method <- "linear"
 
 
-  stopifnot("Ony `survey`, `sampling` and `laeken` are possible backends" = backend %in% c("sampling", "laeken", "survey"))
-  stopifnot("Ony `raking`, `linear`, logit` and `sinh` are possible" = method %in% c("linear", "raking", "logit", "sinh", "truncated"))
+  stopifnot("Ony `survey`, `sampling` and `laeken` are possible backends" = backend %in% c("sampling", "laeken", "survey", "optim"))
+  stopifnot("Ony `raking`, `linear`, logit` and `sinh` are possible" = method %in% c("linear", "raking", "logit", "sinh", "truncated", "el"))
 
   stopifnot("`sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
   stopifnot("`truncated` is only possible with `survey`" = !(method == "truncated" & backend != "sampling"))
+  stopifnot("`el` is only possible with `optim`" = !(method == "el" & backend != "optim"))
 
   subset <- parse(text = deparse(substitute(subset)))
 
@@ -277,9 +278,16 @@ function(formula_totals = NULL,
                            verbose = FALSE,
                            variance = NULL)
   }
+  if (backend == "optim") {
+    gweights <- calib_el(X = X,
+                         d = dweights,
+                         totals = T_mat,
+                         ...)
+  }
   gweights <- as.numeric(gweights)
   return(list(g=gweights,
               Xs = X,
               totals = c(N, quantiles, pop_totals),
               diff = colSums(X*dweights*gweights) - T_mat))
 }
+

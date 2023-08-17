@@ -17,8 +17,8 @@ joint_calib(
   bounds = c(0, 10),
   maxit = 50,
   tol = 1e-08,
-  backend = c("sampling", "laeken", "survey"),
-  method = c("raking", "linear", "logit", "sinh"),
+  backend = c("sampling", "laeken", "survey", "optim"),
+  method = c("raking", "linear", "logit", "sinh", "truncated", "el"),
   control = control_calib(),
   ...
 )
@@ -54,7 +54,7 @@ joint_calib(
 
 \item{control}{a list of control parameters (currently only for \code{joint_calib_create_matrix})}
 
-\item{...}{arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights} or \code{survey::calibrate}}
+\item{...}{arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights}, \code{survey::calibrate} or \code{optim::constrOptim}}
 }
 \value{
 Returns a list with containing:\cr

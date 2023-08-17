@@ -92,3 +92,45 @@ expect_true(
 expect_true(
   all(result2$g > 0)
 )
+
+# example 3 - empirical likelihood ----------------------------------------
+
+expect_silent(
+  result3 <- joint_calib(formula_quantiles = ~x,
+                         formula_totals = ~x,
+                         data = df_resp,
+                         dweights =  df_resp$d,
+                         N = N,
+                         pop_quantiles = quants_known,
+                         pop_totals = totals_known,
+                         method = "el",
+                         backend = "optim")
+
+)
+
+## check if sum up to N
+expect_equal(
+  sum(result3$g*df_resp$d),
+  N
+)
+
+## check the difference with quantiles
+
+expect_equal(
+  unname(colSums(result3$Xs*result3$g*df_resp$d)[2:10]),
+  probs,
+  tolerance = 1e-3
+)
+
+## check with quantiles
+expect_true(
+  {
+    quants_estimated <- laeken::weightedQuantile(x = df_resp$x, probs = probs, weights = result3$g*df_resp$d)
+    sum(( quants_estimated - quants_known$x)^2)/length(quants_known$x) < 0.05
+  }
+)
+
+## check for nonnegative weights
+expect_true(
+  all(result3$g > 0)
+)

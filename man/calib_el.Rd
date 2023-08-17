@@ -4,21 +4,19 @@
 \alias{calib_el}
 \title{Weights calibration using empirical likelihood function}
 \usage{
-calib_el(X, d, totals, N, ...)
+calib_el(X, d, totals, ...)
 }
 \arguments{
-\item{X}{matrix of variables for calibration of quantiles}
+\item{X}{matrix of variables for calibration of quantiles and totals}
 
 \item{d}{initial d-weights for calibration (e.g. design-weights)}
 
-\item{totals}{vector of totals}
-
-\item{N}{population size}
+\item{totals}{vector of totals (where 1 element is population size)}
 
 \item{...}{arguments passed to \code{stats::constrOptim}}
 }
 \value{
-Returns a vector of empirical likelihood weights that sums to 1
+Returns a vector of empirical likelihood weights that sums to N
 }
 \description{
 \code{calib_el} performs calibration using empirical likelihood method. The function is taken from the supplementary materials from the publication Zhang, Han and Wu (2022)
