@@ -12,6 +12,12 @@ print.jointCalib <- function(x,...) {
   cat("Totals and precision (abs diff: ", sum(abs(x$diff)), ")\n", sep="")
 
   print(cbind(totals=x$totals, precision=x$diff))
+
+  #cat("Quantiles and estimates based on g-weights:\n")
+
+  #print(cbind(true = quants_known$x,
+  #            est = weightedQuantile(df_resp$x, result1$g*df_resp$d, probs)))
+
   invisible(x)
 }
 

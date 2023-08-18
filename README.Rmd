@@ -104,7 +104,7 @@ result1 <- joint_calib(formula_quantiles = ~x,
                       pop_quantiles = quants_known,
                       method = "linear",
                       backend = "sampling")
-summary(result1$g)
+result1
 ```
 
 ```{r}
