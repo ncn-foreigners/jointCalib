@@ -33,7 +33,7 @@
 #'
 #' @returns Returns a list with containing:\cr
 #' \itemize{
-#' \item{\code{g} -- g-weight}
+#' \item{\code{g} -- g-weight that sums up to sample size}
 #' \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles)}
 #' \item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles})}
 #' \item{\code{diff} -- difference between \code{colSums(Xs*w)} and \code{totals}}
@@ -129,18 +129,51 @@
 #'                                          probs = probs,
 #'                                          weights = result3$g*df_resp$d)
 #'
+#' ## example 4: calibrate wigh quantiles (deciles) and totals with ebal package
+#' result4 <- joint_calib(formula_totals = ~x,
+#'                        formula_quantiles = ~x,
+#'                        data = df_resp,
+#'                        dweights = df_resp$d,
+#'                        N = N,
+#'                        pop_quantiles = quants_known,
+#'                        pop_totals = totals_known,
+#'                        method = "eb",
+#'                        backend = "ebal")
+#'
+#' ## estimate quantiles
+#' y_quant_hat4 <- laeken::weightedQuantile(x = df_resp$y,
+#'                                          probs = probs,
+#'                                          weights = result4$g*df_resp$d)
+#' x_quant_hat4 <- laeken::weightedQuantile(x = df_resp$x,
+#'                                          probs = probs,
+#'                                          weights = result4$g*df_resp$d)
+#'
 #' ## compare with known
-#' data.frame(standard = y_quant_hat0, est1=y_quant_hat1,
-#'            est2=y_quant_hat2, est3=y_quant_hat3, true=y_quant_true)
+#' data.frame(standard = y_quant_hat0,
+#'            est1=y_quant_hat1,
+#'            est2=y_quant_hat2,
+#'            est3=y_quant_hat3,
+#'            est4=y_quant_hat4,
+#'            true=y_quant_true)
 #' ## compare with known X
-#' data.frame(standard = x_quant_hat0, est1=x_quant_hat1,
-#'            est2=x_quant_hat2, est3=x_quant_hat3, true = quants_known$x)
+#' data.frame(standard = x_quant_hat0,
+#'            est1=x_quant_hat1,
+#'            est2=x_quant_hat2,
+#'            est3=x_quant_hat3,
+#'            est4=x_quant_hat4,
+#'            true = quants_known$x)
 #'
 #' }
+#'
 #' @seealso
 #' [sampling::calib()] -- for standard calibration.
+#'
 #' [laeken::calibWeights()] -- for standard calibration.
+#'
 #' [survey::calibrate()] -- for standard and more advanced calibration.
+#'
+#' [ebal::ebalance()] -- for standard entropy balancing.
+#'
 #'
 #' @export
 joint_calib <-
@@ -156,26 +189,31 @@ function(formula_totals = NULL,
          bounds = c(0, 10),
          maxit = 50,
          tol = 1e-8,
-         backend = c("sampling", "laeken", "survey", "stats"),
-         method = c("raking", "linear", "logit", "sinh", "truncated", "el"),
+         backend = c("sampling", "laeken", "survey", "ebal", "base"),
+         method = c("raking", "linear", "logit", "sinh", "truncated", "el", "eb"),
          control = control_calib(),
          ...) {
 
   ## processing
   if (is.null(formula_quantiles)) {
-    stop("Parameter formula_quantiles is required. If you would like to use standard calibration we suggest using survey, sampling or laeken package.")
+    stop("Parameter formula_quantiles is required. If you would like to use
+         standard calibration we suggest using survey, sampling or laeken package.")
   }
 
   if (missing(backend)) backend <- "sampling"
   if (missing(method)) method <- "linear"
+  if (method == "eb") backend <- "ebal"
+  if (method == "el") backend <- "base"
 
-
-  stopifnot("Ony `survey`, `sampling`, `laeken` and `stats` are possible backends" = backend %in% c("sampling", "laeken", "survey", "stats"))
-  stopifnot("Ony `raking`, `linear`, logit` and `sinh` are possible" = method %in% c("linear", "raking", "logit", "sinh", "truncated", "el"))
-
+  stopifnot("Only `survey`, `sampling`, `laeken`, `ebal` and `base` are possible backends" =
+              backend %in% c("sampling", "laeken", "survey", "ebal", "base"))
+  stopifnot("Only `raking`, `linear`, logit` and `sinh` are possible" =
+              method %in% c("linear", "raking", "logit", "sinh", "truncated", "el", "eb"))
   stopifnot("`sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
   stopifnot("`truncated` is only possible with `survey`" = !(method == "truncated" & backend != "sampling"))
-  stopifnot("`el` is only possible with `stats`" = !(method == "el" & backend != "stats"))
+
+  #stopifnot("`el` is only possible with `base`" = !(method == "el" & backend != "base"))
+  #stopifnot("`eb` is only possible with `ebal`" = !(method == "eb" & backend != "ebal"))
 
   subset <- parse(text = deparse(substitute(subset)))
 
@@ -193,7 +231,6 @@ function(formula_totals = NULL,
   if (!is.null(formula_totals)) {
     X <- stats::model.matrix(formula_totals, data)
     X <- X[, colnames(X) != "(Intercept)", drop = FALSE]
-
     stopifnot("X and pop_totals have different dimensions" = ncol(X) == NROW(pop_totals))
     stopifnot("X and pop_totals have different names"=all.equal(colnames(X), names(pop_totals)))
     stopifnot("X contains constant" = all(base::apply(X, 2, stats::sd) > 0))
@@ -203,6 +240,7 @@ function(formula_totals = NULL,
 
    X_q <- stats::model.matrix(formula_quantiles, data)
    X_q <- X_q[, colnames(X_q) != "(Intercept)", drop = FALSE]
+
    stopifnot("pop_quantiles contains unnamed elements" = all(sapply(names(pop_quantiles), nchar) > 0))
    stopifnot("X_q and pop_quantiles have different dimensions" = ncol(X_q) == length(pop_quantiles))
    stopifnot("X_q and pop_quantiles have different names" = all.equal(colnames(X_q), names(pop_quantiles)))
@@ -216,7 +254,7 @@ function(formula_totals = NULL,
     dweights <- rep(1, nrow(X_q))
   }
 
-  ## processing quantiles
+  ## processing quantiles [more robust is needed]
   pop_quantiles <- pop_quantiles[colnames(X_q)]
   names(pop_quantiles) <- NULL
   totals_q_vec <- unlist(pop_quantiles)
@@ -233,62 +271,66 @@ function(formula_totals = NULL,
   #X <- cbind(1/N, A*N, X/N)
   X <- cbind(1, A, X)
 
+  ## change to large switch
+  gweights <- switch(backend,
+                     "sampling" = {
+                       if (method %in% c("logit", "truncated")) {
+                         sampling::calib(Xs = X,
+                                         d = dweights,
+                                         total = T_mat,
+                                         method = method,
+                                         bounds = bounds,
+                                         max_iter = maxit,
+                                         ...)
+                       } else {
+                         sampling::calib(Xs = X,
+                                         d = dweights,
+                                         total = T_mat,
+                                         method = method,
+                                         max_iter = maxit,
+                                         ...)
+                       }
+                       },
+                     "laeken" = laeken::calibWeights(X = X,
+                                                     d = dweights,
+                                                     totals = T_mat,
+                                                     method = method,
+                                                     bounds = bounds,
+                                                     maxit = maxit,
+                                                     tol = tol,
+                                                     ...),
+                     "survey" = survey::grake(mm = X,
+                                              ww = dweights,
+                                              calfun = switch(method,
+                                                              "linear" = survey::cal.linear,
+                                                              "raking" = survey::cal.raking,
+                                                              "logit" = survey::cal.logit,
+                                                              "sinh" = survey::cal.sinh),
+                                              population = T_mat,
+                                              bounds = list(lower = bounds[1], upper = bounds[2]),
+                                              epsilon = tol,
+                                              maxit = maxit,
+                                              verbose = FALSE,
+                                              variance = NULL),
+                     "ebal" =  ebal::eb(tr.total = T_mat,
+                                        co.x = X,
+                                        coefs = c(log(T_mat[1]/NROW(X)), rep(0, (NCOL(X) - 1))),
+                                        base.weight = dweights,
+                                        max.iterations = maxit,
+                                        constraint.tolerance = 1, ## to control
+                                        print.level = 0 ## to control
+                                        )$Weights.ebal/dweights,
+                     "base" = calib_el(X = X,
+                                        d = dweights,
+                                        totals = T_mat,
+                                        tol = tol,
+                                        maxit = maxit))
 
-  if (backend == "sampling") {
-    if (method %in% c("linear", "raking")) {
-      gweights <- sampling::calib(Xs = X,
-                               d = dweights,
-                               total = T_mat,
-                               method = method,
-                               max_iter = maxit,
-                               ...)
-    } else {
-      gweights <- sampling::calib(Xs = X,
-                               d = dweights,
-                               total = T_mat,
-                               method = method,
-                               bounds = bounds,
-                               max_iter = maxit,
-                               ...)
-    }
-  }
-  if (backend == "laeken") {
-    gweights <- laeken::calibWeights(X=X,
-                                  d= dweights,
-                                  totals = T_mat,
-                                  method = method,
-                                  bounds=bounds,
-                                  maxit = maxit,
-                                  tol = tol,
-                                  ...)
-  }
-  if (backend == "survey") {
-    method <- switch(method,
-                     "linear" = survey::cal.linear,
-                     "raking" = survey::cal.raking,
-                     "logit" = survey::cal.logit,
-                     "sinh" = survey::cal.sinh)
-    gweights <- survey::grake(mm = X,
-                           ww = dweights,
-                           calfun = method,
-                           population = T_mat,
-                           bounds = list(lower = bounds[1], upper = bounds[2]),
-                           epsilon = tol,
-                           maxit = maxit,
-                           verbose = FALSE,
-                           variance = NULL)
-  }
-  if (backend == "stats") {
-    gweights <- calib_el(X = X,
-                         d = dweights,
-                         totals = T_mat,
-                         tol = tol,
-                         maxit = maxit)
-  }
   gweights <- as.numeric(gweights)
-  return(list(g=gweights,
+
+  return(list(g = gweights,
               Xs = X,
               totals = c(N, quantiles, pop_totals),
-              diff = colSums(X*dweights*gweights) - T_mat))
+              diff = colSums(X * dweights * gweights) - T_mat))
 }
 

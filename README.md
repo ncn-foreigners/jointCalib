@@ -19,22 +19,29 @@ package combines the following approaches:
   likelihood method in survey
   sampling](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=80fa6257cd6bb693403eb5efdef231c57a9e2969#page=135),
   Survey Methodology, 31(2), 239.
+- Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques
+  Encompassing Survey Sampling, Missing Data Analysis and Causal
+  Inference](https://doi.org/10.1111/insr.12518), International
+  Statistical Review 91, 165–192.
 
 which allows to calibrate weights to known (or estimated) totals and
 quantiles jointly. As an backend for calibration
 [sampling](https://cran.r-project.org/web/packages/sampling)
 (`sampling::calib`),
 [laeken](https://cran.r-project.org/web/packages/laeken)
-(`laeken::calibWeights`) or
+(`laeken::calibWeights`),
 [survey](https://cran.r-project.org/web/packages/survey/index.html)
-(`survey::grake`) package can be used. One can also apply empirical
-likelihood using codes from Wu (2005).
+(`survey::grake`) or
+[ebal](https://cran.r-project.org/web/packages/ebal/index.html)
+(`ebal::eb`) package can be used. One can also apply empirical
+likelihood using codes from Wu (2005) with support of
+`stats::constrOptim` as used in Zhang, Han and Wu (2022).
 
 Currently supports:
 
 - calibration of totals,
 - calibration of quantiles,
-- calibration using empirical likelihood method.
+- calibration using empirical likelihood and entropy balancing method
 
 Further plans:
 
@@ -61,7 +68,7 @@ remotes::install_github("ncn-foreigners/jointCalib")
 
 ## Examples
 
-### Example 1
+### Example 1 – census case
 
 Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting
 procedures for unit nonresponse. Journal of Official Statistics, 32(1),
@@ -207,7 +214,7 @@ result4a <- joint_calib(formula_quantiles = ~ x,
                         N = N,
                         pop_quantiles = quants_known,
                         method = "el",
-                        backend = "stats")
+                        backend = "base")
 summary(result4a$g)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #>  0.4563  0.6773  0.8180  1.0000  1.4500  2.4538
@@ -220,7 +227,7 @@ result4b <- joint_calib(formula_totals = ~ x,
                         pop_quantiles = quants_known,
                         pop_totals = totals_known,
                         method = "el",
-                        backend = "stats")
+                        backend = "base")
 
 summary(result4b$g)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -247,12 +254,26 @@ data.frame(true = quants_known$x,
 #> 10%  7.078067  7.085003  3.640246  7.085003  7.085003
 #> 20% 14.831221 14.824424  8.024948 14.824424 14.824424
 #> 30% 23.146180 23.287657 14.499018 23.287657 23.287657
-#> 40% 31.641911 31.802986 24.010501 31.297922 31.802986
-#> 50% 39.033812 39.154276 39.154276 39.154276 39.154276
+#> 40% 31.641911 31.802986 24.010501 31.802986 31.297922
+#> 50% 39.033812 39.154276 39.154276 38.892342 39.154276
 #> 60% 47.527168 48.252065 54.685438 48.252065 48.252065
 #> 70% 54.984229 55.311953 63.084405 54.954054 54.954054
 #> 80% 64.073167 64.062629 70.050593 64.062629 64.062629
 #> 90% 71.565441 71.567274 75.663078 71.567274 71.567274
+```
+
+Entropy balancing method can be applied using the following code
+
+``` r
+result5 <- joint_calib(formula_quantiles = ~ x,
+                        data = df_resp,
+                        dweights = df_resp$d,
+                        N = N,
+                        pop_quantiles = quants_known,
+                        method = "eb")
+summary(result5$g)
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#>  0.4576  0.6775  0.8180  1.0003  1.4500  2.4538
 ```
 
 Finally, compare all method with true Y distribution where
@@ -264,6 +285,7 @@ Finally, compare all method with true Y distribution where
 - `est_y4` – weights calibrated to means only using `el`.
 - `est_y5` – weights calibrated to quantiles only using `el`.
 - `est_y6` – weights calibrated to quantiles and totals using `el`.
+- `est_y7` – weights calibrated to quantiles and totals using `eb`.
 
 ``` r
 results_y <- data.frame(true_y = y_quant_true,
@@ -272,7 +294,8 @@ results_y <- data.frame(true_y = y_quant_true,
                         est_y3 = weightedQuantile(df_resp$y, result3$g * df_resp$d, probs),
                         est_y4 = weightedQuantile(df_resp$y, result4c * df_resp$d, probs),
                         est_y5 = weightedQuantile(df_resp$y, result4a$g * df_resp$d, probs),
-                        est_y6 = weightedQuantile(df_resp$y, result4b$g * df_resp$d, probs))
+                        est_y6 = weightedQuantile(df_resp$y, result4b$g * df_resp$d, probs),
+                        est_y7 = weightedQuantile(df_resp$y, result5$g * df_resp$d, probs))
 
 results_y
 #>         true_y     est_y1     est_y2     est_y3     est_y4     est_y5
@@ -285,16 +308,16 @@ results_y
 #> 70% 1123.44643 1023.75230 1023.75230 1023.75230  811.84389 1023.75230
 #> 80% 1245.62645 1162.06504 1162.06504 1162.06504 1009.46703 1162.06504
 #> 90% 1449.23819 1471.33301 1471.33301 1471.33301 1242.60357 1471.33301
-#>         est_y6
-#> 10%  -36.18473
-#> 20%  228.75429
-#> 30%  411.47088
-#> 40%  622.82192
-#> 50%  789.89936
-#> 60%  925.84730
-#> 70% 1023.75230
-#> 80% 1162.06504
-#> 90% 1471.33301
+#>         est_y6     est_y7
+#> 10%  -36.18473  -36.18473
+#> 20%  228.75429  228.75429
+#> 30%  411.47088  413.22517
+#> 40%  622.82192  622.82192
+#> 50%  789.89936  789.89936
+#> 60%  925.84730  925.84730
+#> 70% 1023.75230 1023.75230
+#> 80% 1162.06504 1162.06504
+#> 90% 1471.33301 1471.33301
 ```
 
 Here is the sum of squares and calibration of totals and means seems to
@@ -302,8 +325,8 @@ be the best.
 
 ``` r
 apply(results_y[, -1], 2, FUN = function(x) sum((x-results_y[,1])^2))
-#>    est_y1    est_y2    est_y3    est_y4    est_y5    est_y6 
-#>  22342.87  22085.51  22342.87 547195.99  22342.87  22456.79
+#>    est_y1    est_y2    est_y3    est_y4    est_y5    est_y6    est_y7 
+#>  22342.87  22085.51  22342.87 547195.99  22342.87  22456.79  22342.87
 ```
 
 ### Using `survey` package
@@ -383,3 +406,7 @@ summary(as.numeric(g1))
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #>  0.4562  0.6773  0.8180  1.0000  1.4500  2.4538
 ```
+
+## Example 2 – non-probability sample
+
+## Example 3 – observational studies / causal inference

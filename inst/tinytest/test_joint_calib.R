@@ -103,8 +103,7 @@ expect_silent(
                          N = N,
                          pop_quantiles = quants_known,
                          pop_totals = totals_known,
-                         method = "el",
-                         backend = "stats")
+                         method = "el")
 
 )
 
@@ -134,3 +133,47 @@ expect_true(
 expect_true(
   all(result3$g > 0)
 )
+
+# example 4 - ebal ----------------------------------------
+
+expect_silent(
+  result4 <- joint_calib(formula_quantiles = ~x,
+                         formula_totals = ~x,
+                         data = df_resp,
+                         dweights =  df_resp$d,
+                         N = N,
+                         pop_quantiles = quants_known,
+                         pop_totals = totals_known,
+                         method = "eb")
+
+)
+
+## check if sum up to N
+expect_equal(
+  sum(result4$g*df_resp$d),
+  N,
+  tolerance = 0.01
+)
+
+## check the difference with quantiles
+
+expect_equal(
+  unname(colSums(result4$Xs*result4$g*df_resp$d)[2:10]),
+  probs,
+  tolerance = 1e-3
+)
+
+## check with quantiles
+expect_true(
+  {
+    quants_estimated <- laeken::weightedQuantile(x = df_resp$x, probs = probs, weights = result4$g*df_resp$d)
+    sum(( quants_estimated - quants_known$x)^2)/length(quants_known$x) < 0.05
+  }
+)
+
+## check for nonnegative weights
+expect_true(
+  all(result4$g > 0)
+)
+
+

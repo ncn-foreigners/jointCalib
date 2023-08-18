@@ -23,4 +23,6 @@ Imports:
   laeken,
   sampling,
   mathjaxr,
-  survey
+  survey,
+  MASS,
+  ebal

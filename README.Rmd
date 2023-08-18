@@ -23,15 +23,16 @@ A small package for joint calibration of totals and quantiles. The package combi
 + Deville, J. C., and Särndal, C. E. (1992). [Calibration estimators in survey sampling](https://www.tandfonline.com/doi/abs/10.1080/01621459.1992.10475217). Journal of the American statistical Association, 87(418), 376-382.
 + Harms, T. and Duchesne, P. (2006). [On calibration estimation for quantiles](https://www150.statcan.gc.ca/n1/pub/12-001-x/2006001/article/9255-eng.pdf). Survey Methodology, 32(1), 37.
 + Wu, C. (2005) [Algorithms and R codes for the pseudo empirical likelihood method in survey sampling](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=80fa6257cd6bb693403eb5efdef231c57a9e2969#page=135), Survey Methodology, 31(2), 239.
++ Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques Encompassing Survey Sampling, Missing Data Analysis and Causal Inference](https://doi.org/10.1111/insr.12518 ), International Statistical Review 91, 165–192.
 
 
-which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://cran.r-project.org/web/packages/sampling) (`sampling::calib`), [laeken](https://cran.r-project.org/web/packages/laeken) (`laeken::calibWeights`) or [survey](https://cran.r-project.org/web/packages/survey/index.html) (`survey::grake`) package can be used. One can also apply empirical likelihood using codes from Wu (2005).
+which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://cran.r-project.org/web/packages/sampling) (`sampling::calib`), [laeken](https://cran.r-project.org/web/packages/laeken) (`laeken::calibWeights`),  [survey](https://cran.r-project.org/web/packages/survey/index.html) (`survey::grake`) or [ebal](https://cran.r-project.org/web/packages/ebal/index.html) (`ebal::eb`) package can be used. One can also apply empirical likelihood using codes from Wu (2005) with support of `stats::constrOptim` as used in Zhang, Han and Wu (2022).
 
 Currently supports:
 
   + calibration of totals,
   + calibration of quantiles,
-  + calibration using empirical likelihood method.
+  + calibration using empirical likelihood and entropy balancing method
 
 Further plans: 
 
@@ -59,7 +60,7 @@ remotes::install_github("ncn-foreigners/jointCalib")
 
 ## Examples 
 
-### Example 1  
+### Example 1  -- census case
 
 Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
 
@@ -159,7 +160,7 @@ result4a <- joint_calib(formula_quantiles = ~ x,
                         N = N,
                         pop_quantiles = quants_known,
                         method = "el",
-                        backend = "stats")
+                        backend = "base")
 summary(result4a$g)
 
 result4b <- joint_calib(formula_totals = ~ x,
@@ -170,7 +171,7 @@ result4b <- joint_calib(formula_totals = ~ x,
                         pop_quantiles = quants_known,
                         pop_totals = totals_known,
                         method = "el",
-                        backend = "stats")
+                        backend = "base")
 
 summary(result4b$g)
 
@@ -182,7 +183,6 @@ result4c <- calib_el(X = result4b$Xs[, c(1, 11)],
 
 summary(result4c)
 ```
-
 ```{r}
 data.frame(true = quants_known$x, 
            est = weightedQuantile(df_resp$x, result2$g*df_resp$d, probs),
@@ -190,6 +190,20 @@ data.frame(true = quants_known$x,
            est_el1 = weightedQuantile(df_resp$x, result4a$g*df_resp$d, probs),
            est_el2 = weightedQuantile(df_resp$x, result4b$g*df_resp$d, probs))
 ```
+
+Entropy balancing method can be applied using the following code
+
+```{r example1-joint-eb}
+result5 <- joint_calib(formula_quantiles = ~ x,
+                        data = df_resp,
+                        dweights = df_resp$d,
+                        N = N,
+                        pop_quantiles = quants_known,
+                        method = "eb")
+summary(result5$g)
+```
+
+
 Finally, compare all method with true Y distribution where
 
 + `est_y1` -- weights calibrated to quantiles only,
@@ -198,6 +212,7 @@ Finally, compare all method with true Y distribution where
 + `est_y4` -- weights calibrated to means only using `el`.
 + `est_y5` -- weights calibrated to quantiles only using `el`.
 + `est_y6` -- weights calibrated to quantiles and totals using `el`.
++ `est_y7` -- weights calibrated to quantiles and totals using `eb`.
 
 ```{r results-combined}
 results_y <- data.frame(true_y = y_quant_true,
@@ -206,7 +221,8 @@ results_y <- data.frame(true_y = y_quant_true,
                         est_y3 = weightedQuantile(df_resp$y, result3$g * df_resp$d, probs),
                         est_y4 = weightedQuantile(df_resp$y, result4c * df_resp$d, probs),
                         est_y5 = weightedQuantile(df_resp$y, result4a$g * df_resp$d, probs),
-                        est_y6 = weightedQuantile(df_resp$y, result4b$g * df_resp$d, probs))
+                        est_y6 = weightedQuantile(df_resp$y, result4b$g * df_resp$d, probs),
+                        est_y7 = weightedQuantile(df_resp$y, result5$g * df_resp$d, probs))
 
 results_y
 ```
@@ -254,4 +270,8 @@ g1 <- grake(mm = as.matrix(cbind(1, A)),
             variance = NULL)
 summary(as.numeric(g1))
 ```
+
+## Example 2  -- non-probability sample
+
+## Example 3  -- observational studies / causal inference
 

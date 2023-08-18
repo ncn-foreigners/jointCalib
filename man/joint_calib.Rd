@@ -17,8 +17,8 @@ joint_calib(
   bounds = c(0, 10),
   maxit = 50,
   tol = 1e-08,
-  backend = c("sampling", "laeken", "survey", "stats"),
-  method = c("raking", "linear", "logit", "sinh", "truncated", "el"),
+  backend = c("sampling", "laeken", "survey", "ebal", "base"),
+  method = c("raking", "linear", "logit", "sinh", "truncated", "el", "eb"),
   control = control_calib(),
   ...
 )
@@ -59,7 +59,7 @@ joint_calib(
 \value{
 Returns a list with containing:\cr
 \itemize{
-\item{\code{g} -- g-weight}
+\item{\code{g} -- g-weight that sums up to sample size}
 \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles)}
 \item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles})}
 \item{\code{diff} -- difference between \code{colSums(Xs*w)} and \code{totals}}
@@ -158,14 +158,42 @@ x_quant_hat3 <- laeken::weightedQuantile(x = df_resp$x,
                                          probs = probs,
                                          weights = result3$g*df_resp$d)
 
+## example 4: calibrate wigh quantiles (deciles) and totals with ebal package
+result4 <- joint_calib(formula_totals = ~x,
+                       formula_quantiles = ~x,
+                       data = df_resp,
+                       dweights = df_resp$d,
+                       N = N,
+                       pop_quantiles = quants_known,
+                       pop_totals = totals_known,
+                       method = "eb",
+                       backend = "ebal")
+
+## estimate quantiles
+y_quant_hat4 <- laeken::weightedQuantile(x = df_resp$y,
+                                         probs = probs,
+                                         weights = result4$g*df_resp$d)
+x_quant_hat4 <- laeken::weightedQuantile(x = df_resp$x,
+                                         probs = probs,
+                                         weights = result4$g*df_resp$d)
+
 ## compare with known
-data.frame(standard = y_quant_hat0, est1=y_quant_hat1,
-           est2=y_quant_hat2, est3=y_quant_hat3, true=y_quant_true)
+data.frame(standard = y_quant_hat0,
+           est1=y_quant_hat1,
+           est2=y_quant_hat2,
+           est3=y_quant_hat3,
+           est4=y_quant_hat4,
+           true=y_quant_true)
 ## compare with known X
-data.frame(standard = x_quant_hat0, est1=x_quant_hat1,
-           est2=x_quant_hat2, est3=x_quant_hat3, true = quants_known$x)
+data.frame(standard = x_quant_hat0,
+           est1=x_quant_hat1,
+           est2=x_quant_hat2,
+           est3=x_quant_hat3,
+           est4=x_quant_hat4,
+           true = quants_known$x)
 
 }
+
 }
 \references{
 Deville, J. C., and Särndal, C. E. (1992). Calibration estimators in survey sampling.
@@ -178,8 +206,12 @@ Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for uni
 }
 \seealso{
 \code{\link[sampling:calib]{sampling::calib()}} -- for standard calibration.
+
 \code{\link[laeken:calibWeights]{laeken::calibWeights()}} -- for standard calibration.
+
 \code{\link[survey:calibrate]{survey::calibrate()}} -- for standard and more advanced calibration.
+
+\code{\link[ebal:ebalance]{ebal::ebalance()}} -- for standard entropy balancing.
 }
 \author{
 Maciej Beręsewicz

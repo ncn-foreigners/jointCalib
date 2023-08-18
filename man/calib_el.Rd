@@ -21,13 +21,14 @@ calib_el(X, d, totals, maxit = 50, tol = 1e-08)
 Returns a vector of empirical likelihood weights that sums to N
 }
 \description{
-\code{calib_el} performs calibration using empirical likelihood method. The function is taken from Wu (2005)
+\code{calib_el} performs calibration using empirical likelihood method. The function is taken from Wu (2005), if algorithm has problem with convergence codes from Zhang, Han and Wu (2022) using \code{constrOptim} is used.
 }
 \references{
-Wu, C. (2005). Algorithms and R codes for the pseudo empirical likelihood method in survey sampling. Survey Methodology, 31(2), 239..
+Wu, C. (2005). Algorithms and R codes for the pseudo empirical likelihood method in survey sampling. Survey Methodology, 31(2), 239 (code is taken from \url{https://sas.uwaterloo.ca/~cbwu/Rcodes/LagrangeM2.txt}).
+Zhang, S., Han, P., and Wu, C. (2023) Calibration Techniques Encompassing Survey Sampling, Missing Data Analysis and Causal Inference. International Statistical Review, 91: 165–192. https://doi.org/10.1111/insr.12518 (code is taken from Supplementary Materials).
 }
 \author{
-Maciej Beręsewicz based on Zhang, Han and Wu (2022)
+Maciej Beręsewicz based on Wu (2005) and Zhang, Han and Wu (2022)
 
 \loadmathjax
 }
