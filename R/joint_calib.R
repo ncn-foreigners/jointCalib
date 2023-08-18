@@ -328,9 +328,16 @@ function(formula_totals = NULL,
 
   gweights <- as.numeric(gweights)
 
-  return(list(g = gweights,
-              Xs = X,
-              totals = c(N, quantiles, pop_totals),
-              diff = colSums(X * dweights * gweights) - T_mat))
+  return(
+    structure(
+      list(g = gweights,
+           Xs = X,
+           totals = c(N, quantiles, pop_totals),
+           diff = colSums(X * dweights * gweights) - T_mat,
+           method = method,
+           backend = backend),
+      class = "jointCalib"
+      )
+  )
 }
 
