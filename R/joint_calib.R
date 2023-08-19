@@ -1,23 +1,22 @@
-#' @title Function to calibrate totals and quantiles jointly
+#' @title Function for the joint calibration of totals and quantiles
 #' @author Maciej Beręsewicz
 #'
 #' @description
-#' \code{joint_calib} allows to specify matrix of X variables for calibration of totals (intercept should not be included) and matrix of X_q variables for calibration of quantiles.
+#' \code{joint_calib} allows joint calibration of totals and quantiles. It provides a user-friendly interface that includes the specification of variables in formula notation, a vector of population totals, a list of quantiles, and a variety of backends and methods.
 #'
-#' @param formula_totals a formula with variables for calibration of totals
-#' @param formula_quantiles a formula with variables for calibration of quantiles
-#' @param data a data.frame with variables
-#' @param design a svydesign object (currently not supported)
-#' @param dweights initial d-weights for calibration (e.g. design-weights)
+#' @param formula_totals a formula with variables to calibrate the totals,
+#' @param formula_quantiles a formula with variables for quantile calibration,
+#' @param data a data.frame with variables,
+#' @param dweights initial d-weights for calibration (e.g. design weights),
 #' @param N population size for calibration of quantiles
-#' @param pop_totals a named vector of population totals for \code{X}, should be provided exactly as in `survey` package (see `survey::calibrate`)
-#' @param pop_quantiles a named list of of population quantiles for \code{X_q}
-#' @param subset a formula for subset of data
-#' @param backend specify an R package to perform calibration
-#' @param method specify distance function for calibration
-#' @param bounds a numeric vector of length two giving bounds for the g-weights
-#' @param maxit a numeric value giving the maximum number of iterations
-#' @param tol the desired accuracy for the iterative procedure (for `sampling` and `laeken`) or Tolerance in matching population total for `survey::grake` (see help for survey::grake)
+#' @param pop_totals a named vector of population totals for \code{X}. Should be provided exactly as in `survey` package (see `survey::calibrate`),
+#' @param pop_quantiles a named list of population quantiles for \code{X_q},
+#' @param subset a formula for subset of data,
+#' @param backend specify an R package to perform the calibration. Only \code{sampling}, \code{laeken}, \code{survey}, \code{ebal} or \code{base} are allowed,
+#' @param method specify method (i.e. distance function) for the calibration. Only \code{raking}, \code{linear}, \code{logit}, \code{sinh}, \code{truncated}, \code{el} (empirical likelihood), \code{eb} (entropy balancing) are allowed,
+#' @param bounds a numeric vector of length two giving bounds for the g-weights,
+#' @param maxit a numeric value representing the maximum number of iterations,
+#' @param tol the desired accuracy for the iterative procedure (for `sampling`, `laeken`, `ebal`) or tolerance in matching population total for `survey::grake` (see help for `survey::grake`)
 #' @param control a list of control parameters (currently only for \code{joint_calib_create_matrix})
 #' @param ... arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights}, \code{survey::calibrate} or \code{optim::constrOptim}
 #'
@@ -29,7 +28,14 @@
 #' Harms, T. and Duchesne, P. (2006). On calibration estimation for quantiles.
 #' Survey Methodology, 32(1), 37.
 #'
-#' Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
+#' Wu, C. (2005) Algorithms and R codes for the pseudo empirical likelihood method in survey sampling,
+#' Survey Methodology, 31(2), 239.
+#'
+#' Zhang, S., Han, P., and Wu, C. (2023) Calibration Techniques Encompassing Survey Sampling,
+#' Missing Data Analysis and Causal Inference, International Statistical Review 91, 165–192.
+#'
+#' Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse.
+#' Journal of Official Statistics, 32(1), 129-145.
 #'
 #' @returns Returns a list with containing:\cr
 #' \itemize{
@@ -37,7 +43,7 @@
 #' \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles),}
 #' \item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles}),}
 #' \item{\code{method} -- selected method,}
-#' \item{\code{backend} -- selected background.}
+#' \item{\code{backend} -- selected backend.}
 #' }
 #'
 #' @examples
@@ -181,7 +187,6 @@ joint_calib <-
 function(formula_totals = NULL,
          formula_quantiles = NULL,
          data = NULL,
-         design = NULL, ## TBA
          dweights = NULL,
          N = NULL,
          pop_totals = NULL,
@@ -197,8 +202,8 @@ function(formula_totals = NULL,
 
   ## processing
   if (is.null(formula_quantiles)) {
-    stop("Parameter formula_quantiles is required. If you would like to use
-         standard calibration we suggest using survey, sampling, laeken or ebal package.")
+    stop("The `formula_quantiles` parameter is required. If you want to use
+         standard calibration, we recommend using the `survey`, `sampling`, `laeken` or `ebal` packages.")
   }
 
   if (missing(backend)) backend <- "sampling"
@@ -212,8 +217,8 @@ function(formula_totals = NULL,
   stopifnot("Only `raking`, `linear`, logit`, `sinh`, `truncated`, `el` and `eb` are possible" =
               method %in% c("linear", "raking", "logit", "sinh", "truncated", "el", "eb"))
 
-  stopifnot("`sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
-  stopifnot("`truncated` is only possible with `sampling`" = !(method == "truncated" & backend != "sampling"))
+  stopifnot("Method `sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
+  stopifnot("Method `truncated` is only possible with `sampling`" = !(method == "truncated" & backend != "sampling"))
 
   subset <- parse(text = deparse(substitute(subset)))
 
@@ -231,9 +236,9 @@ function(formula_totals = NULL,
   if (!is.null(formula_totals)) {
     X <- stats::model.matrix(formula_totals, data)
     X <- X[, colnames(X) != "(Intercept)", drop = FALSE]
-    stopifnot("X and pop_totals have different dimensions" = ncol(X) == NROW(pop_totals))
-    stopifnot("X and pop_totals have different names"=all.equal(colnames(X), names(pop_totals)))
-    stopifnot("X contains constant" = all(base::apply(X, 2, stats::sd) > 0))
+    stopifnot("`X` and `pop_totals` have different dimensions" = ncol(X) == NROW(pop_totals))
+    stopifnot("`X` and `pop_totals` have different names"=all.equal(colnames(X), names(pop_totals)))
+    stopifnot("`X` contains constant" = all(base::apply(X, 2, stats::sd) > 0))
   } else {
     X <- NULL
   }
@@ -241,11 +246,11 @@ function(formula_totals = NULL,
    X_q <- stats::model.matrix(formula_quantiles, data)
    X_q <- X_q[, colnames(X_q) != "(Intercept)", drop = FALSE]
 
-   stopifnot("pop_quantiles contains unnamed elements" = all(sapply(names(pop_quantiles), nchar) > 0))
-   stopifnot("X_q and pop_quantiles have different dimensions" = ncol(X_q) == length(pop_quantiles))
-   stopifnot("X_q and pop_quantiles have different names" = all.equal(colnames(X_q), names(pop_quantiles)))
-   stopifnot("At least one element of pop_quantiles is empty (length of 0)" = all(lengths(pop_quantiles) > 0))
-   stopifnot("X_q contains constant" = all(base::apply(X_q, 2, stats::sd) > 0))
+   stopifnot("`pop_quantiles` contains unnamed elements" = all(sapply(names(pop_quantiles), nchar) > 0))
+   stopifnot("`X_q` and `pop_quantiles` have different dimensions" = ncol(X_q) == length(pop_quantiles))
+   stopifnot("`X_q` and `pop_quantiles` have different names" = all.equal(colnames(X_q), names(pop_quantiles)))
+   stopifnot("At least one element of `pop_quantiles` is empty (length of 0)" = all(lengths(pop_quantiles) > 0))
+   stopifnot("`X_q` contains constant" = all(base::apply(X_q, 2, stats::sd) > 0))
 
 
   if (!is.null(dweights)) {

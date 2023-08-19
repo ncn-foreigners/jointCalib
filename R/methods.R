@@ -1,6 +1,3 @@
-#' @title Print method for jointCalib class
-#' @param x object of jointCalib class
-#' @param ... Additional optional arguments
 #' @method print jointCalib
 #' @exportS3Method
 print.jointCalib <- function(x,...) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/calib_el.R
 \name{calib_el}
 \alias{calib_el}
-\title{Internal function for calibration of weights using empirical likelihood method}
+\title{An internal function for calibration of weights using empirical likelihood method}
 \usage{
 calib_el(X, d, totals, maxit = 50, tol = 1e-08)
 }

@@ -2,18 +2,18 @@
 % Please edit documentation in R/joint_calib_create_matrix.R
 \name{joint_calib_create_matrix}
 \alias{joint_calib_create_matrix}
-\title{Function to create an A matrix for calibration of quantiles}
+\title{An internal function to create an A matrix for calibration of quantiles}
 \usage{
 joint_calib_create_matrix(X_q, N, pop_quantiles, control = control_calib())
 }
 \arguments{
-\item{X_q}{matrix of variables for calibration of quantiles.}
+\item{X_q}{matrix of variables for calibration of quantiles,}
 
-\item{N}{population size for calibration of quantiles.}
+\item{N}{population size for calibration of quantiles,}
 
-\item{pop_quantiles}{a vector of population quantiles for \code{X_q}.}
+\item{pop_quantiles}{a vector of population quantiles for \code{X_q},}
 
-\item{control}{a control parameter for creation of \code{X_q} matrix}
+\item{control}{a control parameter for creation of \code{X_q} matrix.}
 }
 \value{
 Return matrix A

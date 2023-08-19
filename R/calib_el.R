@@ -1,6 +1,6 @@
 #' @import mathjaxr
 NULL
-#' @title Internal function for calibration of weights using empirical likelihood method
+#' @title An internal function for calibration of weights using empirical likelihood method
 #'
 #' @author Maciej Beręsewicz based on Wu (2005) and Zhang, Han and Wu (2022)
 #'

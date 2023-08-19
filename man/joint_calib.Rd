@@ -2,13 +2,12 @@
 % Please edit documentation in R/joint_calib.R
 \name{joint_calib}
 \alias{joint_calib}
-\title{Function to calibrate totals and quantiles jointly}
+\title{Function for the joint calibration of totals and quantiles}
 \usage{
 joint_calib(
   formula_totals = NULL,
   formula_quantiles = NULL,
   data = NULL,
-  design = NULL,
   dweights = NULL,
   N = NULL,
   pop_totals = NULL,
@@ -24,33 +23,31 @@ joint_calib(
 )
 }
 \arguments{
-\item{formula_totals}{a formula with variables for calibration of totals}
+\item{formula_totals}{a formula with variables to calibrate the totals,}
 
-\item{formula_quantiles}{a formula with variables for calibration of quantiles}
+\item{formula_quantiles}{a formula with variables for quantile calibration,}
 
-\item{data}{a data.frame with variables}
+\item{data}{a data.frame with variables,}
 
-\item{design}{a svydesign object (currently not supported)}
-
-\item{dweights}{initial d-weights for calibration (e.g. design-weights)}
+\item{dweights}{initial d-weights for calibration (e.g. design weights),}
 
 \item{N}{population size for calibration of quantiles}
 
-\item{pop_totals}{a named vector of population totals for \code{X}, should be provided exactly as in \code{survey} package (see \code{survey::calibrate})}
+\item{pop_totals}{a named vector of population totals for \code{X}. Should be provided exactly as in \code{survey} package (see \code{survey::calibrate}),}
 
-\item{pop_quantiles}{a named list of of population quantiles for \code{X_q}}
+\item{pop_quantiles}{a named list of population quantiles for \code{X_q},}
 
-\item{subset}{a formula for subset of data}
+\item{subset}{a formula for subset of data,}
 
-\item{bounds}{a numeric vector of length two giving bounds for the g-weights}
+\item{bounds}{a numeric vector of length two giving bounds for the g-weights,}
 
-\item{maxit}{a numeric value giving the maximum number of iterations}
+\item{maxit}{a numeric value representing the maximum number of iterations,}
 
-\item{tol}{the desired accuracy for the iterative procedure (for \code{sampling} and \code{laeken}) or Tolerance in matching population total for \code{survey::grake} (see help for survey::grake)}
+\item{tol}{the desired accuracy for the iterative procedure (for \code{sampling}, \code{laeken}, \code{ebal}) or tolerance in matching population total for \code{survey::grake} (see help for \code{survey::grake})}
 
-\item{backend}{specify an R package to perform calibration}
+\item{backend}{specify an R package to perform the calibration. Only \code{sampling}, \code{laeken}, \code{survey}, \code{ebal} or \code{base} are allowed,}
 
-\item{method}{specify distance function for calibration}
+\item{method}{specify method (i.e. distance function) for the calibration. Only \code{raking}, \code{linear}, \code{logit}, \code{sinh}, \code{truncated}, \code{el} (empirical likelihood), \code{eb} (entropy balancing) are allowed,}
 
 \item{control}{a list of control parameters (currently only for \code{joint_calib_create_matrix})}
 
@@ -63,11 +60,11 @@ Returns a list with containing:\cr
 \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles),}
 \item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles}),}
 \item{\code{method} -- selected method,}
-\item{\code{backend} -- selected background.}
+\item{\code{backend} -- selected backend.}
 }
 }
 \description{
-\code{joint_calib} allows to specify matrix of X variables for calibration of totals (intercept should not be included) and matrix of X_q variables for calibration of quantiles.
+\code{joint_calib} allows joint calibration of totals and quantiles. It provides a user-friendly interface that includes the specification of variables in formula notation, a vector of population totals, a list of quantiles, and a variety of backends and methods.
 }
 \examples{
 \donttest{
@@ -203,7 +200,14 @@ Journal of the American statistical Association, 87(418), 376-382.
 Harms, T. and Duchesne, P. (2006). On calibration estimation for quantiles.
 Survey Methodology, 32(1), 37.
 
-Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
+Wu, C. (2005) Algorithms and R codes for the pseudo empirical likelihood method in survey sampling,
+Survey Methodology, 31(2), 239.
+
+Zhang, S., Han, P., and Wu, C. (2023) Calibration Techniques Encompassing Survey Sampling,
+Missing Data Analysis and Causal Inference, International Statistical Review 91, 165–192.
+
+Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse.
+Journal of Official Statistics, 32(1), 129-145.
 }
 \seealso{
 \code{\link[sampling:calib]{sampling::calib()}} -- for standard calibration.

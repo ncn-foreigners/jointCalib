@@ -1,6 +1,6 @@
 #' @import mathjaxr
 NULL
-#' @title Function to create an A matrix for calibration of quantiles
+#' @title An internal function to create an A matrix for calibration of quantiles
 #' @author Maciej Beręsewicz
 #'
 #' \loadmathjax
@@ -30,10 +30,10 @@ NULL
 #'
 #' \mjseqn{i=1,...,r}, \mjseqn{j=1,...,k}, \mjseqn{t \in \mathbb{R}}.
 #'
-#' @param X_q matrix of variables for calibration of quantiles.
-#' @param N population size for calibration of quantiles.
-#' @param pop_quantiles a vector of population quantiles for \code{X_q}.
-#' @param control a control parameter for creation of \code{X_q} matrix
+#' @param X_q matrix of variables for calibration of quantiles,
+#' @param N population size for calibration of quantiles,
+#' @param pop_quantiles a vector of population quantiles for \code{X_q},
+#' @param control a control parameter for creation of \code{X_q} matrix.
 #'
 #' @references
 #'
