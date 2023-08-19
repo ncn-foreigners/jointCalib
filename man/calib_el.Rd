@@ -2,29 +2,67 @@
 % Please edit documentation in R/calib_el.R
 \name{calib_el}
 \alias{calib_el}
-\title{Weights calibration using empirical likelihood function}
+\title{Internal function for calibration of weights using empirical likelihood method}
 \usage{
 calib_el(X, d, totals, maxit = 50, tol = 1e-08)
 }
 \arguments{
-\item{X}{matrix of variables for calibration of quantiles and totals}
+\item{X}{matrix of variables for calibration of quantiles and totals (first column should be intercept),}
 
-\item{d}{initial d-weights for calibration (e.g. design-weights)}
+\item{d}{initial d-weights for calibration (e.g. design-weights),}
 
-\item{totals}{vector of totals (where 1 element is population size)}
+\item{totals}{vector of totals (where 1 element is the population size),}
 
-\item{maxit}{a numeric value giving the maximum number of iterations}
+\item{maxit}{a numeric value giving the maximum number of iterations,}
 
-\item{tol}{the desired accuracy for the iterative procedure}
+\item{tol}{the desired accuracy for the iterative procedure.}
 }
 \value{
-Returns a vector of empirical likelihood weights that sums to N
+Returns a vector of empirical likelihood g-weights
 }
 \description{
-\code{calib_el} performs calibration using empirical likelihood method. The function is taken from Wu (2005), if algorithm has problem with convergence codes from Zhang, Han and Wu (2022) using \code{constrOptim} is used.
+\code{calib_el} performs calibration using empirical likelihood (EL) method. The function is taken from Wu (2005), if algorithm has problem with convergence codes from Zhang, Han and Wu (2022) using \code{constrOptim} is used.
+
+In (pseudo) EL the following (pseudo) EL function is maximized
+
+\mjsdeqn{\sum_{i \in r} d_i\log(p_i),}
+
+under the following constraint
+
+\mjsdeqn{\sum_{i \in r} p_i = 1,}
+
+with constraints on quantiles (with notation as in Harms and Duchesne (2006))
+
+\mjsdeqn{\sum_{i \in r} p_i(a_{i} - \alpha/N) = 0,}
+
+where \mjseqn{a_{i}} is created using \code{joint_calib_create_matrix} function, and possibly means
+
+\mjsdeqn{\sum_{i \in r} p_i(x_{i} - \mu_{x}) = 0,}
+
+where \mjseqn{\mu_{x}} is known population mean of X (for simplicity we assume one known quantile and mean).
+}
+\examples{
+\donttest{
+## generate data based on Haziza and Lesage (2016)
+set.seed(123)
+N <- 1000
+x <- runif(N, 0, 80)
+y <- exp(-0.1 + 0.1*x) + rnorm(N, 0, 300)
+p <- rbinom(N, 1, prob = exp(-0.2 - 0.014*x))
+totals_known <- c(N=N, x=sum(x))
+df <- data.frame(x, y, p)
+df_resp <- df[df$p == 1, ]
+df_resp$d <- N/nrow(df_resp)
+res <- calib_el(X = model.matrix(~x, df_resp),
+                d = df_resp$d,
+                totals = totals_known)
+data.frame(known = totals_known, estimated=colSums(res*df_resp$d*model.matrix(~x, df_resp)))
+}
+
 }
 \references{
 Wu, C. (2005). Algorithms and R codes for the pseudo empirical likelihood method in survey sampling. Survey Methodology, 31(2), 239 (code is taken from \url{https://sas.uwaterloo.ca/~cbwu/Rcodes/LagrangeM2.txt}).
+
 Zhang, S., Han, P., and Wu, C. (2023) Calibration Techniques Encompassing Survey Sampling, Missing Data Analysis and Causal Inference. International Statistical Review, 91: 165–192. https://doi.org/10.1111/insr.12518 (code is taken from Supplementary Materials).
 }
 \author{

@@ -30,9 +30,9 @@ which allows to calibrate weights to known (or estimated) totals and quantiles j
 
 Currently supports:
 
-  + calibration of totals,
   + calibration of quantiles,
-  + calibration using empirical likelihood and entropy balancing method
+  + calibration of quantiles and totals,
+  + calibration using stadard calibration, empirical likelihood and entropy balancing method.
 
 Further plans: 
 
@@ -41,7 +41,7 @@ Further plans:
   + calibration for Gini and other metrices,
   + observational studies / causal inference
   + ...
-  
+
 
 ## Funding
 
@@ -60,15 +60,18 @@ remotes::install_github("ncn-foreigners/jointCalib")
 
 ## Examples 
 
-### Example 1  -- census case
-
-Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
+Load packages
 
 ```{r example1, message=FALSE}
 library(jointCalib)
 library(survey)
 library(laeken)
+library(ebal)
 ```
+
+### Example 1  -- census case
+
+Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
 
 ```{r example1-generate-data}
 set.seed(20230817)
@@ -271,7 +274,7 @@ g1 <- grake(mm = as.matrix(cbind(1, A)),
 summary(as.numeric(g1))
 ```
 
-## Example 2  -- non-probability sample
+## Example 2  -- non-probability samples
 
 ## Example 3  -- observational studies / causal inference
 

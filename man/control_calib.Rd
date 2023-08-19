@@ -4,12 +4,18 @@
 \alias{control_calib}
 \title{control parameters}
 \usage{
-control_calib(interpolation = c("logit", "linear"), logit_const = -1000)
+control_calib(
+  interpolation = c("logit", "linear"),
+  logit_const = -1000,
+  sparse = FALSE
+)
 }
 \arguments{
 \item{interpolation}{type of interpolation: \code{logit} or \code{linear}}
 
 \item{logit_const}{constant for \code{logit} interpolation}
+
+\item{sparse}{whether to use sparse matrices via \code{Matrix} package}
 }
 \value{
 a list with parameters

@@ -6,12 +6,14 @@
 #'
 #' @param interpolation type of interpolation: \code{logit} or \code{linear}
 #' @param logit_const constant for \code{logit} interpolation
+#' @param sparse whether to use sparse matrices via \code{Matrix} package
 #'
 #' @return a list with parameters
 #'
 #' @export
-control_calib <- function(interpolation=c("logit", "linear"),
-                          logit_const=-1000) {
+control_calib <- function(interpolation = c("logit", "linear"),
+                          logit_const = -1000,
+                          sparse = FALSE) {
 
   if (missing(interpolation)) interpolation <- "logit"
 

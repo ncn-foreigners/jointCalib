@@ -39,9 +39,10 @@ likelihood using codes from Wu (2005) with support of
 
 Currently supports:
 
-- calibration of totals,
 - calibration of quantiles,
-- calibration using empirical likelihood and entropy balancing method
+- calibration of quantiles and totals,
+- calibration using stadard calibration, empirical likelihood and
+  entropy balancing method.
 
 Further plans:
 
@@ -68,17 +69,20 @@ remotes::install_github("ncn-foreigners/jointCalib")
 
 ## Examples
 
-### Example 1 – census case
-
-Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting
-procedures for unit nonresponse. Journal of Official Statistics, 32(1),
-129-145.
+Load packages
 
 ``` r
 library(jointCalib)
 library(survey)
 library(laeken)
+library(ebal)
 ```
+
+### Example 1 – census case
+
+Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting
+procedures for unit nonresponse. Journal of Official Statistics, 32(1),
+129-145.
 
 ``` r
 set.seed(20230817)
@@ -122,7 +126,7 @@ result1 <- joint_calib(formula_quantiles = ~x,
                       method = "linear",
                       backend = "sampling")
 result1
-#> Weights calibrated using: linear (backend: sampling)
+#> Weights calibrated using: linear withsamplingbackend.
 #> Summary statistics for g-weights:
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #>  0.4562  0.6773  0.8180  1.0000  1.4500  2.4538 
@@ -421,6 +425,6 @@ summary(as.numeric(g1))
 #>  0.4562  0.6773  0.8180  1.0000  1.4500  2.4538
 ```
 
-## Example 2 – non-probability sample
+## Example 2 – non-probability samples
 
 ## Example 3 – observational studies / causal inference

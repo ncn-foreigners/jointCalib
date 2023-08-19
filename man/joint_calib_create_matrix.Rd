@@ -2,7 +2,7 @@
 % Please edit documentation in R/joint_calib_create_matrix.R
 \name{joint_calib_create_matrix}
 \alias{joint_calib_create_matrix}
-\title{Function to calibrate totals and quantiles jointly}
+\title{Function to create an A matrix for calibration of quantiles}
 \usage{
 joint_calib_create_matrix(X_q, N, pop_quantiles, control = control_calib())
 }
@@ -19,7 +19,15 @@ joint_calib_create_matrix(X_q, N, pop_quantiles, control = control_calib())
 Return matrix A
 }
 \description{
-\code{joint_calib_create_matrix} is function that creates an \mjseqn{A = [a_{ij}]} matrix for calibration of quantiles using a slightly modified Heavyside function based on Harms and Duchesne (2006)
+\code{joint_calib_create_matrix} is function that creates an \mjseqn{A = [a_{ij}]} matrix for calibration of quantiles. Function allows to create matrix using \code{logistic} interpolation (using \code{stats::plogis}, default) or \code{linear} (as in Harms and Duchesne (2006), i.e. slightly modified Heavyside function).
+
+In case of \code{logistic} interpolation elements of \mjseqn{A} are created as follows
+
+\mjsdeqn{a_{i j} = \frac{1}{(1 + \exp\left(-2l\left(x_{ij}-Q_{x_j, \alpha}\right)\right))N},}
+
+where \mjseqn{x_{ij}} is the \mjseqn{i}th row of the auxiliary variable \mjseqn{X_j}, \mjseqn{N} is the population size, \mjseqn{Q_{x_j, \alpha}} is the known population \mjseqn{\alpha}th quantile, and \mjseqn{l} is set to -1000 (by default).
+
+In case of  \code{linear} interpolation elements of \mjseqn{A} are created as follows
 
 \mjsdeqn{a_{i j}=
 \begin{cases}
@@ -28,7 +36,7 @@ N^{-1} \beta_{x_{j}, r}\left(Q_{x_j, \alpha}\right), & x_{i j}=U_{x_{j}, r}\left
 0, & x_{i j}>U_{x_{j}, r} \left(Q_{x_j, \alpha}\right),
 \end{cases}}
 
-\mjseqn{i=1,...,r}, \mjseqn{j=1,...,k}, where \mjseqn{r} is the set of respondents, \mjseqn{k} is the auxiliary variable index, \mjseqn{x_{ij}} is the \mjseqn{i}th row of the auxiliary variable \mjseqn{X_j}, \mjseqn{N} is the population size, \mjseqn{Q_{x_j, \alpha}} is the known population \mjseqn{\alpha}th quantile, and
+\mjseqn{i=1,...,r}, \mjseqn{j=1,...,k}, where \mjseqn{r} is the set of respondents, \mjseqn{k} is the auxiliary variable index and
 
 \mjsdeqn{L_{x_{j}, r}(t) = \max \left\lbrace\left\lbrace{x_{i j}}, i \in s \mid x_{i j} \leqslant t\right\rbrace \cup \lbrace-\infty\rbrace \right\rbrace,}
 \mjsdeqn{U_{x_{j}, r}(t) = \min \left\lbrace\left\lbrace{x_{i j}}, i \in s \mid x_{i j}>t\right\rbrace \cup \lbrace\infty\rbrace \right\rbrace,}
@@ -44,6 +52,11 @@ N <- 1000
 x <- as.matrix(rnorm(N))
 quants <- list(quantile(x, c(0.25,0.5,0.75)))
 A <- joint_calib_create_matrix(x, N, quants)
+head(A)
+colSums(A)
+
+# Create matrix with linear interpolation
+A <- joint_calib_create_matrix(x, N, quants, control_calib(interpolation="linear"))
 head(A)
 colSums(A)
 

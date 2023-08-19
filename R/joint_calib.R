@@ -33,10 +33,11 @@
 #'
 #' @returns Returns a list with containing:\cr
 #' \itemize{
-#' \item{\code{g} -- g-weight that sums up to sample size}
-#' \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles)}
-#' \item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles})}
-#' \item{\code{diff} -- difference between \code{colSums(Xs*w)} and \code{totals}}
+#' \item{\code{g} -- g-weight that sums up to sample size,}
+#' \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles),}
+#' \item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles}),}
+#' \item{\code{method} -- selected method,}
+#' \item{\code{backend} -- selected background.}
 #' }
 #'
 #' @examples
@@ -197,23 +198,22 @@ function(formula_totals = NULL,
   ## processing
   if (is.null(formula_quantiles)) {
     stop("Parameter formula_quantiles is required. If you would like to use
-         standard calibration we suggest using survey, sampling or laeken package.")
+         standard calibration we suggest using survey, sampling, laeken or ebal package.")
   }
 
   if (missing(backend)) backend <- "sampling"
   if (missing(method)) method <- "linear"
+
   if (method == "eb") backend <- "ebal"
   if (method == "el") backend <- "base"
 
   stopifnot("Only `survey`, `sampling`, `laeken`, `ebal` and `base` are possible backends" =
               backend %in% c("sampling", "laeken", "survey", "ebal", "base"))
-  stopifnot("Only `raking`, `linear`, logit` and `sinh` are possible" =
+  stopifnot("Only `raking`, `linear`, logit`, `sinh`, `truncated`, `el` and `eb` are possible" =
               method %in% c("linear", "raking", "logit", "sinh", "truncated", "el", "eb"))
-  stopifnot("`sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
-  stopifnot("`truncated` is only possible with `survey`" = !(method == "truncated" & backend != "sampling"))
 
-  #stopifnot("`el` is only possible with `base`" = !(method == "el" & backend != "base"))
-  #stopifnot("`eb` is only possible with `ebal`" = !(method == "eb" & backend != "ebal"))
+  stopifnot("`sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
+  stopifnot("`truncated` is only possible with `sampling`" = !(method == "truncated" & backend != "sampling"))
 
   subset <- parse(text = deparse(substitute(subset)))
 
@@ -262,7 +262,7 @@ function(formula_totals = NULL,
   if (all(grepl("%", quantiles))) {
     quantiles <- as.numeric(gsub("%", "", quantiles))/100
   }
-  ## create pop_totals
+  ## create pop_totals -- scaled totals are needed
   #T_mat <- c(N/N, quantiles*N, pop_totals/N)
   T_mat <- c(N, quantiles, pop_totals)
 
