@@ -7,15 +7,21 @@
 control_calib(
   interpolation = c("logit", "linear"),
   logit_const = -1000,
-  sparse = FALSE
+  survey_sparse = FALSE,
+  ebal_constraint_tolerance = 1,
+  ebal_print_level = 0
 )
 }
 \arguments{
-\item{interpolation}{type of interpolation: \code{logit} or \code{linear}}
+\item{interpolation}{type of interpolation: \code{logit} or \code{linear},}
 
-\item{logit_const}{constant for \code{logit} interpolation}
+\item{logit_const}{constant for \code{logit} interpolation,}
 
-\item{sparse}{whether to use sparse matrices via \code{Matrix} package}
+\item{survey_sparse}{whether to use sparse matrices via \code{Matrix} package in \code{\link[survey:calibrate]{survey::grake()}} (currently not supported),}
+
+\item{ebal_constraint_tolerance}{This is the tolerance level used by ebalance to decide if the moments in the reweighted data are equal to the target moments (see \code{\link[ebal:ebalance]{ebal::ebalance()}}),}
+
+\item{ebal_print_level}{Controls the level of printing: 0 (normal printing), 2 (detailed), and 3 (very detailed) (see \code{\link[ebal:ebalance]{ebal::ebalance()}}).}
 }
 \value{
 a list with parameters

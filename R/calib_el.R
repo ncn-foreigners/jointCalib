@@ -24,13 +24,15 @@ NULL
 #'
 #' \mjsdeqn{\sum_{i \in r} p_i(x_{i} - \mu_{x}) = 0,}
 #'
-#' where \mjseqn{\mu_{x}} is known population mean of X (for simplicity we assume one known quantile and mean).
+#' where \mjseqn{\mu_{x}} is known population mean of X. For simplicity of notation we assume only one quantile and one mean is known. This can be generalized to multiple quantiles and means.
 #'
 #' @param X matrix of variables for calibration of quantiles and totals (first column should be intercept),
 #' @param d initial d-weights for calibration (e.g. design-weights),
 #' @param totals vector of totals (where 1 element is the population size),
 #' @param maxit a numeric value giving the maximum number of iterations,
-#' @param tol the desired accuracy for the iterative procedure.
+#' @param tol the desired accuracy for the iterative procedure,
+#' @param eps the desired accuracy for computing the Moore-Penrose generalized inverse (see [MASS::ginv()]),
+#' @param ... arguments passed to [stats::optim] via [stats::constrOptim].
 #'
 #' @references
 #' Wu, C. (2005). Algorithms and R codes for the pseudo empirical likelihood method in survey sampling. Survey Methodology, 31(2), 239 (code is taken from \url{https://sas.uwaterloo.ca/~cbwu/Rcodes/LagrangeM2.txt}).
@@ -58,7 +60,7 @@ NULL
 #' }
 #'
 #' @export
-calib_el <- function(X, d, totals, maxit=50, tol=1e-8) {
+calib_el <- function(X, d, totals, maxit=50, tol=1e-8, eps = .Machine$double.eps, ...) {
   n_col <- NCOL(X[, -1])
   n_row <- NROW(X)
   N <- totals[1]
@@ -68,14 +70,17 @@ calib_el <- function(X, d, totals, maxit=50, tol=1e-8) {
   dif <- 1
   k <- 0
   while (dif > tol & k <= maxit) {
-    D1 <- t(U) %*% as.vector(d / (1 + U %*% lambda))
-    DD <- -t(U) %*% (as.vector(d / (1 + U %*% lambda)^2) * U)
-    D2 <- try(MASS::ginv(DD, tol = .Machine$double.eps) %*% D1)
+    p <- (1 + U %*% lambda)
+    D1 <- t(U) %*% as.vector(d / p)
+    DD <- -t(U) %*% (as.vector(d / p^2) * U)
+    D2 <- try(MASS::ginv(DD, tol = eps) %*% D1)
     if (class(D2)[1] == "try-error") break
     dif <- max(abs(D2))
-    ## other way of verifying stoping point (taking from sampling package)
-    # tr <- crossprod(X, g * d)
-    # dif <- max(abs(tr - total)/total)
+    ################################################
+    ## here we use the same stoping rule as in sampling::calib
+    ## tr <- crossprod(X, d/p)
+    ## dif <- max(abs(tr - totals)/totals)
+    ################################################
     rule <- 1
     while (rule > 0) {
       rule <- 0
@@ -85,6 +90,7 @@ calib_el <- function(X, d, totals, maxit=50, tol=1e-8) {
         D2 <- D2 / 2
     }
     lambda <- lambda - D2
+
     k <- k + 1
   }
   if (k >= maxit | class(D2)[1] == "try-error") {
@@ -103,16 +109,16 @@ calib_el <- function(X, d, totals, maxit=50, tol=1e-8) {
         theta = rep(0, n_col),
         f = ll_fun,
         grad = ll_grad,
+        method = "BFGS",
         ui = U,
         ci = rep(1 / n_row - 1, n_row),
         g_hat = U,
-        d = d
+        d = d,
+        control = list(maxit = maxit, ...)
       )
     lambda <- rho_hat$par
   }
-  ## this should be updated
-  gweight <- c(d / (1 + U %*% lambda) / n_row)
-  gweight <- gweight/sum(gweight)*N/d
 
+  gweight <- as.numeric(1/(1 + U %*% lambda))
   return(gweight)
 }

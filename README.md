@@ -1,5 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 # Overview
 
@@ -17,25 +21,23 @@ package combines the following approaches:
   Survey Methodology, 32(1), 37.
 - Wu, C. (2005) [Algorithms and R codes for the pseudo empirical
   likelihood method in survey
-  sampling](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=80fa6257cd6bb693403eb5efdef231c57a9e2969#page=135),
+  sampling](https://www150.statcan.gc.ca/n1/pub/12-001-x/2005002/article/9051-eng.pdf),
   Survey Methodology, 31(2), 239.
 - Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques
   Encompassing Survey Sampling, Missing Data Analysis and Causal
-  Inference](https://doi.org/10.1111/insr.12518), International
-  Statistical Review 91, 165–192.
+  Inference](https://onlinelibrary.wiley.com/doi/10.1111/insr.12518),
+  International Statistical Review 91, 165–192.
 
 which allows to calibrate weights to known (or estimated) totals and
 quantiles jointly. As an backend for calibration
-[sampling](https://cran.r-project.org/web/packages/sampling)
-(`sampling::calib`),
-[laeken](https://cran.r-project.org/web/packages/laeken)
+[sampling](https://CRAN.R-project.org/package=sampling)
+(`sampling::calib`), [laeken](https://CRAN.R-project.org/package=laeken)
 (`laeken::calibWeights`),
-[survey](https://cran.r-project.org/web/packages/survey/index.html)
-(`survey::grake`) or
-[ebal](https://cran.r-project.org/web/packages/ebal/index.html)
-(`ebal::eb`) package can be used. One can also apply empirical
-likelihood using codes from Wu (2005) with support of
-`stats::constrOptim` as used in Zhang, Han and Wu (2022).
+[survey](https://CRAN.R-project.org/package=survey) (`survey::grake`) or
+[ebal](https://CRAN.R-project.org/package=ebal) (`ebal::eb`) package can
+be used. One can also apply empirical likelihood using codes from Wu
+(2005) with support of `stats::constrOptim` as used in Zhang, Han and Wu
+(2022).
 
 Currently supports:
 
@@ -272,7 +274,7 @@ data.frame(true = quants_known$x,
 #> 10%  7.078067  7.085003  3.640246  7.085003  7.085003
 #> 20% 14.831221 14.824424  8.024948 14.824424 14.824424
 #> 30% 23.146180 23.287657 14.499018 23.287657 23.287657
-#> 40% 31.641911 31.802986 24.010501 31.802986 31.297922
+#> 40% 31.641911 31.802986 24.010501 31.802986 31.802986
 #> 50% 39.033812 39.154276 39.154276 38.892342 39.154276
 #> 60% 47.527168 48.252065 54.685438 48.252065 48.252065
 #> 70% 54.984229 55.311953 63.084405 54.954054 54.954054

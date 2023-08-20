@@ -17,6 +17,7 @@
 #' @param bounds a numeric vector of length two giving bounds for the g-weights,
 #' @param maxit a numeric value representing the maximum number of iterations,
 #' @param tol the desired accuracy for the iterative procedure (for `sampling`, `laeken`, `ebal`) or tolerance in matching population total for `survey::grake` (see help for `survey::grake`)
+#' @param eps the desired accuracy for computing the Moore-Penrose generalized inverse (see [MASS::ginv()])
 #' @param control a list of control parameters (currently only for \code{joint_calib_create_matrix})
 #' @param ... arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights}, \code{survey::calibrate} or \code{optim::constrOptim}
 #'
@@ -192,11 +193,12 @@ function(formula_totals = NULL,
          pop_totals = NULL,
          pop_quantiles = NULL,
          subset = NULL,
+         backend = c("sampling", "laeken", "survey", "ebal", "base"),
+         method = c("raking", "linear", "logit", "sinh", "truncated", "el", "eb"),
          bounds = c(0, 10),
          maxit = 50,
          tol = 1e-8,
-         backend = c("sampling", "laeken", "survey", "ebal", "base"),
-         method = c("raking", "linear", "logit", "sinh", "truncated", "el", "eb"),
+         eps = .Machine$double.eps,
          control = control_calib(),
          ...) {
 
@@ -303,6 +305,7 @@ function(formula_totals = NULL,
                                                      bounds = bounds,
                                                      maxit = maxit,
                                                      tol = tol,
+                                                     eps = .Machine$double.eps,
                                                      ...),
                      "survey" = survey::grake(mm = X,
                                               ww = dweights,
@@ -322,14 +325,15 @@ function(formula_totals = NULL,
                                         coefs = c(log(T_mat[1]/NROW(X)), rep(0, (NCOL(X) - 1))),
                                         base.weight = dweights,
                                         max.iterations = maxit,
-                                        constraint.tolerance = 1, ## to control
-                                        print.level = 0 ## to control
+                                        constraint.tolerance = control$ebal_constraint_tolerance,
+                                        print.level = control$ebal_print_level
                                         )$Weights.ebal/dweights,
                      "base" = calib_el(X = X,
                                         d = dweights,
                                         totals = T_mat,
                                         tol = tol,
-                                        maxit = maxit))
+                                        maxit = maxit,
+                                        eps = eps))
 
   gweights <- as.numeric(gweights)
 

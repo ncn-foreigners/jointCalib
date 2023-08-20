@@ -1,6 +1,6 @@
 Package: jointCalib
 Type: Package
-Title: A joint calibration of totals and quantiles
+Title: A Joint Calibration of Totals and Quantiles
 Version: 0.1.0
 Authors@R:
   c(person(given = "Maciej",
@@ -8,7 +8,7 @@ Authors@R:
              role = c("aut", "cre"),
              email = "maciej.beresewicz@ue.poznan.pl",
              comment = c(ORCID = "0000-0002-8281-4301")))
-Description: A small package that contains functions to conduct a joint calibration of totals and quantiles. Calibration for totals is based Deville and S{\"a}rndal (1992) <doi:10.2307/2290268>, calibration for quantiles is based on Harms and Duchesne (2006). Package uses standard calibration via survey, sampling or laeken packages, entropy balancing using ebal and empirical likelihood method based on codes from Wu (2005).
+Description: A small package that contains functions to conduct a joint calibration of totals and quantiles. Calibration for totals is based Deville and Särndal (1992) <doi:10.1080/01621459.1992.10475217>, calibration for quantiles is based on Harms and Duchesne (2006). Package uses standard calibration via survey, sampling or laeken packages, entropy balancing using ebal and empirical likelihood method based on codes from Wu (2005).
 License: GPL-3
 Encoding: UTF-8
 RdMacros: mathjaxr

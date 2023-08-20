@@ -4,7 +4,7 @@
 \alias{calib_el}
 \title{An internal function for calibration of weights using empirical likelihood method}
 \usage{
-calib_el(X, d, totals, maxit = 50, tol = 1e-08)
+calib_el(X, d, totals, maxit = 50, tol = 1e-08, eps = .Machine$double.eps, ...)
 }
 \arguments{
 \item{X}{matrix of variables for calibration of quantiles and totals (first column should be intercept),}
@@ -15,7 +15,11 @@ calib_el(X, d, totals, maxit = 50, tol = 1e-08)
 
 \item{maxit}{a numeric value giving the maximum number of iterations,}
 
-\item{tol}{the desired accuracy for the iterative procedure.}
+\item{tol}{the desired accuracy for the iterative procedure,}
+
+\item{eps}{the desired accuracy for computing the Moore-Penrose generalized inverse (see \code{\link[MASS:ginv]{MASS::ginv()}}),}
+
+\item{...}{arguments passed to \link[stats:optim]{stats::optim} via \link[stats:constrOptim]{stats::constrOptim}.}
 }
 \value{
 Returns a vector of empirical likelihood g-weights
@@ -39,7 +43,7 @@ where \mjseqn{a_{i}} is created using \code{joint_calib_create_matrix} function,
 
 \mjsdeqn{\sum_{i \in r} p_i(x_{i} - \mu_{x}) = 0,}
 
-where \mjseqn{\mu_{x}} is known population mean of X (for simplicity we assume one known quantile and mean).
+where \mjseqn{\mu_{x}} is known population mean of X. For simplicity of notation we assume only one quantile and one mean is known. This can be generalized to multiple quantiles and means.
 }
 \examples{
 \donttest{

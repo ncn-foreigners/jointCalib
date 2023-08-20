@@ -13,11 +13,12 @@ joint_calib(
   pop_totals = NULL,
   pop_quantiles = NULL,
   subset = NULL,
+  backend = c("sampling", "laeken", "survey", "ebal", "base"),
+  method = c("raking", "linear", "logit", "sinh", "truncated", "el", "eb"),
   bounds = c(0, 10),
   maxit = 50,
   tol = 1e-08,
-  backend = c("sampling", "laeken", "survey", "ebal", "base"),
-  method = c("raking", "linear", "logit", "sinh", "truncated", "el", "eb"),
+  eps = .Machine$double.eps,
   control = control_calib(),
   ...
 )
@@ -39,15 +40,17 @@ joint_calib(
 
 \item{subset}{a formula for subset of data,}
 
+\item{backend}{specify an R package to perform the calibration. Only \code{sampling}, \code{laeken}, \code{survey}, \code{ebal} or \code{base} are allowed,}
+
+\item{method}{specify method (i.e. distance function) for the calibration. Only \code{raking}, \code{linear}, \code{logit}, \code{sinh}, \code{truncated}, \code{el} (empirical likelihood), \code{eb} (entropy balancing) are allowed,}
+
 \item{bounds}{a numeric vector of length two giving bounds for the g-weights,}
 
 \item{maxit}{a numeric value representing the maximum number of iterations,}
 
 \item{tol}{the desired accuracy for the iterative procedure (for \code{sampling}, \code{laeken}, \code{ebal}) or tolerance in matching population total for \code{survey::grake} (see help for \code{survey::grake})}
 
-\item{backend}{specify an R package to perform the calibration. Only \code{sampling}, \code{laeken}, \code{survey}, \code{ebal} or \code{base} are allowed,}
-
-\item{method}{specify method (i.e. distance function) for the calibration. Only \code{raking}, \code{linear}, \code{logit}, \code{sinh}, \code{truncated}, \code{el} (empirical likelihood), \code{eb} (entropy balancing) are allowed,}
+\item{eps}{the desired accuracy for computing the Moore-Penrose generalized inverse (see \code{\link[MASS:ginv]{MASS::ginv()}})}
 
 \item{control}{a list of control parameters (currently only for \code{joint_calib_create_matrix})}
 

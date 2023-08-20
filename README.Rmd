@@ -4,6 +4,11 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -22,11 +27,11 @@ A small package for joint calibration of totals and quantiles. The package combi
 
 + Deville, J. C., and Särndal, C. E. (1992). [Calibration estimators in survey sampling](https://www.tandfonline.com/doi/abs/10.1080/01621459.1992.10475217). Journal of the American statistical Association, 87(418), 376-382.
 + Harms, T. and Duchesne, P. (2006). [On calibration estimation for quantiles](https://www150.statcan.gc.ca/n1/pub/12-001-x/2006001/article/9255-eng.pdf). Survey Methodology, 32(1), 37.
-+ Wu, C. (2005) [Algorithms and R codes for the pseudo empirical likelihood method in survey sampling](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=80fa6257cd6bb693403eb5efdef231c57a9e2969#page=135), Survey Methodology, 31(2), 239.
-+ Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques Encompassing Survey Sampling, Missing Data Analysis and Causal Inference](https://doi.org/10.1111/insr.12518 ), International Statistical Review 91, 165–192.
++ Wu, C. (2005) [Algorithms and R codes for the pseudo empirical likelihood method in survey sampling](https://www150.statcan.gc.ca/n1/pub/12-001-x/2005002/article/9051-eng.pdf), Survey Methodology, 31(2), 239.
++ Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques Encompassing Survey Sampling, Missing Data Analysis and Causal Inference](https://onlinelibrary.wiley.com/doi/10.1111/insr.12518), International Statistical Review 91, 165–192.
 
 
-which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://cran.r-project.org/web/packages/sampling) (`sampling::calib`), [laeken](https://cran.r-project.org/web/packages/laeken) (`laeken::calibWeights`),  [survey](https://cran.r-project.org/web/packages/survey/index.html) (`survey::grake`) or [ebal](https://cran.r-project.org/web/packages/ebal/index.html) (`ebal::eb`) package can be used. One can also apply empirical likelihood using codes from Wu (2005) with support of `stats::constrOptim` as used in Zhang, Han and Wu (2022).
+which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://CRAN.R-project.org/package=sampling) (`sampling::calib`), [laeken](https://CRAN.R-project.org/package=laeken) (`laeken::calibWeights`),  [survey](https://CRAN.R-project.org/package=survey) (`survey::grake`) or [ebal](https://CRAN.R-project.org/package=ebal) (`ebal::eb`) package can be used. One can also apply empirical likelihood using codes from Wu (2005) with support of `stats::constrOptim` as used in Zhang, Han and Wu (2022).
 
 Currently supports:
 
@@ -277,4 +282,6 @@ summary(as.numeric(g1))
 ## Example 2  -- non-probability samples
 
 ## Example 3  -- observational studies / causal inference
+
+
 
