@@ -1,4 +1,5 @@
 ## create data
+library(survey)
 set.seed(123)
 N <- 1000
 x <- runif(N, 0, 80)
@@ -10,7 +11,8 @@ totals_known <- c(x=sum(x))
 df <- data.frame(x, y, p)
 df_resp <- df[df$p == 1, ]
 df_resp$d <- N/nrow(df_resp)
-
+svydes <- svydesign(ids=~1, data=df, weights = ~1)
+quants_known_svyq <- svyquantile(~ x, svydes, probs)
 
 # example 1 -- only quantiles ---------------------------------------------
 
@@ -177,3 +179,15 @@ expect_true(
 )
 
 
+# test svyquantile --------------------------------------------------------
+
+expect_silent(
+  result5 <- joint_calib(formula_quantiles = ~x,
+                         data = df_resp,
+                         dweights = df_resp$d,
+                         N = N,
+                         pop_quantiles = quants_known_svyq,
+                         method = "linear",
+                         backend = "sampling")
+
+)

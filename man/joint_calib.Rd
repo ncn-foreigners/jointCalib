@@ -36,7 +36,7 @@ joint_calib(
 
 \item{pop_totals}{a named vector of population totals for \code{X}. Should be provided exactly as in \code{survey} package (see \code{survey::calibrate}),}
 
-\item{pop_quantiles}{a named list of population quantiles for \code{X_q},}
+\item{pop_quantiles}{a named list of population quantiles for \code{X_q} or an \code{newsvyquantile} class object (from \code{survey::svyquantile} function),}
 
 \item{subset}{a formula for subset of data,}
 

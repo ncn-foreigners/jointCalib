@@ -10,7 +10,7 @@
 #' @param dweights initial d-weights for calibration (e.g. design weights),
 #' @param N population size for calibration of quantiles
 #' @param pop_totals a named vector of population totals for \code{X}. Should be provided exactly as in `survey` package (see `survey::calibrate`),
-#' @param pop_quantiles a named list of population quantiles for \code{X_q},
+#' @param pop_quantiles a named list of population quantiles for \code{X_q} or an \code{newsvyquantile} class object (from \code{survey::svyquantile} function),
 #' @param subset a formula for subset of data,
 #' @param backend specify an R package to perform the calibration. Only \code{sampling}, \code{laeken}, \code{survey}, \code{ebal} or \code{base} are allowed,
 #' @param method specify method (i.e. distance function) for the calibration. Only \code{raking}, \code{linear}, \code{logit}, \code{sinh}, \code{truncated}, \code{el} (empirical likelihood), \code{eb} (entropy balancing) are allowed,
@@ -208,6 +208,9 @@ function(formula_totals = NULL,
          standard calibration, we recommend using the `survey`, `sampling`, `laeken` or `ebal` packages.")
   }
 
+  stopifnot("The `pop_quantiles` parameter should be of `list` or `newsvyquantile` class" =
+              inherits(pop_quantiles, "newsvyquantile") | inherits(pop_quantiles, "list"))
+
   if (missing(backend)) backend <- "sampling"
   if (missing(method)) method <- "linear"
 
@@ -262,13 +265,24 @@ function(formula_totals = NULL,
   }
 
   ## processing quantiles [more robust is needed]
-  pop_quantiles <- pop_quantiles[colnames(X_q)]
-  names(pop_quantiles) <- NULL
-  totals_q_vec <- unlist(pop_quantiles)
-  quantiles <- names(totals_q_vec)
-  if (all(grepl("%", quantiles))) {
-    quantiles <- as.numeric(gsub("%", "", quantiles))/100
+  if (inherits(pop_quantiles, "list")) {
+    pop_quantiles <- pop_quantiles[colnames(X_q)]
+    names(pop_quantiles) <- NULL
+    totals_q_vec <- unlist(pop_quantiles)
+    quantiles <- names(totals_q_vec)
+    if (all(grepl("%", quantiles))) {
+      quantiles <- as.numeric(gsub("%", "", quantiles))/100
+    }
   }
+  if (inherits(pop_quantiles, "newsvyquantile")) {
+    pop_quantiles <- lapply(pop_quantiles, FUN=function(x) x[,1])
+    pop_quantiles <- pop_quantiles[colnames(X_q)]
+    names(pop_quantiles) <- NULL
+    totals_q_vec <- unlist(pop_quantiles)
+    quantiles <- names(totals_q_vec)
+    quantiles <- as.numeric(quantiles)
+  }
+
   ## create pop_totals -- scaled totals are needed
   #T_mat <- c(N/N, quantiles*N, pop_totals/N)
   T_mat <- c(N, quantiles, pop_totals)
