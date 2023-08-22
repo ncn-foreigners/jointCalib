@@ -3,6 +3,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
 # Overview
@@ -38,6 +39,14 @@ quantiles jointly. As an backend for calibration
 be used. One can also apply empirical likelihood using codes from Wu
 (2005) with support of `stats::constrOptim` as used in Zhang, Han and Wu
 (2022).
+
+| backend    | method                                        | function called                 |
+|------------|-----------------------------------------------|---------------------------------|
+| `sampling` | `c("raking", "linear", "logit", "truncated")` | `sampling::calib`               |
+| `laeken`   | `c("raking", "linear", "logit")`              | `laeken::calibWeights`          |
+| `survey`   | `c("raking", "linear", "logit", "sinh")`      | `survey::grake`                 |
+| `ebal`     | `eb`                                          | `ebal::eb`                      |
+| `stats`    | `el`                                          | R code and `stats::constrOptim` |
 
 Currently supports:
 

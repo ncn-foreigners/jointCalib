@@ -5,9 +5,10 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
 
+[![R-CMD-check](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml)
+
+<!-- badges: end -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -18,52 +19,79 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 # Overview
 
 ## Details
 
-A small package for joint calibration of totals and quantiles. The package combines the following approaches:
+A small package for joint calibration of totals and quantiles. The
+package combines the following approaches:
 
-+ Deville, J. C., and Särndal, C. E. (1992). [Calibration estimators in survey sampling](https://www.tandfonline.com/doi/abs/10.1080/01621459.1992.10475217). Journal of the American statistical Association, 87(418), 376-382.
-+ Harms, T. and Duchesne, P. (2006). [On calibration estimation for quantiles](https://www150.statcan.gc.ca/n1/pub/12-001-x/2006001/article/9255-eng.pdf). Survey Methodology, 32(1), 37.
-+ Wu, C. (2005) [Algorithms and R codes for the pseudo empirical likelihood method in survey sampling](https://www150.statcan.gc.ca/n1/pub/12-001-x/2005002/article/9051-eng.pdf), Survey Methodology, 31(2), 239.
-+ Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques Encompassing Survey Sampling, Missing Data Analysis and Causal Inference](https://onlinelibrary.wiley.com/doi/10.1111/insr.12518), International Statistical Review 91, 165–192.
+-   Deville, J. C., and Särndal, C. E. (1992). [Calibration estimators
+    in survey
+    sampling](https://www.tandfonline.com/doi/abs/10.1080/01621459.1992.10475217).
+    Journal of the American statistical Association, 87(418), 376-382.
+-   Harms, T. and Duchesne, P. (2006). [On calibration estimation for
+    quantiles](https://www150.statcan.gc.ca/n1/pub/12-001-x/2006001/article/9255-eng.pdf).
+    Survey Methodology, 32(1), 37.
+-   Wu, C. (2005) [Algorithms and R codes for the pseudo empirical
+    likelihood method in survey
+    sampling](https://www150.statcan.gc.ca/n1/pub/12-001-x/2005002/article/9051-eng.pdf),
+    Survey Methodology, 31(2), 239.
+-   Zhang, S., Han, P., and Wu, C. (2023) [Calibration Techniques
+    Encompassing Survey Sampling, Missing Data Analysis and Causal
+    Inference](https://onlinelibrary.wiley.com/doi/10.1111/insr.12518),
+    International Statistical Review 91, 165--192.
 
+which allows to calibrate weights to known (or estimated) totals and
+quantiles jointly. As an backend for calibration
+[sampling](https://CRAN.R-project.org/package=sampling)
+(`sampling::calib`), [laeken](https://CRAN.R-project.org/package=laeken)
+(`laeken::calibWeights`),
+[survey](https://CRAN.R-project.org/package=survey) (`survey::grake`) or
+[ebal](https://CRAN.R-project.org/package=ebal) (`ebal::eb`) package can
+be used. One can also apply empirical likelihood using codes from Wu
+(2005) with support of `stats::constrOptim` as used in Zhang, Han and Wu
+(2022).
 
-which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration [sampling](https://CRAN.R-project.org/package=sampling) (`sampling::calib`), [laeken](https://CRAN.R-project.org/package=laeken) (`laeken::calibWeights`),  [survey](https://CRAN.R-project.org/package=survey) (`survey::grake`) or [ebal](https://CRAN.R-project.org/package=ebal) (`ebal::eb`) package can be used. One can also apply empirical likelihood using codes from Wu (2005) with support of `stats::constrOptim` as used in Zhang, Han and Wu (2022).
+| backend    | method                                        | function called        |
+|---------------|-------------------------------------------|---------------|
+| `sampling` | `c("raking", "linear", "logit", "truncated")` | `sampling::calib`      |
+| `laeken`   | `c("raking", "linear", "logit")`              | `laeken::calibWeights` |
+| `survey`   | `c("raking", "linear", "logit", "sinh")`      | `survey::grake` |
+| `ebal`     | `eb`                                          | `ebal::eb`             |
+| `stats`     | `el`                                         | R code and `stats::constrOptim` |
 
 Currently supports:
 
-  + calibration of quantiles,
-  + calibration of quantiles and totals,
-  + calibration using stadard calibration, empirical likelihood and entropy balancing method.
+-   calibration of quantiles,
+-   calibration of quantiles and totals,
+-   calibration using stadard calibration, empirical likelihood and
+    entropy balancing method.
 
-Further plans: 
+Further plans:
 
-  + generalized calibration via `sampling::gencalib`,
-  + calibrated / covariate balancing propensity score,
-  + calibration for Gini and other metrices,
-  + observational studies / causal inference
-  + ...
-
+-   generalized calibration via `sampling::gencalib`,
+-   calibrated / covariate balancing propensity score,
+-   calibration for Gini and other metrices,
+-   observational studies / causal inference
+-   ...
 
 ## Funding
 
-Work on this package is supported by the the National Science Center, OPUS 22 grant no. 2020/39/B/HS4/00941.
-
+Work on this package is supported by the the National Science Center,
+OPUS 22 grant no. 2020/39/B/HS4/00941.
 
 ## Installation
 
-You can install the development version of `jointCalib` from GitHub with:
+You can install the development version of `jointCalib` from GitHub
+with:
 
 ```{r, eval=FALSE}
 # install.packages("remotes")
 remotes::install_github("ncn-foreigners/jointCalib")
 ```
 
-
-## Examples 
+## Examples
 
 Load packages
 
@@ -74,9 +102,11 @@ library(laeken)
 library(ebal)
 ```
 
-### Example 1  -- census case
+### Example 1 -- census case
 
-Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting procedures for unit nonresponse. Journal of Official Statistics, 32(1), 129-145.
+Based on Haziza, D., and Lesage, É. (2016). A discussion of weighting
+procedures for unit nonresponse. Journal of Official Statistics, 32(1),
+129-145.
 
 ```{r example1-generate-data}
 set.seed(20230817)
@@ -159,6 +189,7 @@ summary(result3$g)
 ```{r}
 data.frame(true = quants_known$x, est = weightedQuantile(df_resp$x, result3$g*df_resp$d, probs))
 ```
+
 Empirical likelihood method can be applied using the following code
 
 ```{r example1-joint-el}
@@ -191,6 +222,7 @@ result4c <- calib_el(X = result4b$Xs[, c(1, 11)],
 
 summary(result4c)
 ```
+
 ```{r}
 data.frame(true = quants_known$x, 
            est = weightedQuantile(df_resp$x, result2$g*df_resp$d, probs),
@@ -211,16 +243,16 @@ result5 <- joint_calib(formula_quantiles = ~ x,
 summary(result5$g)
 ```
 
-
 Finally, compare all method with true Y distribution where
 
-+ `est_y1` -- weights calibrated to quantiles only,
-+ `est_y2` -- weights calibrated to quantiles and totals,
-+ `est_y3` -- weights calibrated to quantiles and totals using `logit` distance and range limitations,
-+ `est_y4` -- weights calibrated to means only using `el`.
-+ `est_y5` -- weights calibrated to quantiles only using `el`.
-+ `est_y6` -- weights calibrated to quantiles and totals using `el`.
-+ `est_y7` -- weights calibrated to quantiles and totals using `eb`.
+-   `est_y1` -- weights calibrated to quantiles only,
+-   `est_y2` -- weights calibrated to quantiles and totals,
+-   `est_y3` -- weights calibrated to quantiles and totals using `logit`
+    distance and range limitations,
+-   `est_y4` -- weights calibrated to means only using `el`.
+-   `est_y5` -- weights calibrated to quantiles only using `el`.
+-   `est_y6` -- weights calibrated to quantiles and totals using `el`.
+-   `est_y7` -- weights calibrated to quantiles and totals using `eb`.
 
 ```{r results-combined}
 results_y <- data.frame(true_y = y_quant_true,
@@ -234,7 +266,9 @@ results_y <- data.frame(true_y = y_quant_true,
 
 results_y
 ```
-Here is the sum of squares and calibration of totals and means seems to be the best.
+
+Here is the sum of squares and calibration of totals and means seems to
+be the best.
 
 ```{r}
 apply(results_y[, -1], 2, FUN = function(x) sum((x-results_y[,1])^2))
@@ -264,6 +298,7 @@ names(pop_totals) <- c("(Intercept)", colnames(A))
 m1_cal <- calibrate(m1, quants_formula, pop_totals)
 svytotal(quants_formula, m1_cal)
 ```
+
 Calibration using `grake` (low level)
 
 ```{r}
@@ -279,9 +314,6 @@ g1 <- grake(mm = as.matrix(cbind(1, A)),
 summary(as.numeric(g1))
 ```
 
-## Example 2  -- non-probability samples
+## Example 2 -- non-probability samples
 
-## Example 3  -- observational studies / causal inference
-
-
-
+## Example 3 -- observational studies / causal inference

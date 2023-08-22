@@ -252,10 +252,10 @@ function(formula_totals = NULL,
    X_q <- X_q[, colnames(X_q) != "(Intercept)", drop = FALSE]
 
    stopifnot("`pop_quantiles` contains unnamed elements" = all(sapply(names(pop_quantiles), nchar) > 0))
-   stopifnot("`X_q` and `pop_quantiles` have different dimensions" = ncol(X_q) == length(pop_quantiles))
-   stopifnot("`X_q` and `pop_quantiles` have different names" = all.equal(colnames(X_q), names(pop_quantiles)))
+   stopifnot("`formula_quantiles` and `pop_quantiles` have different dimensions" = ncol(X_q) == length(pop_quantiles))
+   stopifnot("`formula_quantiles` and `pop_quantiles` have different names" = all.equal(colnames(X_q), names(pop_quantiles)))
    stopifnot("At least one element of `pop_quantiles` is empty (length of 0)" = all(lengths(pop_quantiles) > 0))
-   stopifnot("`X_q` contains constant" = all(base::apply(X_q, 2, stats::sd) > 0))
+   stopifnot("`formula_quantiles` contains constant" = all(base::apply(X_q, 2, stats::sd) > 0))
 
 
   if (!is.null(dweights)) {
