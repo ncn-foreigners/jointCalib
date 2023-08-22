@@ -59,7 +59,7 @@ be used. One can also apply empirical likelihood using codes from Wu
 | `laeken`   | `c("raking", "linear", "logit")`              | `laeken::calibWeights` |
 | `survey`   | `c("raking", "linear", "logit", "sinh")`      | `survey::grake` |
 | `ebal`     | `eb`                                          | `ebal::eb`             |
-| `stats`     | `el`                                         | R code and `stats::constrOptim` |
+| `base`     | `el`                                         | R code and `stats::constrOptim` |
 
 Currently supports:
 
