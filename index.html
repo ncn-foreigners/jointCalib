@@ -58,6 +58,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
+<!-- badges: end -->
 <div class="section level1">
 <div class="page-header"><h1 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h1></div>
@@ -72,6 +73,46 @@
 <li>Zhang, S., Han, P., and Wu, C. (2023) <a href="https://onlinelibrary.wiley.com/doi/10.1111/insr.12518" class="external-link">Calibration Techniques Encompassing Survey Sampling, Missing Data Analysis and Causal Inference</a>, International Statistical Review 91, 165–192.</li>
 </ul>
 <p>which allows to calibrate weights to known (or estimated) totals and quantiles jointly. As an backend for calibration <a href="https://CRAN.R-project.org/package=sampling" class="external-link">sampling</a> (<code><a href="https://rdrr.io/pkg/sampling/man/calib.html" class="external-link">sampling::calib</a></code>), <a href="https://CRAN.R-project.org/package=laeken" class="external-link">laeken</a> (<code><a href="https://rdrr.io/pkg/laeken/man/calibWeights.html" class="external-link">laeken::calibWeights</a></code>), <a href="https://CRAN.R-project.org/package=survey" class="external-link">survey</a> (<code><a href="https://rdrr.io/pkg/survey/man/calibrate.html" class="external-link">survey::grake</a></code>) or <a href="https://CRAN.R-project.org/package=ebal" class="external-link">ebal</a> (<code><a href="https://rdrr.io/pkg/ebal/man/eb.html" class="external-link">ebal::eb</a></code>) package can be used. One can also apply empirical likelihood using codes from Wu (2005) with support of <code><a href="https://rdrr.io/r/stats/constrOptim.html" class="external-link">stats::constrOptim</a></code> as used in Zhang, Han and Wu (2022).</p>
+<table class="table">
+<colgroup>
+<col width="13%">
+<col width="51%">
+<col width="35%">
+</colgroup>
+<thead><tr class="header">
+<th>backend</th>
+<th>method</th>
+<th>function called</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>sampling</code></td>
+<td><code>c("raking", "linear", "logit", "truncated")</code></td>
+<td><code><a href="https://rdrr.io/pkg/sampling/man/calib.html" class="external-link">sampling::calib</a></code></td>
+</tr>
+<tr class="even">
+<td><code>laeken</code></td>
+<td><code>c("raking", "linear", "logit")</code></td>
+<td><code><a href="https://rdrr.io/pkg/laeken/man/calibWeights.html" class="external-link">laeken::calibWeights</a></code></td>
+</tr>
+<tr class="odd">
+<td><code>survey</code></td>
+<td><code>c("raking", "linear", "logit", "sinh")</code></td>
+<td><code><a href="https://rdrr.io/pkg/survey/man/calibrate.html" class="external-link">survey::grake</a></code></td>
+</tr>
+<tr class="even">
+<td><code>ebal</code></td>
+<td><code>eb</code></td>
+<td><code><a href="https://rdrr.io/pkg/ebal/man/eb.html" class="external-link">ebal::eb</a></code></td>
+</tr>
+<tr class="odd">
+<td><code>stats</code></td>
+<td><code>el</code></td>
+<td>R code and <code><a href="https://rdrr.io/r/stats/constrOptim.html" class="external-link">stats::constrOptim</a></code>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Currently supports:</p>
 <ul>
 <li>calibration of quantiles,</li>
