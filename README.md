@@ -2,7 +2,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncn-foreigners/calibrate-quantiles/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/ncn-foreigners/jointCalib/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncn-foreigners/jointCalib/actions/workflows/R-CMD-check.yaml)
 
 <!-- badges: end -->
 
@@ -52,20 +52,20 @@ Currently supports:
 
 - calibration of quantiles,
 - calibration of quantiles and totals,
-- calibration using stadard calibration, empirical likelihood and
+- calibration using standard calibration, empirical likelihood and
   entropy balancing method.
 
 Further plans:
 
 - generalized calibration via `sampling::gencalib`,
 - calibrated / covariate balancing propensity score,
-- calibration for Gini and other metrices,
+- calibration for Gini and other metrics,
 - observational studies / causal inference
 - …
 
 ## Funding
 
-Work on this package is supported by the the National Science Center,
+Work on this package is supported by the the National Science Centre,
 OPUS 22 grant no. 2020/39/B/HS4/00941.
 
 ## Installation

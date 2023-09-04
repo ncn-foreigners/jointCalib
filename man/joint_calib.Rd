@@ -32,11 +32,11 @@ joint_calib(
 
 \item{dweights}{initial d-weights for calibration (e.g. design weights),}
 
-\item{N}{population size for calibration of quantiles}
+\item{N}{population size for calibration of quantiles,}
 
-\item{pop_totals}{a named vector of population totals for \code{X}. Should be provided exactly as in \code{survey} package (see \code{survey::calibrate}),}
+\item{pop_totals}{a named vector of population totals for \code{formula_totals}. Should be provided exactly as in \code{survey} package (see \code{survey::calibrate}),}
 
-\item{pop_quantiles}{a named list of population quantiles for \code{X_q} or an \code{newsvyquantile} class object (from \code{survey::svyquantile} function),}
+\item{pop_quantiles}{a named list of population quantiles for \code{formula_quantiles} or an \code{newsvyquantile} class object (from \code{survey::svyquantile} function),}
 
 \item{subset}{a formula for subset of data,}
 
@@ -48,7 +48,7 @@ joint_calib(
 
 \item{maxit}{a numeric value representing the maximum number of iterations,}
 
-\item{tol}{the desired accuracy for the iterative procedure (for \code{sampling}, \code{laeken}, \code{ebal}) or tolerance in matching population total for \code{survey::grake} (see help for \code{survey::grake})}
+\item{tol}{the desired accuracy for the iterative procedure (for \code{sampling}, \code{laeken}, \code{ebal}, \code{el}) or tolerance in matching population total for \code{survey::grake} (see help for \link[survey:calibrate]{survey::grake})}
 
 \item{eps}{the desired accuracy for computing the Moore-Penrose generalized inverse (see \code{\link[MASS:ginv]{MASS::ginv()}})}
 

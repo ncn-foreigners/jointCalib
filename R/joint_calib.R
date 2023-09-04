@@ -8,15 +8,15 @@
 #' @param formula_quantiles a formula with variables for quantile calibration,
 #' @param data a data.frame with variables,
 #' @param dweights initial d-weights for calibration (e.g. design weights),
-#' @param N population size for calibration of quantiles
-#' @param pop_totals a named vector of population totals for \code{X}. Should be provided exactly as in `survey` package (see `survey::calibrate`),
-#' @param pop_quantiles a named list of population quantiles for \code{X_q} or an \code{newsvyquantile} class object (from \code{survey::svyquantile} function),
+#' @param N population size for calibration of quantiles,
+#' @param pop_totals a named vector of population totals for \code{formula_totals}. Should be provided exactly as in `survey` package (see `survey::calibrate`),
+#' @param pop_quantiles a named list of population quantiles for \code{formula_quantiles} or an \code{newsvyquantile} class object (from \code{survey::svyquantile} function),
 #' @param subset a formula for subset of data,
 #' @param backend specify an R package to perform the calibration. Only \code{sampling}, \code{laeken}, \code{survey}, \code{ebal} or \code{base} are allowed,
 #' @param method specify method (i.e. distance function) for the calibration. Only \code{raking}, \code{linear}, \code{logit}, \code{sinh}, \code{truncated}, \code{el} (empirical likelihood), \code{eb} (entropy balancing) are allowed,
 #' @param bounds a numeric vector of length two giving bounds for the g-weights,
 #' @param maxit a numeric value representing the maximum number of iterations,
-#' @param tol the desired accuracy for the iterative procedure (for `sampling`, `laeken`, `ebal`) or tolerance in matching population total for `survey::grake` (see help for `survey::grake`)
+#' @param tol the desired accuracy for the iterative procedure (for \code{sampling}, \code{laeken}, \code{ebal}, \code{el}) or tolerance in matching population total for \code{survey::grake} (see help for [survey::grake])
 #' @param eps the desired accuracy for computing the Moore-Penrose generalized inverse (see [MASS::ginv()])
 #' @param control a list of control parameters (currently only for \code{joint_calib_create_matrix})
 #' @param ... arguments passed either to \code{sampling::calib}, \code{laeken::calibWeights}, \code{survey::calibrate} or \code{optim::constrOptim}
