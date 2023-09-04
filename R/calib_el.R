@@ -42,7 +42,6 @@ NULL
 #' @return Returns a vector of empirical likelihood g-weights
 #'
 #' @examples
-#' \donttest{
 #' ## generate data based on Haziza and Lesage (2016)
 #' set.seed(123)
 #' N <- 1000
@@ -57,7 +56,6 @@ NULL
 #'                 d = df_resp$d,
 #'                 totals = totals_known)
 #' data.frame(known = totals_known, estimated=colSums(res*df_resp$d*model.matrix(~x, df_resp)))
-#' }
 #'
 #' @export
 calib_el <- function(X, d, totals, maxit=50, tol=1e-8, eps = .Machine$double.eps, ...) {

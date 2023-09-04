@@ -43,7 +43,6 @@ NULL
 #' @return Return matrix A
 #'
 #' @examples
-#' \donttest{
 #' # Create matrix for one variable and 3 quantiles
 #' set.seed(123)
 #' N <- 1000
@@ -68,7 +67,6 @@ NULL
 #' B <- joint_calib_create_matrix(x, N, quants)
 #' head(B)
 #' colSums(B)
-#' }
 #' @export
 joint_calib_create_matrix <-
 function(X_q, N, pop_quantiles, control = control_calib()) {

@@ -45,7 +45,6 @@ N^{-1} \beta_{x_{j}, r}\left(Q_{x_j, \alpha}\right), & x_{i j}=U_{x_{j}, r}\left
 \mjseqn{i=1,...,r}, \mjseqn{j=1,...,k}, \mjseqn{t \in \mathbb{R}}.
 }
 \examples{
-\donttest{
 # Create matrix for one variable and 3 quantiles
 set.seed(123)
 N <- 1000
@@ -70,7 +69,6 @@ quants <- list(quantile(x1, 0.5), quantile(x2, c(0.1, 0.75, 0.9)))
 B <- joint_calib_create_matrix(x, N, quants)
 head(B)
 colSums(B)
-}
 }
 \references{
 Harms, T. and Duchesne, P. (2006). On calibration estimation for quantiles.

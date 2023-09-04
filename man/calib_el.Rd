@@ -46,7 +46,6 @@ where \mjseqn{a_{i}} is created using \code{joint_calib_create_matrix} function,
 where \mjseqn{\mu_{x}} is known population mean of X. For simplicity of notation we assume only one quantile and one mean is known. This can be generalized to multiple quantiles and means.
 }
 \examples{
-\donttest{
 ## generate data based on Haziza and Lesage (2016)
 set.seed(123)
 N <- 1000
@@ -61,7 +60,6 @@ res <- calib_el(X = model.matrix(~x, df_resp),
                 d = df_resp$d,
                 totals = totals_known)
 data.frame(known = totals_known, estimated=colSums(res*df_resp$d*model.matrix(~x, df_resp)))
-}
 
 }
 \references{

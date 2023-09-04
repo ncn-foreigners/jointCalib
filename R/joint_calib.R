@@ -48,7 +48,6 @@
 #' }
 #'
 #' @examples
-#' \donttest{
 #' ## generate data based on Haziza and Lesage (2016)
 #' set.seed(123)
 #' N <- 1000
@@ -171,7 +170,6 @@
 #'            est4=x_quant_hat4,
 #'            true = quants_known$x)
 #'
-#' }
 #'
 #' @seealso
 #' [sampling::calib()] -- for standard calibration.

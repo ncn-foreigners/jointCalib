@@ -70,7 +70,6 @@ Returns a list with containing:\cr
 \code{joint_calib} allows joint calibration of totals and quantiles. It provides a user-friendly interface that includes the specification of variables in formula notation, a vector of population totals, a list of quantiles, and a variety of backends and methods.
 }
 \examples{
-\donttest{
 ## generate data based on Haziza and Lesage (2016)
 set.seed(123)
 N <- 1000
@@ -193,7 +192,6 @@ data.frame(standard = x_quant_hat0,
            est4=x_quant_hat4,
            true = quants_known$x)
 
-}
 
 }
 \references{
