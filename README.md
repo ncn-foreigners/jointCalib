@@ -10,8 +10,10 @@
 
 ## Details
 
-A small package for joint calibration of totals and quantiles. The
-package combines the following approaches:
+A small package for joint calibration of totals and quantiles (see
+[Beręsewicz and Szymkowiak (2023)](https://arxiv.org/abs/2308.13281)
+working paper for details). The package combines the following
+approaches:
 
 - Deville, J. C., and Särndal, C. E. (1992). [Calibration estimators in
   survey

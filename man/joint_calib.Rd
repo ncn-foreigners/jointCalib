@@ -195,6 +195,9 @@ data.frame(standard = x_quant_hat0,
 
 }
 \references{
+Beręsewicz,  M., and Szymkowiak, M. (2023). A note on joint calibration estimators for totals and quantiles
+Arxiv preprint \url{https://arxiv.org/abs/2308.13281}
+
 Deville, J. C., and Särndal, C. E. (1992). Calibration estimators in survey sampling.
 Journal of the American statistical Association, 87(418), 376-382.
 

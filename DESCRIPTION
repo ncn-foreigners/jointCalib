@@ -8,7 +8,7 @@ Authors@R:
              role = c("aut", "cre"),
              email = "maciej.beresewicz@ue.poznan.pl",
              comment = c(ORCID = "0000-0002-8281-4301")))
-Description: A small package containing functions to perform a joint calibration of totals and quantiles. The calibration for totals is based on Deville and Särndal (1992) <doi:10.1080/01621459.1992.10475217>, the calibration for quantiles is based on Harms and Duchesne (2006) <https://www150.statcan.gc.ca/n1/en/catalogue/12-001-X20060019255>. The package uses standard calibration via 'survey', 'sampling' or 'laeken' packages. In addition, entropy balancing via 'ebal' and empirical likelihood based on codes from Wu (2005) can be used.
+Description: A small package containing functions to perform a joint calibration of totals and quantiles. The calibration for totals is based on Deville and Särndal (1992) <doi:10.1080/01621459.1992.10475217>, the calibration for quantiles is based on Harms and Duchesne (2006) <https://www150.statcan.gc.ca/n1/en/catalogue/12-001-X20060019255>. The package uses standard calibration via the 'survey', 'sampling' or 'laeken' packages. In addition, entropy balancing via the 'ebal' package and empirical likelihood based on codes from Wu (2005) <https://www150.statcan.gc.ca/n1/pub/12-001-x/2005002/article/9051-eng.pdf> can be used. See the paper by Beręsewicz and Szymkowiak (2023) for details <https://arxiv.org/abs/2308.13281>.
 License: GPL-3
 Encoding: UTF-8
 RdMacros: mathjaxr
