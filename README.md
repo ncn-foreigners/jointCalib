@@ -3,7 +3,10 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/ncn-foreigners/jointCalib/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ncn-foreigners/jointCalib/actions/workflows/R-CMD-check.yaml)
-
+[![CRAN
+status](https://www.r-pkg.org/badges/version/jointCalib)](https://CRAN.R-project.org/package=jointCalib)
+[![CRAN
+downloads](http://cranlogs.r-pkg.org/badges/grand-total/jointCalib?color=blue)](https://cran.r-project.org/package=jointCalib)
 <!-- badges: end -->
 
 # Overview
