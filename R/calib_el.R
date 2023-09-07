@@ -6,7 +6,7 @@ NULL
 #'
 #' \loadmathjax
 #' @description
-#' \code{calib_el} performs calibration using empirical likelihood (EL) method. The function is taken from Wu (2005), if algorithm has problem with convergence codes from Zhang, Han and Wu (2022) using \code{constrOptim} is used.
+#' \code{calib_el} performs calibration using empirical likelihood (EL) method. The function is taken from Wu (2005). If algorithm has problem with convergence \code{constrOptim} is used instead (as in Zhang, Han and Wu (2022)).
 #'
 #' In (pseudo) EL the following (pseudo) EL function is maximized
 #'
