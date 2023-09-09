@@ -1,7 +1,7 @@
 Package: jointCalib
 Type: Package
 Title: A Joint Calibration of Totals and Quantiles
-Version: 0.1.0
+Version: 0.1.1
 Authors@R:
   c(person(given = "Maciej",
              family = "Beręsewicz",

@@ -186,182 +186,181 @@
 #'
 #' @export
 joint_calib <-
-function(formula_totals = NULL,
-         formula_quantiles = NULL,
-         data = NULL,
-         dweights = NULL,
-         N = NULL,
-         pop_totals = NULL,
-         pop_quantiles = NULL,
-         subset = NULL,
-         backend = c("sampling", "laeken", "survey", "ebal", "base"),
-         method = c("raking", "linear", "logit", "sinh", "truncated", "el", "eb"),
-         bounds = c(0, 10),
-         maxit = 50,
-         tol = 1e-8,
-         eps = .Machine$double.eps,
-         control = control_calib(),
-         ...) {
+  function(formula_totals = NULL,
+           formula_quantiles = NULL,
+           data = NULL,
+           dweights = NULL,
+           N = NULL,
+           pop_totals = NULL,
+           pop_quantiles = NULL,
+           subset = NULL,
+           backend = c("sampling", "laeken", "survey", "ebal", "base"),
+           method = c("raking", "linear", "logit", "sinh", "truncated", "el", "eb"),
+           bounds = c(0, 10),
+           maxit = 50,
+           tol = 1e-8,
+           eps = .Machine$double.eps,
+           control = control_calib(),
+           ...) {
 
-  ## processing
-  if (is.null(formula_quantiles)) {
-    stop("The `formula_quantiles` parameter is required. If you want to use
+    ## processing
+    if (is.null(formula_quantiles)) {
+      stop("The `formula_quantiles` parameter is required. If you want to use
          standard calibration, we recommend using the `survey`, `sampling`, `laeken` or `ebal` packages.")
-  }
-
-  stopifnot("The `pop_quantiles` parameter should be of `list` or `newsvyquantile` class" =
-              inherits(pop_quantiles, "newsvyquantile") | inherits(pop_quantiles, "list"))
-
-  if (missing(backend)) backend <- "sampling"
-  if (missing(method)) method <- "linear"
-
-  if (method == "eb") backend <- "ebal"
-  if (method == "el") backend <- "base"
-
-  stopifnot("Only `survey`, `sampling`, `laeken`, `ebal` and `base` are possible backends" =
-              backend %in% c("sampling", "laeken", "survey", "ebal", "base"))
-  stopifnot("Only `raking`, `linear`, logit`, `sinh`, `truncated`, `el` and `eb` are possible" =
-              method %in% c("linear", "raking", "logit", "sinh", "truncated", "el", "eb"))
-
-  stopifnot("Method `sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
-  stopifnot("Method `truncated` is only possible with `sampling`" = !(method == "truncated" & backend != "sampling"))
-
-  subset <- parse(text = deparse(substitute(subset)))
-
-  if (!is.logical(subset)) {subset <- eval(subset, data)}
-  if (is.null(subset)) {subset <- TRUE}
-
-  data <- base::subset(data, subset = subset)
-
-  if (!is.data.frame(data)) {
-    data <- data.frame(data)
-  }
-
-  ## parse formulas
-
-  if (!is.null(formula_totals)) {
-    X <- stats::model.matrix(formula_totals, data)
-    X <- X[, colnames(X) != "(Intercept)", drop = FALSE]
-    stopifnot("`X` and `pop_totals` have different dimensions" = ncol(X) == NROW(pop_totals))
-    stopifnot("`X` and `pop_totals` have different names"=all.equal(colnames(X), names(pop_totals)))
-    stopifnot("`X` contains constant" = all(base::apply(X, 2, stats::sd) > 0))
-  } else {
-    X <- NULL
-  }
-
-   X_q <- stats::model.matrix(formula_quantiles, data)
-   X_q <- X_q[, colnames(X_q) != "(Intercept)", drop = FALSE]
-
-   stopifnot("`pop_quantiles` contains unnamed elements" = all(sapply(names(pop_quantiles), nchar) > 0))
-   stopifnot("`formula_quantiles` and `pop_quantiles` have different dimensions" = ncol(X_q) == length(pop_quantiles))
-   stopifnot("`formula_quantiles` and `pop_quantiles` have different names" = all.equal(colnames(X_q), names(pop_quantiles)))
-   stopifnot("At least one element of `pop_quantiles` is empty (length of 0)" = all(lengths(pop_quantiles) > 0))
-   stopifnot("`formula_quantiles` contains constant" = all(base::apply(X_q, 2, stats::sd) > 0))
-
-
-  if (!is.null(dweights)) {
-    dweights <- as.numeric(dweights)
-  } else {
-    dweights <- rep(1, nrow(X_q))
-  }
-
-  ## processing quantiles [more robust is needed]
-  if (inherits(pop_quantiles, "list")) {
-    pop_quantiles <- pop_quantiles[colnames(X_q)]
-    names(pop_quantiles) <- NULL
-    totals_q_vec <- unlist(pop_quantiles)
-    quantiles <- names(totals_q_vec)
-    if (all(grepl("%", quantiles))) {
-      quantiles <- as.numeric(gsub("%", "", quantiles))/100
     }
-  }
-  if (inherits(pop_quantiles, "newsvyquantile")) {
-    pop_quantiles <- lapply(pop_quantiles, FUN=function(x) x[,1])
-    pop_quantiles <- pop_quantiles[colnames(X_q)]
-    names(pop_quantiles) <- NULL
-    totals_q_vec <- unlist(pop_quantiles)
-    quantiles <- names(totals_q_vec)
-    quantiles <- as.numeric(quantiles)
-  }
 
-  ## create pop_totals -- scaled totals are needed
-  #T_mat <- c(N/N, quantiles*N, pop_totals/N)
-  T_mat <- c(N, quantiles, pop_totals)
+    stopifnot("The `pop_quantiles` parameter should be of `list` or `newsvyquantile` class" =
+                inherits(pop_quantiles, "newsvyquantile") | inherits(pop_quantiles, "list"))
 
-  A <- joint_calib_create_matrix(X_q, N, pop_quantiles,
-                                 control = control)
-  #X <- cbind(1/N, A*N, X/N)
-  X <- cbind(1, A, X)
+    if (missing(backend)) backend <- "sampling"
+    if (missing(method)) method <- "linear"
 
-  ## change to large switch
-  gweights <- switch(backend,
-                     "sampling" = {
-                       if (method %in% c("logit", "truncated")) {
-                         sampling::calib(Xs = X,
-                                         d = dweights,
-                                         total = T_mat,
-                                         method = method,
-                                         bounds = bounds,
-                                         max_iter = maxit,
-                                         ...)
-                       } else {
-                         sampling::calib(Xs = X,
-                                         d = dweights,
-                                         total = T_mat,
-                                         method = method,
-                                         max_iter = maxit,
-                                         ...)
-                       }
+    if (method == "eb") backend <- "ebal"
+    if (method == "el") backend <- "base"
+
+    stopifnot("Only `survey`, `sampling`, `laeken`, `ebal` and `base` are possible backends" =
+                backend %in% c("sampling", "laeken", "survey", "ebal", "base"))
+    stopifnot("Only `raking`, `linear`, logit`, `sinh`, `truncated`, `el` and `eb` are possible" =
+                method %in% c("linear", "raking", "logit", "sinh", "truncated", "el", "eb"))
+
+    stopifnot("Method `sinh` is only possible with `survey`" = !(method == "sinh" & backend != "survey"))
+    stopifnot("Method `truncated` is only possible with `sampling`" = !(method == "truncated" & backend != "sampling"))
+
+    subset <- parse(text = deparse(substitute(subset)))
+
+    if (!is.logical(subset)) {subset <- eval(subset, data)}
+    if (is.null(subset)) {subset <- TRUE}
+
+    data <- base::subset(data, subset = subset)
+
+    if (!is.data.frame(data)) {
+      data <- data.frame(data)
+    }
+
+    ## parse formulas
+
+    if (!is.null(formula_totals)) {
+      X <- stats::model.matrix(formula_totals, data)
+      X <- X[, colnames(X) != "(Intercept)", drop = FALSE]
+      stopifnot("`X` and `pop_totals` have different dimensions" = ncol(X) == NROW(pop_totals))
+      stopifnot("`X` and `pop_totals` have different names"=all.equal(colnames(X), names(pop_totals)))
+      stopifnot("`X` contains constant" = all(base::apply(X, 2, stats::sd) > 0))
+    } else {
+      X <- NULL
+    }
+
+    X_q <- stats::model.matrix(formula_quantiles, data)
+    X_q <- X_q[, colnames(X_q) != "(Intercept)", drop = FALSE]
+
+    stopifnot("`pop_quantiles` contains unnamed elements" = all(sapply(names(pop_quantiles), nchar) > 0))
+    stopifnot("`formula_quantiles` and `pop_quantiles` have different dimensions" = ncol(X_q) == length(pop_quantiles))
+    stopifnot("`formula_quantiles` and `pop_quantiles` have different names" = all.equal(colnames(X_q), names(pop_quantiles)))
+    stopifnot("At least one element of `pop_quantiles` is empty (length of 0)" = all(lengths(pop_quantiles) > 0))
+    stopifnot("`formula_quantiles` contains constant" = all(base::apply(X_q, 2, stats::sd) > 0))
+
+
+    if (!is.null(dweights)) {
+      dweights <- as.numeric(dweights)
+    } else {
+      dweights <- rep(1, nrow(X_q))
+    }
+
+    ## processing quantiles [more robust is needed]
+    if (inherits(pop_quantiles, "list")) {
+      pop_quantiles <- pop_quantiles[colnames(X_q)]
+      names(pop_quantiles) <- NULL
+      totals_q_vec <- unlist(pop_quantiles)
+      quantiles <- names(totals_q_vec)
+      if (all(grepl("%", quantiles))) {
+        quantiles <- as.numeric(gsub("%", "", quantiles))/100
+      }
+    }
+    if (inherits(pop_quantiles, "newsvyquantile")) {
+      pop_quantiles <- lapply(pop_quantiles, FUN=function(x) x[,1])
+      pop_quantiles <- pop_quantiles[colnames(X_q)]
+      names(pop_quantiles) <- NULL
+      totals_q_vec <- unlist(pop_quantiles)
+      quantiles <- names(totals_q_vec)
+      quantiles <- as.numeric(quantiles)
+    }
+
+    ## create pop_totals -- scaled totals are needed
+    #T_mat <- c(N/N, quantiles*N, pop_totals/N)
+    T_mat <- c(N, quantiles, pop_totals)
+
+    A <- joint_calib_create_matrix(X_q, N, pop_quantiles,
+                                   control = control)
+    #X <- cbind(1/N, A*N, X/N)
+    X <- cbind(1, A, X)
+
+    ## change to large switch
+    gweights <- switch(backend,
+                       "sampling" = {
+                         if (method %in% c("logit", "truncated")) {
+                           sampling::calib(Xs = X,
+                                           d = dweights,
+                                           total = T_mat,
+                                           method = method,
+                                           bounds = bounds,
+                                           max_iter = maxit,
+                                           ...)
+                         } else {
+                           sampling::calib(Xs = X,
+                                           d = dweights,
+                                           total = T_mat,
+                                           method = method,
+                                           max_iter = maxit,
+                                           ...)
+                         }
                        },
-                     "laeken" = laeken::calibWeights(X = X,
-                                                     d = dweights,
-                                                     totals = T_mat,
-                                                     method = method,
-                                                     bounds = bounds,
-                                                     maxit = maxit,
-                                                     tol = tol,
-                                                     eps = .Machine$double.eps,
-                                                     ...),
-                     "survey" = survey::grake(mm = X,
-                                              ww = dweights,
-                                              calfun = switch(method,
-                                                              "linear" = survey::cal.linear,
-                                                              "raking" = survey::cal.raking,
-                                                              "logit" = survey::cal.logit,
-                                                              "sinh" = survey::cal.sinh),
-                                              population = T_mat,
-                                              bounds = list(lower = bounds[1], upper = bounds[2]),
-                                              epsilon = tol,
-                                              maxit = maxit,
-                                              verbose = FALSE,
-                                              variance = NULL),
-                     "ebal" =  ebal::eb(tr.total = T_mat,
-                                        co.x = X,
-                                        coefs = c(log(T_mat[1]/NROW(X)), rep(0, (NCOL(X) - 1))),
-                                        base.weight = dweights,
-                                        max.iterations = maxit,
-                                        constraint.tolerance = control$ebal_constraint_tolerance,
-                                        print.level = control$ebal_print_level
-                                        )$Weights.ebal/dweights,
-                     "base" = calib_el(X = X,
-                                        d = dweights,
-                                        totals = T_mat,
-                                        tol = tol,
-                                        maxit = maxit,
-                                        eps = eps))
+                       "laeken" = laeken::calibWeights(X = X,
+                                                       d = dweights,
+                                                       totals = T_mat,
+                                                       method = method,
+                                                       bounds = bounds,
+                                                       maxit = maxit,
+                                                       tol = tol,
+                                                       eps = .Machine$double.eps,
+                                                       ...),
+                       "survey" = survey::grake(mm = X,
+                                                ww = dweights,
+                                                calfun = switch(method,
+                                                                "linear" = survey::cal.linear,
+                                                                "raking" = survey::cal.raking,
+                                                                "logit" = survey::cal.logit,
+                                                                "sinh" = survey::cal.sinh),
+                                                population = T_mat,
+                                                bounds = list(lower = bounds[1], upper = bounds[2]),
+                                                epsilon = tol,
+                                                maxit = maxit,
+                                                verbose = FALSE,
+                                                variance = NULL),
+                       "ebal" =  ebal::eb(tr.total = T_mat,
+                                          co.x = X,
+                                          coefs = c(log(T_mat[1]/NROW(X)), rep(0, (NCOL(X) - 1))),
+                                          base.weight = dweights,
+                                          max.iterations = maxit,
+                                          constraint.tolerance = control$ebal_constraint_tolerance,
+                                          print.level = control$ebal_print_level
+                       )$Weights.ebal/dweights,
+                       "base" = calib_el(X = X,
+                                         d = dweights,
+                                         totals = T_mat,
+                                         tol = tol,
+                                         maxit = maxit,
+                                         eps = eps))
 
-  gweights <- as.numeric(gweights)
+    gweights <- as.numeric(gweights)
 
-  return(
-    structure(
-      list(g = gweights,
-           Xs = X,
-           totals = c(N, quantiles, pop_totals),
-           diff = colSums(X * dweights * gweights) - T_mat,
-           method = method,
-           backend = backend),
-      class = "jointCalib"
+    return(
+      structure(
+        list(g = gweights,
+             Xs = X,
+             totals = c(N, quantiles, pop_totals),
+             diff = colSums(X * dweights * gweights) - T_mat,
+             method = method,
+             backend = backend),
+        class = "jointCalib"
       )
-  )
-}
-
+    )
+  }
