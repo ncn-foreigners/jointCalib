@@ -217,6 +217,7 @@ joint_calib <-
 
     if (method == "eb") backend <- "ebal"
     if (method == "el") backend <- "base"
+    if (method == "sinh") backend <- "survey"
 
     stopifnot("Only `survey`, `sampling`, `laeken`, `ebal` and `base` are possible backends" =
                 backend %in% c("sampling", "laeken", "survey", "ebal", "base"))

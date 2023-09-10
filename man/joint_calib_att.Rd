@@ -2,7 +2,7 @@
 % Please edit documentation in R/joint_calib_att.R
 \name{joint_calib_att}
 \alias{joint_calib_att}
-\title{Function for the balancing control to treatment groups using \code{joint_calib}}
+\title{Function for the balancing control to treatment group using \code{joint_calib}}
 \usage{
 joint_calib_att(
   formula_means = NULL,
@@ -37,7 +37,7 @@ Returns a list with containing:\cr
 }
 }
 \description{
-\code{joint_calib} allows joint calibration of totals and quantiles. It provides a user-friendly interface that includes the specification of variables in formula notation, a vector of population totals, a list of quantiles, and a variety of backends and methods.
+\code{joint_calib_att} allows balancing control to treatment group on quantiles or means and quantiles. It provides a user-friendly interface that allows to specify variables and quantiles to be balanced.
 }
 \examples{
 # generate data as in hbal package
@@ -81,7 +81,7 @@ formula_quantiles = ~ X1 + X2,
 treatment = ~ D,
 data = dat,
 method = "raking",
-probs = list(X1 = 0.5, X2 = c(0.25, 0.75), "X1:X3"=0.5)
+probs = list(X1 = 0.5, X2 = c(0.25, 0.75))
 )
 
 results3
