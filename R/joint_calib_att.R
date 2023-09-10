@@ -58,6 +58,18 @@
 #'
 #' results2
 #'
+#' ## probs as a named list with varying probs
+#' results3 <- joint_calib_att(
+#' formula_means = ~ X1 + X2 + X3 + X1*X3,
+#' formula_quantiles = ~ X1 + X2,
+#' treatment = ~ D,
+#' data = dat,
+#' method = "raking",
+#' probs = list(X1 = 0.5, X2 = c(0.25, 0.75), "X1:X3"=0.5)
+#' )
+#'
+#' results3
+#'
 #' @export
 joint_calib_att <-
   function(formula_means = NULL,
@@ -67,6 +79,8 @@ joint_calib_att <-
            probs = c(0.25, 0.5, 0.75),
            ... ) {
 
+    ## checks
+    stopifnot("`probs` should be a vector or a named list" = inherits(probs, "numeric") | inherits(probs, "list"))
     ## split data by treatment
     data_splitted <- split(data, treatment)
     N_size <- sapply(data_splitted, nrow)
@@ -83,7 +97,16 @@ joint_calib_att <-
     ## calculate quantiles
     X_q <- stats::model.matrix(formula_quantiles, data_splitted[["1"]])
     X_q <- as.data.frame(X_q[, colnames(X_q) != "(Intercept)", drop = FALSE])
-    pop_quantiles <- lapply(X_q, stats::quantile, probs = probs)
+
+    ## check quantiles
+    ## list of quantiles
+    if (inherits(probs, "list")) {
+      pop_quantiles <- lapply(colnames(X_q), FUN = function(x) stats::quantile(X_q[, x], probs = probs[[x]]))
+      names(pop_quantiles) <- colnames(X_q)
+    } else {
+      pop_quantiles <- lapply(X_q, stats::quantile, probs = probs)
+    }
+
 
     result <- joint_calib(formula_totals = formula_means,
                           formula_quantiles = formula_quantiles,

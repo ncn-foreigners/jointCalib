@@ -74,6 +74,18 @@ method = "raking"
 
 results2
 
+## probs as a named list with varying probs
+results3 <- joint_calib_att(
+formula_means = ~ X1 + X2 + X3 + X1*X3,
+formula_quantiles = ~ X1 + X2,
+treatment = ~ D,
+data = dat,
+method = "raking",
+probs = list(X1 = 0.5, X2 = c(0.25, 0.75), "X1:X3"=0.5)
+)
+
+results3
+
 }
 \references{
 reference

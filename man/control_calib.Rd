@@ -7,6 +7,8 @@
 control_calib(
   interpolation = c("logit", "linear"),
   logit_const = -1000,
+  sum_to_sample = FALSE,
+  sum_to_one = FALSE,
   survey_sparse = FALSE,
   ebal_constraint_tolerance = 1,
   ebal_print_level = 0
@@ -16,6 +18,10 @@ control_calib(
 \item{interpolation}{type of interpolation: \code{logit} or \code{linear},}
 
 \item{logit_const}{constant for \code{logit} interpolation,}
+
+\item{sum_to_sample}{whether weights should sum to sample,}
+
+\item{sum_to_one}{whether weights should sum to one (aka normalized weights),}
 
 \item{survey_sparse}{whether to use sparse matrices via \code{Matrix} package in \code{\link[survey:calibrate]{survey::grake()}} (currently not supported),}
 
