@@ -86,3 +86,14 @@ expect_error(
   )
 )
 
+## expect error because of repeated quantiles for interaction
+
+expect_error(
+  joint_calib_att(
+    formula_means = ~ X1 + X2 + X3,
+    formula_quantiles = ~ X1 + X2 + X1:X3,
+    treatment = ~ D,
+    data = dat,
+    method = "raking"
+  )
+)
