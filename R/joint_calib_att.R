@@ -28,7 +28,7 @@
 #'
 #' @returns Returns a list with containing:\cr
 #' \itemize{
-#' \item{\code{g} -- g-weight that sums up to sample size,}
+#' \item{\code{g} -- g-weight that sums up to treatment group size,}
 #' \item{\code{Xs} -- matrix used for calibration (i.e. Intercept, X and X_q transformed for calibration of quantiles),}
 #' \item{\code{totals} -- a vector of totals (i.e. \code{N}, \code{pop_totals} and \code{pop_quantiles}),}
 #' \item{\code{method} -- selected method,}

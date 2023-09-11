@@ -269,6 +269,7 @@ joint_calib <-
     ## processing quantiles [more robust is needed]
     if (inherits(pop_quantiles, "list")) {
       pop_quantiles <- pop_quantiles[colnames(X_q)]
+      names_q_temp <- names(unlist(pop_quantiles))
       names(pop_quantiles) <- NULL
       totals_q_vec <- unlist(pop_quantiles)
       quantiles <- names(totals_q_vec)
@@ -279,6 +280,7 @@ joint_calib <-
     if (inherits(pop_quantiles, "newsvyquantile")) {
       pop_quantiles <- lapply(pop_quantiles, FUN=function(x) x[,1])
       pop_quantiles <- pop_quantiles[colnames(X_q)]
+      names_q_temp <- names(unlist(pop_quantiles))
       names(pop_quantiles) <- NULL
       totals_q_vec <- unlist(pop_quantiles)
       quantiles <- names(totals_q_vec)
@@ -354,11 +356,23 @@ joint_calib <-
 
     gweights <- as.numeric(gweights)
 
+    ## formatting
+    names_q_temp <- gsub("%", "", names_q_temp)
+    names_q_temp <- gsub("\\.0\\.", "\\.", names_q_temp)
+
+    if (all(nchar(names_q_temp) == 3)) {
+      names_q_temp <- formatC(names_q_temp, width = 4, digits=4, format = "s", flag = "-")
+      names_q_temp <- gsub(" ", "0", names_q_temp)
+    }
+
+    names_q_temp <- gsub("\\.", " 0\\.", names_q_temp)
+    names(quantiles) <- names_q_temp
+
     return(
       structure(
         list(g = gweights,
              Xs = X,
-             totals = c(N, quantiles, pop_totals),
+             totals = c(N=N, quantiles, pop_totals),
              diff = colSums(X * dweights * gweights) - T_mat,
              method = method,
              backend = backend),
