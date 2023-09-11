@@ -63,9 +63,13 @@ Currently supports:
 Further plans:
 
 - generalized calibration via `sampling::gencalib`,
-- calibrated / covariate balancing propensity score,
+- calibrated / covariate balancing propensity score (see
+  [causal](https://github.com/ncn-foreigners/jointCalib/tree/causal)
+  branch for initial development),
 - calibration for Gini and other metrics,
-- observational studies / causal inference
+- observational studies / causal inference (see
+  [causal](https://github.com/ncn-foreigners/jointCalib/tree/causal)
+  branch for initial development)
 - …
 
 ## Funding
@@ -142,7 +146,7 @@ result1 <- joint_calib(formula_quantiles = ~x,
                       method = "linear",
                       backend = "sampling")
 result1
-#> Weights calibrated using: linear withsamplingbackend.
+#> Weights calibrated using: linear with sampling backend.
 #> Summary statistics for g-weights:
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #>  0.4562  0.6773  0.8180  1.0000  1.4500  2.4538 

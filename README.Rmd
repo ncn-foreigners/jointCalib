@@ -74,9 +74,9 @@ Currently supports:
 Further plans:
 
 -   generalized calibration via `sampling::gencalib`,
--   calibrated / covariate balancing propensity score,
+-   calibrated / covariate balancing propensity score (see [causal](https://github.com/ncn-foreigners/jointCalib/tree/causal) branch for initial development),
 -   calibration for Gini and other metrics,
--   observational studies / causal inference
+-   observational studies / causal inference (see [causal](https://github.com/ncn-foreigners/jointCalib/tree/causal) branch for initial development)
 -   ...
 
 ## Funding
