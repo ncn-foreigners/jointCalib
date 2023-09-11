@@ -2,7 +2,7 @@
 % Please edit documentation in R/joint_calib_att.R
 \name{joint_calib_att}
 \alias{joint_calib_att}
-\title{Function for the balancing control to treatment group using \code{joint_calib}}
+\title{Function for balancing the control and treatment group using \code{joint_calib}}
 \usage{
 joint_calib_att(
   formula_means = NULL,
@@ -37,7 +37,7 @@ Returns a list with containing:\cr
 }
 }
 \description{
-\code{joint_calib_att} allows balancing control to treatment group on quantiles or means and quantiles. It provides a user-friendly interface that allows to specify variables and quantiles to be balanced.
+\code{joint_calib_att} allows quantile or mean and quantile balancing of control and treatment groups. It provides a user-friendly interface to specify the variables and quantiles to be balanced.
 }
 \examples{
 # generate data as in hbal package
@@ -88,7 +88,18 @@ results3
 
 }
 \references{
-reference
+Greifer N (2023). WeightIt: Weighting for Covariate Balance in Observational Studies.
+R package version 0.14.2, \url{https://CRAN.R-project.org/package=WeightIt}.
+
+Greifer N (2023). cobalt: Covariate Balance Tables and Plots.
+R package version 4.5.1, \url{https://CRAN.R-project.org/package=cobalt}.
+
+Ho, D., Imai, K., King, G., & Stuart, E. A. (2011).
+MatchIt: Nonparametric Preprocessing for Parametric Causal Inference.
+Journal of Statistical Software, 42(8), 1–28. \url{https://doi.org/10.18637/jss.v042.i08}
+
+Xu, Y., & Yang, E. (2023). Hierarchically Regularized Entropy Balancing.
+Political Analysis, 31(3), 457-464. \url{https://doi.org/10.1017/pan.2022.12}
 }
 \author{
 Maciej Beręsewicz
