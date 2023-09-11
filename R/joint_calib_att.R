@@ -94,6 +94,7 @@ joint_calib_att <-
     ## checks
     stopifnot("`formula_quantiles` should be provided" = !is.null(formula_quantiles))
     stopifnot("`probs` should be a vector or a named list" = inherits(probs, "numeric") | inherits(probs, "list"))
+
     ## split data by treatment
     data_splitted <- split(data, treatment)
     N_size <- sapply(data_splitted, nrow)

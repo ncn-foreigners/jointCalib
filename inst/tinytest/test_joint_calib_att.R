@@ -33,6 +33,20 @@ expect_silent(
   )
 )
 
+## el weights sums up to N
+
+expect_equal(
+  sum(joint_calib_att(
+    formula_means = ~ X1 + X2 + X3,
+    formula_quantiles = ~ X1 + X2,
+    treatment = ~ D,
+    data = dat,
+    method = "el"
+  )$g),
+  sum(D)
+)
+
+
 ## test list of probs
 
 expect_silent(
