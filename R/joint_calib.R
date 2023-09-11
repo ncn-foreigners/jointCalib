@@ -349,7 +349,8 @@ joint_calib <-
                                          totals = T_mat,
                                          tol = tol,
                                          maxit = maxit,
-                                         eps = eps))
+                                         eps = eps,
+                                         att = control$el_att))
 
     gweights <- as.numeric(gweights)
 

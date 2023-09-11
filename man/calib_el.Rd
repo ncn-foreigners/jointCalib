@@ -4,7 +4,16 @@
 \alias{calib_el}
 \title{An internal function for calibration of weights using empirical likelihood method}
 \usage{
-calib_el(X, d, totals, maxit = 50, tol = 1e-08, eps = .Machine$double.eps, ...)
+calib_el(
+  X,
+  d,
+  totals,
+  maxit = 50,
+  tol = 1e-08,
+  eps = .Machine$double.eps,
+  att = FALSE,
+  ...
+)
 }
 \arguments{
 \item{X}{matrix of variables for calibration of quantiles and totals (first column should be intercept),}
@@ -18,6 +27,8 @@ calib_el(X, d, totals, maxit = 50, tol = 1e-08, eps = .Machine$double.eps, ...)
 \item{tol}{the desired accuracy for the iterative procedure,}
 
 \item{eps}{the desired accuracy for computing the Moore-Penrose generalized inverse (see \code{\link[MASS:ginv]{MASS::ginv()}}),}
+
+\item{att}{indicating whether the weights should sum up treatment group (for \code{joint_calib_att} function),}
 
 \item{...}{arguments passed to \link[stats:optim]{stats::optim} via \link[stats:constrOptim]{stats::constrOptim}.}
 }

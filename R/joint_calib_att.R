@@ -89,7 +89,7 @@ joint_calib_att <-
            treatment = NULL,
            data,
            probs = c(0.25, 0.5, 0.75),
-           ... ) {
+           ...) {
 
     ## checks
     stopifnot("`formula_quantiles` should be provided" = !is.null(formula_quantiles))
@@ -142,6 +142,7 @@ joint_calib_att <-
                           N = unname(N_size["1"]),
                           pop_totals = pop_totals,
                           pop_quantiles = pop_quantiles,
+                          control = control_calib(el_att = TRUE),
                           ...)
 
     return(result)
