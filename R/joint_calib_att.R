@@ -8,7 +8,7 @@
 #' @param formula_quantiles a formula with variables to be balanced at quantiles,
 #' @param treatment a formula with treatment indicator
 #' @param data a data.frame with variables,
-#' @param probs a vector or a named list with quantiles to be balanced,
+#' @param probs a vector or a named list with quantiles to be balanced (default is \code{c(0.25, 0.5, 0.75)}),
 #' @param ... other parameters passed to \code{joint_calib} function.
 #'
 #' @references
@@ -141,7 +141,7 @@ joint_calib_att <-
       locate_error <- abs(check_uniques-n_quantiles) > 0
       stop(
         paste0(
-        "Non-unique values when calculating quantiles for the following variables",
+        "Non-unique values when calculating quantiles for the following variables: ",
         paste(names(which(locate_error)), collapse = ", "),
         ". Adjust `probs` for quantiles to avoid repeated reference values."
         )

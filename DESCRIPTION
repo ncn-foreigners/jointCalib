@@ -25,4 +25,5 @@ Imports:
   mathjaxr,
   survey,
   MASS,
-  ebal
+  ebal,
+  CBPS

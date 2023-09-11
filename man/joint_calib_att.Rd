@@ -22,7 +22,7 @@ joint_calib_att(
 
 \item{data}{a data.frame with variables,}
 
-\item{probs}{a vector or a named list with quantiles to be balanced,}
+\item{probs}{a vector or a named list with quantiles to be balanced (default is \code{c(0.25, 0.5, 0.75)}),}
 
 \item{...}{other parameters passed to \code{joint_calib} function.}
 }
@@ -85,6 +85,18 @@ probs = list(X1 = 0.5, X2 = c(0.25, 0.75))
 )
 
 results3
+
+## probs for interactions
+results4 <- joint_calib_att(
+formula_means = ~ X1 + X2 + X3,
+formula_quantiles = ~ X1 + X2 + X1:X3,
+treatment = ~ D,
+data = dat,
+probs = list(X1=0.5, X2 = c(0.25, 0.5), `X1:X3` = 0.75),
+method = "raking"
+)
+
+results4
 
 }
 \references{
