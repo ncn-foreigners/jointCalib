@@ -10,9 +10,11 @@
 #' @param data a data.frame with variables,
 #' @param probs a vector or a named list with quantiles to be balanced (default is \code{c(0.25, 0.5, 0.75)}),
 #' @param control a control list of parameters for creation of X_q matrix,
-#' @param standardize Default is TRUE, which normalizes weights to sum to 1 within each treatment group,
+#' @param standardize default is FALSE, which normalizes weights to sum to 1 within each treatment group,
 #' @param method method passed to \code{CBPS} function,
-#' @param ... other parameters passed to \code{CBPS} function.
+#' @param variable_selection default is FALSE. Set to TRUE to specify high dimension CBPS via [CBPS::hdCBPS()],
+#' @param target specify target (y) variable for \code{hdCBPS} function,
+#' @param ... other parameters passed to \code{CBPS} or \code{hdCBPS} function
 #'
 #' @references
 #'
@@ -22,7 +24,7 @@
 #' Fong C, Ratkovic M, Imai K (2022). CBPS: Covariate Balancing Propensity Score.
 #' R package version 0.23, <https://CRAN.R-project.org/package=CBPS>.
 #'
-#' @returns Returns an \code{CBPS} object.
+#' @returns Returns a \code{CBPS} or a \code{list} object as a result of the \code{hdCBPS} function.
 #'
 #' @examples
 #' # generate data as in hbal package
@@ -72,11 +74,14 @@ joint_calib_cbps <-
            control = control_calib(),
            standardize = FALSE,
            method = "exact",
+           variable_selection = FALSE,
+           target = NULL,
            ...) {
 
     ## checks
     stopifnot("`formula_quantiles` should be provided" = !is.null(formula_quantiles))
     stopifnot("`probs` should be a vector or a named list" = inherits(probs, "numeric") | inherits(probs, "list"))
+    stopifnot("If `variable_selection == TRUE` then `target` should be provided" = !(variable_selection == TRUE & is.null(target)))
 
     ## split data by treatment
     treat <- stats::model.frame(treatment, data)
@@ -131,11 +136,23 @@ joint_calib_cbps <-
     colnames(A) <- gsub("%", "", names(unlist(pop_quantiles)))
 
     Xs <- as.data.frame(cbind(treat=treat[,1], X, A))
+    names(Xs)[1] <- names(treat)
 
-    result <- CBPS::CBPS(formula = treat ~ ., data = Xs,
-                         ATT = 0,
-                         standardize = standardize,
-                         method = method, ...)
+    if (variable_selection) {
+      cat("Variable selection via `CBPS::hdCBPS` started...")
+      y <- stats::model.frame(target, data)
+      result <- CBPS::hdCBPS(formula = stats::as.formula(paste(names(Xs)[1], "~ .")),
+                             data = Xs,
+                             y = y[, 1],
+                             ATT = 0,
+                             ...)
+    } else {
+      result <- CBPS::CBPS(formula = stats::as.formula(paste(names(Xs)[1], "~ .")),
+                           data = Xs,
+                           ATT = 0,
+                           standardize = standardize,
+                           method = method, ...)
+    }
 
     return(result)
 }

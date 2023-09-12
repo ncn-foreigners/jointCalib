@@ -13,6 +13,8 @@ joint_calib_cbps(
   control = control_calib(),
   standardize = FALSE,
   method = "exact",
+  variable_selection = FALSE,
+  target = NULL,
   ...
 )
 }
@@ -29,14 +31,18 @@ joint_calib_cbps(
 
 \item{control}{a control list of parameters for creation of X_q matrix,}
 
-\item{standardize}{Default is TRUE, which normalizes weights to sum to 1 within each treatment group,}
+\item{standardize}{default is FALSE, which normalizes weights to sum to 1 within each treatment group,}
 
 \item{method}{method passed to \code{CBPS} function,}
 
-\item{...}{other parameters passed to \code{CBPS} function.}
+\item{variable_selection}{default is FALSE. Set to TRUE to specify high dimension CBPS via \code{\link[CBPS:hdCBPS]{CBPS::hdCBPS()}},}
+
+\item{target}{specify target (y) variable for \code{hdCBPS} function,}
+
+\item{...}{other parameters passed to \code{CBPS} or \code{hdCBPS} function}
 }
 \value{
-Returns an \code{CBPS} object.
+Returns a \code{CBPS} or a \code{list} object as a result of the \code{hdCBPS} function.
 }
 \description{
 \code{joint_calib_cbps} allows quantile or mean and quantile balancing using covariate balancing propensity score via \code{\link[CBPS:CBPS]{CBPS::CBPS()}} function.

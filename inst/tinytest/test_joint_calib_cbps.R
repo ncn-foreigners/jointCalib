@@ -39,3 +39,24 @@ expect_error(
                    data = dat)
 )
 
+## test variable selection
+
+expect_error(
+  joint_calib_cbps(formula_means = ~ X1 + X2,
+                   formula_quantiles = ~ X1 + X2,
+                   treatment = ~ D,
+                   data = dat,
+                   variable_selection = TRUE)
+)
+
+### this takes close to 10 sec
+expect_silent(
+  res <- joint_calib_cbps(formula_means = ~ X1 + X2,
+                          formula_quantiles = ~ X1 + X2,
+                          treatment = ~ D,
+                          data = dat,
+                          variable_selection = TRUE,
+                          target = ~ Y)
+)
+
+
