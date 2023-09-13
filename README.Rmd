@@ -69,14 +69,14 @@ Currently supports:
 -   calibration of quantiles,
 -   calibration of quantiles and totals,
 -   calibration using standard calibration, empirical likelihood and
-    entropy balancing method.
+    entropy balancing method,
+-   covariate distribution balancing (ATT),
+-   covariate distribution balancing propensity score (ATE).
 
 Further plans:
 
 -   generalized calibration via `sampling::gencalib`,
--   calibrated / covariate balancing propensity score (see [causal](https://github.com/ncn-foreigners/jointCalib/tree/causal) branch for initial development),
 -   calibration for Gini and other metrics,
--   observational studies / causal inference (see [causal](https://github.com/ncn-foreigners/jointCalib/tree/causal) branch for initial development)
 -   ...
 
 ## Funding

@@ -58,18 +58,14 @@ Currently supports:
 - calibration of quantiles,
 - calibration of quantiles and totals,
 - calibration using standard calibration, empirical likelihood and
-  entropy balancing method.
+  entropy balancing method,
+- covariate distribution balancing (ATT),
+- covariate distribution balancing propensity score (ATE).
 
 Further plans:
 
 - generalized calibration via `sampling::gencalib`,
-- calibrated / covariate balancing propensity score (see
-  [causal](https://github.com/ncn-foreigners/jointCalib/tree/causal)
-  branch for initial development),
 - calibration for Gini and other metrics,
-- observational studies / causal inference (see
-  [causal](https://github.com/ncn-foreigners/jointCalib/tree/causal)
-  branch for initial development)
 - …
 
 ## Funding
@@ -151,17 +147,17 @@ result1
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #>  0.4562  0.6773  0.8180  1.0000  1.4500  2.4538 
 #> Totals and precision (abs diff: 4.574665e-10)
-#>       totals    precision
-#>  [1,]  1e+03 4.557705e-10
-#>  [2,]  1e-01 5.020984e-14
-#>  [3,]  2e-01 1.055545e-13
-#>  [4,]  3e-01 1.324496e-13
-#>  [5,]  4e-01 1.580958e-13
-#>  [6,]  5e-01 1.765255e-13
-#>  [7,]  6e-01 1.991740e-13
-#>  [8,]  7e-01 2.304823e-13
-#>  [9,]  8e-01 2.882139e-13
-#> [10,]  9e-01 3.552714e-13
+#>        totals    precision
+#> N       1e+03 4.557705e-10
+#> x 0.10  1e-01 5.020984e-14
+#> x 0.20  2e-01 1.055545e-13
+#> x 0.30  3e-01 1.324496e-13
+#> x 0.40  4e-01 1.580958e-13
+#> x 0.50  5e-01 1.765255e-13
+#> x 0.60  6e-01 1.991740e-13
+#> x 0.70  7e-01 2.304823e-13
+#> x 0.80  8e-01 2.882139e-13
+#> x 0.90  9e-01 3.552714e-13
 ```
 
 ``` r
