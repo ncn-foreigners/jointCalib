@@ -7,9 +7,12 @@
 control_calib(
   interpolation = c("logit", "linear"),
   logit_const = -1000,
+  sum_to_sample = FALSE,
+  sum_to_one = FALSE,
   survey_sparse = FALSE,
   ebal_constraint_tolerance = 1,
-  ebal_print_level = 0
+  ebal_print_level = 0,
+  el_att = FALSE
 )
 }
 \arguments{
@@ -17,11 +20,17 @@ control_calib(
 
 \item{logit_const}{constant for \code{logit} interpolation,}
 
+\item{sum_to_sample}{whether weights should sum to sample,}
+
+\item{sum_to_one}{whether weights should sum to one (aka normalized weights),}
+
 \item{survey_sparse}{whether to use sparse matrices via \code{Matrix} package in \code{\link[survey:calibrate]{survey::grake()}} (currently not supported),}
 
-\item{ebal_constraint_tolerance}{This is the tolerance level used by ebalance to decide if the moments in the reweighted data are equal to the target moments (see \code{\link[ebal:ebalance]{ebal::ebalance()}}),}
+\item{ebal_constraint_tolerance}{this is the tolerance level used by ebalance to decide if the moments in the reweighted data are equal to the target moments (see \code{\link[ebal:ebalance]{ebal::ebalance()}}),}
 
-\item{ebal_print_level}{Controls the level of printing: 0 (normal printing), 2 (detailed), and 3 (very detailed) (see \code{\link[ebal:ebalance]{ebal::ebalance()}}).}
+\item{ebal_print_level}{controls the level of printing: 0 (normal printing), 2 (detailed), and 3 (very detailed) (see \code{\link[ebal:ebalance]{ebal::ebalance()}}),}
+
+\item{el_att}{whether weights for control should sum up to treatment size (for \code{calib_el} function only).}
 }
 \value{
 a list with parameters

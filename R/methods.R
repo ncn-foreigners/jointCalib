@@ -1,7 +1,7 @@
 #' @method print jointCalib
 #' @exportS3Method
 print.jointCalib <- function(x,...) {
-  cat("Weights calibrated using: ", x$method, " with", x$backend, "backend.\n", sep="")
+  cat("Weights calibrated using: ", x$method, " with ", x$backend, " backend.\n", sep="")
   cat("Summary statistics for g-weights:\n")
 
   print(summary(x$g))

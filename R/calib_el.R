@@ -32,6 +32,7 @@ NULL
 #' @param maxit a numeric value giving the maximum number of iterations,
 #' @param tol the desired accuracy for the iterative procedure,
 #' @param eps the desired accuracy for computing the Moore-Penrose generalized inverse (see [MASS::ginv()]),
+#' @param att indicating whether the weights should sum up treatment group (for \code{joint_calib_att} function),
 #' @param ... arguments passed to [stats::optim] via [stats::constrOptim].
 #'
 #' @references
@@ -58,7 +59,14 @@ NULL
 #' data.frame(known = totals_known, estimated=colSums(res*df_resp$d*model.matrix(~x, df_resp)))
 #'
 #' @export
-calib_el <- function(X, d, totals, maxit=50, tol=1e-8, eps = .Machine$double.eps, ...) {
+calib_el <- function(X,
+                     d,
+                     totals,
+                     maxit=50,
+                     tol=1e-8,
+                     eps = .Machine$double.eps,
+                     att = FALSE,
+                     ...) {
   n_col <- NCOL(X[, -1])
   n_row <- NROW(X)
   N <- totals[1]
@@ -118,5 +126,8 @@ calib_el <- function(X, d, totals, maxit=50, tol=1e-8, eps = .Machine$double.eps
   }
 
   gweight <- as.numeric(1/(1 + U %*% lambda))
+
+  if (att == TRUE) gweight <- gweight/sum(gweight)*N
+
   return(gweight)
 }
