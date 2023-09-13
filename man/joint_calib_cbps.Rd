@@ -2,7 +2,7 @@
 % Please edit documentation in R/joint_calib_cbps.R
 \name{joint_calib_cbps}
 \alias{joint_calib_cbps}
-\title{Function for the covariate balancing propensity score using \code{CBPS}}
+\title{Function to balance the covariate distributions using covariate balancing propensity score \code{CBPS}}
 \usage{
 joint_calib_cbps(
   formula_means = NULL,
@@ -23,32 +23,34 @@ joint_calib_cbps(
 
 \item{formula_quantiles}{a formula with variables to be balanced at quantiles,}
 
-\item{treatment}{a formula with treatment indicator,}
+\item{treatment}{a formula with a treatment indicator,}
 
 \item{data}{a data.frame with variables,}
 
-\item{probs}{a vector or a named list with quantiles to be balanced (default is \code{c(0.25, 0.5, 0.75)}),}
+\item{probs}{a vector or a named list of quantiles to be balanced (default is \code{c(0.25, 0.5, 0.75)}),}
 
-\item{control}{a control list of parameters for creation of X_q matrix,}
+\item{control}{a control list of parameters for creation of X_q matrix based on \code{formula_quantiles} and \code{probs} (see \code{\link[=joint_calib_create_matrix]{joint_calib_create_matrix()}}),}
 
-\item{standardize}{default is FALSE, which normalizes weights to sum to 1 within each treatment group,}
+\item{standardize}{default is FALSE, which normalizes weights to sum to 1 within each treatment group (passed to \code{CBPS()} function),}
 
-\item{method}{method passed to \code{CBPS} function,}
+\item{method}{default is "exact". Choose "over" to fit an over-identified model that combines the propensity score and covariate balancing conditions; choose "exact" to fit a model that only contains the covariate balancing conditions (passed to \code{CBPS()} function)}
 
-\item{variable_selection}{default is FALSE. Set to TRUE to specify high dimension CBPS via \code{\link[CBPS:hdCBPS]{CBPS::hdCBPS()}},}
+\item{variable_selection}{default is FALSE. Set to TRUE to select high dimension CBPS via \code{\link[CBPS:hdCBPS]{CBPS::hdCBPS()}},}
 
 \item{target}{specify target (y) variable for \code{hdCBPS} function,}
 
-\item{...}{other parameters passed to \code{CBPS} or \code{hdCBPS} function}
+\item{...}{other parameters passed to \code{CBPS} or \code{hdCBPS} functions.}
 }
 \value{
 Returns a \code{CBPS} or a \code{list} object as a result of the \code{hdCBPS} function.
 }
 \description{
-\code{joint_calib_cbps} allows quantile or mean and quantile balancing using covariate balancing propensity score via \code{\link[CBPS:CBPS]{CBPS::CBPS()}} function.
+\code{joint_calib_cbps} allows quantile or mean and quantile balancing of the covariate distributions of the control and treatment groups using the covariate balancing propensity score method (Imai & Ratkovic (2014)). CBPS::CBPS()] and \code{\link[CBPS:hdCBPS]{CBPS::hdCBPS()}} are used a backend for estimating the parameters.
+This function works in a similar way to the \code{\link[=joint_calib_att]{joint_calib_att()}} function, i.e. the user can specify variables for the balancing means as well as the quantiles.
 }
 \examples{
-# generate data as in hbal package
+
+## generate data as in the hbal package (see [hbal::hbal()])
 set.seed(123)
 N <- 1500
 X1 <- rnorm(N)
@@ -61,24 +63,26 @@ y <- 0.5*D + X1 + X2 + X2*X3 + rnorm(N) # Outcome
 dat <- data.frame(D = D, X1 = X1, X2 = X2, X3 = X3, X1X3 = X1X3, Y = y)
 head(dat)
 
+## Balancing means of X1, X2 and X3 and quartiles (0.25, 0.5, 0.75) of X1 and X2.
 result <- joint_calib_cbps(formula_means = ~ X1 + X2 + X3,
                            formula_quantiles = ~ X1 + X2,
                            treatment = ~ D,
                            data = dat)
 
+## CBPS output is presented
 result
 
-# calculate ATE
+## calculate ATE by hand
 w_1 <- dat$D/fitted(result)
 w_1 <- w_1/mean(w_1)
 w_0 <- (1-dat$D)/(1-fitted(result))
 w_0 <- w_0/mean(w_0)
 mean((w_1-w_0)*dat$Y)
 
-# compare with standard CBPS
-
+## Compare with standard CBPS using only means
 result2 <- CBPS::CBPS(D ~ X1 + X2 + X3, data = dat, method = "exact", standardize = FALSE, ATT = 0)
 
+## calculate ATE by hand
 w_1a <- dat$D/fitted(result2)
 w_1a <- w_1a/mean(w_1a)
 w_0a <- (1-dat$D)/(1-fitted(result2))
@@ -87,10 +91,10 @@ mean((w_1a-w_0a)*dat$Y)
 
 }
 \references{
-Imai, K., & Ratkovic, M. (2014). Covariate balancing propensity score.
+Imai, K., and Ratkovic, M. (2014). Covariate balancing propensity score.
 Journal of the Royal Statistical Society Series B: Statistical Methodology, 76(1), 243-263.
 
-Fong C, Ratkovic M, Imai K (2022). CBPS: Covariate Balancing Propensity Score.
+Fong C, Ratkovic M, and Imai K (2022). CBPS: Covariate Balancing Propensity Score.
 R package version 0.23, \url{https://CRAN.R-project.org/package=CBPS}.
 }
 \author{
