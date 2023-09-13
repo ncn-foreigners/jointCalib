@@ -91,7 +91,6 @@ joint_calib_cbps <-
     ## split data by treatment
     treat <- stats::model.frame(treatment, data)
     id_treatment <- which(treat == 1)
-    id_control <- which(treat == 0)
 
     ## calculate totals
     if (is.null(formula_means)) {
@@ -129,14 +128,8 @@ joint_calib_cbps <-
       )
     }
 
-    A_treat <- joint_calib_create_matrix(X_q = X_q[id_treatment,], N = NROW(X_q[id_treatment, ]),
-                                         pop_quantiles = pop_quantiles, control = control)
-    A_control <- joint_calib_create_matrix(X_q = X_q[id_control,], N = NROW(X_q[id_treatment, ]),
-                                           pop_quantiles = pop_quantiles, control = control)
-
-    A <- matrix(0, nrow = NROW(X_q), ncol = NCOL(A_control))
-    A[id_treatment, ] <- A_treat
-    A[id_control, ] <- A_control
+    A <- joint_calib_create_matrix(X_q = X_q, N=sum(treat),
+                                        pop_quantiles = pop_quantiles, control = control)
 
     colnames(A) <- gsub("%", "", names(unlist(pop_quantiles)))
 

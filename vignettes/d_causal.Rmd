@@ -1,0 +1,28 @@
+---
+title: "Balancing distributions for observational studies"
+author: "Maciej Beręsewicz"
+output: 
+    html_vignette:
+        df_print: kable
+        toc: true
+        number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Balancing distributions for observational studies}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: references.bib
+link-citations: true
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(jointCalib)
+```

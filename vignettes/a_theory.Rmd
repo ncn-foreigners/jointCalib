@@ -1,0 +1,140 @@
+---
+title: "Joint calibration estimators for totals and quantiles"
+author: "Maciej Beręsewicz and Marcin Szymkowiak"
+output: 
+    html_vignette:
+        df_print: kable
+        toc: true
+        number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Joint calibration estimators for totals and quantiles}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: references.bib
+link-citations: true
+header-includes: 
+  - \usepackage{amsmath}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bh}{\mathbf{h}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bp}{\mathbf{p}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bd}{\mathbf{d}}
+\newcommand{\bZ}{\mathbf{Z}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bQ}{\mathbf{Q}}
+\newcommand{\HT}{\text{\rm HT}}
+
+\newcommand{\bbeta}{\mathbf{\beta}}
+\newcommand{\balpha}{\mathbf{\alpha}}
+\newcommand{\btau}{\mathbf{\tau}}
+\newcommand{\bgamma}{\mathbf{\gamma}}
+\newcommand{\btheta}{\mathbf{\theta}}
+
+\newcommand{\colvec}{\operatorname{colvec}}
+\newcommand{\logit}{\operatorname{logit}}
+\newcommand{\Exp}{\operatorname{Exp}}
+\newcommand{\Ber}{\operatorname{Bernoulli}}
+\newcommand{\Uni}{\operatorname{Uniform}}
+\newcommand{\argmin}{\operatorname{argmin}}
+
+# Introduction
+
+Calibration weighting is a method commonly used in survey sampling to adjust original design weights for sampled elements to reproduce known population totals for all auxiliary variables [@deville1992calibration]. Following the calibration paradigm, it can also be used to reproduce known population quantiles for all benchmark variables [@harms2006calibration]. This technique is also used in surveys to compensate for nonsampling errors, such as nonresponse or coverage errors [@sarndal2005estimation]. By appropriately adjusting the weights, it is not only possible to ensure consistency with known structures for key variables from other data sources, such as censuses or registers, but also to reduce the bias and improve the  precision of final estimates. %Calibration weighting is also used in surveys in which the analysed features have asymmetric distributions (in the presence of outliers) to compensate for their negative impact on the final estimates: calibration weights provide robustness while meeting constraints on the calibration variables and the weights [@duchesne1999robust]. 
+
+In this article, we propose a joint calibration approach to estimate the total or quantile of order $\alpha$ for the variable of interest $y$. Final calibration weights $w_{k}$ reproduce known population totals and quantiles for all auxiliary variables. At the same time, they help to reduce the bias and improve the precision of estimates. The proposed method is based on the classic approach to calibration and simultaneously takes into account calibration equations for totals and quantiles of all auxiliary variables.
+
+
+<!-- 
+The paper has the following structure. In section \ref{sec-basic} we introduce the basic setup: notation, calibration for totals and quantiles. In section \ref{sec-proposed} we describe the procedure of joint calibration of totals and quantiles. In section \ref{sec-sims} we describe results of a simulation study based on \citet{chen2020doubly}. Section \ref{sec-summary} summarises the paper. 
+-->
+
+# Calibration estimator for a total
+
+In most applications the goal is to estimate a finite population total $\tau_{y}=\sum_{k\in U}y_{k}$ or the mean $\bar{\tau}_{y}=\tau_{y}/N$ of the variable of interest $y$, where $U$ is the population of size $N$. The well-known estimator of a finite population total is the Horvitz-Thompson estimator, which is expressed as $\hat{\tau}_{y\pi}=\sum_{k=1}^{n}d_{k}y_{k}=\sum_{k\in s}{d_{k}y_{k}}$, where $s$ denotes a probability sample of size $n$, $d_{k}=1/\pi_{k}$ is a design weight and $\pi_{k}$ is the first-order inclusion probability of the $i$-th element of the population $U$. This estimator is unbiased for $\tau_{Y}$ i.e. $E\left(\hat{\tau}_{y\pi}\right)=\tau_{Y}$. 
+
+Let $\bx_{k}^{\circ}$ be a $J_{1}$-dimensional vector of auxiliary variables (benchmark variables) for which $\tau_{\bx}=\sum_{k\in U}\bx_{k}^{\circ}=\left(\sum_{k\in U}x_{k1},\ldots,\sum_{k\in U}x_{kJ_{1}}\right)^T$ is assumed to be known. In most cases in practice the $d_{k}$ weights do not reproduce known population totals for benchmark variables $\bx_{k}^{\circ}$. It means that the resulting estimate $\hat{\tau}_{\bx\pi}=\sum_{k\in s}{d_{k}\bx_{k}^{\circ}}$ is not equal to $\tau_{\bx}$. The main idea of calibration is to look for new calibration weights $w_{k}$ which are as close as possible to original design weights $d_{k}$ and reproduce known population totals $\tau_{\bx}$ exactly. In other words, in order to find new calibration weights $w_{k}$ we have to minimise a distance function $D\left(\bd,\bv\right)=\sum _{k\in s}d_{k}\hspace{2pt} G\hspace{0pt}\left(\frac{v_{k}}{d_{k}}\right) \to \textrm{min}$ to fulfil calibration equations $\sum_{k\in s}v_{k}\bx_{k}^{\circ} = \sum_{k\in U}\bx_{k}^{\circ}$, where $\bd=\left(d_{1},\ldots,d_{n}\right)^T$, $\bv=\left(v_{1},\ldots,v_{n}\right)^T$ and $G\left(\cdot\right)$ is a function which must satisfy some regularity conditions: $G\left(\cdot\right)$ is strictly convex and twice continuously differentiable, $G\left(\cdot\right)\geq 0$, $G\left(1\right)=0$, $G'\left(1\right)=0$ and $G''\left(1\right)=1$. Examples of $G\left(\cdot\right)$ functions are given by @deville1992calibration. For instance, if $G\left(x\right)=\frac{\left(x-1\right)^{2}}{2}$, then using the method of Lagrange multipliers the final calibration weights $w_{k}$ can be expressed as $w_{k}=d_{k}+d_{k}\left(\tau_{\bx}-\hat{\tau}_{\bx\pi}\right)^T\left(\sum_{j\in s}d_{j}\bx_{j}^{\circ}\bx_{j}^{\circ T}\right)^{-1}\bx_{k}^{\circ}$. It is worth adding that in order to avoid negative or large $w_{k}$ weights in the process of minimising the $D\left(\cdot\right)$ function, one can consider some boundary constraints $L\leq \frac{w_{k}}{d_{k}}\leq U$, where $\ 0\leq L\leq 1 \leq U,\  k=1,\ldots,n$. The final calibration estimator of a population total $\tau_{y}$ can be expressed as $\hat{\tau}_{y\bx}=\sum_{k\in s}w_{k}y_{k}$, where $w_{k}$ are calibration weights obtained under a specific chosen $G\left(\cdot\right)$ function.
+
+# Calibration estimator for a quantile
+
+@harms2006calibration considered the estimation of quantiles using the calibration approach in a way very similar to the what @deville1992calibration proposed for a finite population total $\tau_{y}$. By analogy, in their approach it is not necessary to know values for all auxiliary variables for all units in the population. It is enough to know the corresponding quantiles for the benchmark variables. We will briefly discuss the problem of finding calibration weights in this setup.  
+
+We want to estimate a quantile $Q_{y,\alpha}$ of order $\alpha \in \left(0,1\right)$ of the variable of interest $y$, which can be expressed as $Q_{y,\alpha}=\mathrm{inf}\left\{t\left|F_{y}\left(t\right)\geq \alpha \right.\right\}$, where $F_{y}\left(t\right)=N^{-1}\sum_{k\in U}H\left(t-y_{k}\right)$ and the Heavyside function is given by 
+
+\begin{equation}\label{eq:H}
+H\left(t-y_{k}\right)=\left\{ \begin{array}{ll}
+1, & \ t \geq y_{k},\\
+0, & \ t<y_{k}.\\
+\end{array} \right.
+\end{equation}
+
+We assume that $\bQ_{\bx,\alpha}=\left(Q_{x_{1},\alpha},\ldots,Q_{x_{J_{2}},\alpha}\right)^{T}$ is a vector of known population quantiles of order $\alpha$ for a vector of auxiliary variables $\bx_{k}^{*}$, where $\alpha \in \left(0,1\right)$ and $\bx_{k}^{*}$ is a $J_{2}$-dimensional vector of auxiliary variables. It is worth noting that, in general, the numbers $J_{1}$ and $J_{2}$ of the auxiliary variables are different. It may happen that for a specific auxiliary variable its population total and the corresponding quantile of order $\alpha$ will be known. However, in most cases quantiles will be known for continuous auxiliary variables, unlike totals, which will generally be known for categorical variables. In order to find new calibration weights $w_{k}$ which reproduce known population quantiles in a vector $Q_{\bx,\alpha}$, an interpolated distribution function estimator of $F_{y}\left(t\right)$ is defined as $\hat{F}_{y,cal}(t)=\frac{\sum_{k \in s} w_{k} H_{y, s}\left(t, y_{k}\right)}{\sum_{k \in s} w_{k}}$, where the Heavyside function in formula (\ref{eq:H}) is replaced by the modified function $H_{y, s}\left(t, y_{k}\right)$ given by
+
+\begin{equation}
+H_{y, s}\left(t, y_{k}\right)=\left\{
+\begin{array}{ll}
+1, & y_{k} \leqslant L_{y, s}(t), \\ 
+\beta_{y, s}\left(t\right), & y_{k}=U_{y, s}\left(t\right), \\ 
+0, & y_{k}>U_{y, s}\left(t\right),
+\end{array}\right.
+\end{equation}
+
+\noindent where $L_{y, s}\left(t\right)=\max \left\{\left\{y_{k}, k \in s \mid y_{k} \leqslant t\right\} \cup\{-\infty\}\right\}$, $U_{y, s}\left(t\right)=\min \left\{\left\{y_{k}, k \in s \mid y_{k}>t\right\} \cup\{\infty\}\right\}$ and $\beta_{y, s}\left(t\right)=\frac{t-L_{y, s}\left(t\right)}{U_{y, s}\left(t\right)-L_{y, s}\left(t\right)}$ for $k=1,\ldots,n$, $t \in \mathbb{R}$. A calibration estimator of quantile $Q_{y,\alpha}$ of order $\alpha$ for variable $y$ is defined as $\hat{Q}_{y,cal,\alpha}=\hat{F}_{y,cal}^{-1}(\alpha)$, where a vector $\bw=\left(w_{1},\ldots,w_{n}\right)^{T}$ is a solution of optimization problem $D\left(\bd,\bv\right)=\sum _{k\in s}d_{k}\hspace{2pt} G\hspace{0pt}\left(\frac{v_{k}}{d_{k}}\right) \to \textrm{min}$ subject to the calibration constraints $\sum_{k\in s}v_{k}=N$ and  $\hat{\bQ}_{\bx,cal,\alpha}=\left(\hat{Q}_{x_{1},cal,\alpha},\ldots,\hat{Q}_{x_{J_{2}},cal,\alpha}\right)^{T}=\bQ_{\bx,\alpha}$ or equivalently $\hat{F}_{x_{j},cal}\left(Q_{x_{j},\alpha}\right)=\alpha$, where $j=1,\ldots,J_{2}$.
+
+As in the previous case, if $G\left(x\right)=\frac{\left(x-1\right)^{2}}{2}$ then using the method of Lagrange multipliers the final calibration weights $w_{k}$ can be expressed as $w_{k}=d_{k}+d_{k}\left(\mathbf{T_{a}}-\sum_{k\in s}{d_{k}\ba_{k}}\right)^{T}\left(\sum_{j\in s}{d_{j}}\ba_{j}\ba_{j}^{T}\right)^{-1}\ba_{k}$, where $\mathbf{T_{a}}=\left(N,\alpha,\ldots,\alpha\right)^{T}$ and the elements of $\ba_{k}=\left(1,a_{k1},\ldots,a_{kJ_{2}}\right)^{T}$ are given by
+
+\begin{equation}
+a_{kj}=\left\{\begin{array}{lll} 
+N^{-1},& \quad x_{kj}\leq L_{x_{j},s}\left(Q_{x_{j},\alpha}\right),\\
+N^{-1}\beta_{x_{j},s}\left(Q_{x_{j},\alpha}\right), & \quad x_{kj}=U_{x_{j},s}\left(Q_{x_{j},\alpha}\right),\\
+0,& \quad x_{kj}> U_{x_{j},s}\left(Q_{x_{j},\alpha}\right),\\
+\end{array} \right.
+\end{equation}
+
+with $j=1,\ldots,J_{2}$.
+
+Assuming that $y_{1}\leq y_{2}\ldots \leq y_{n}$ it can be shown that if there exists $p\!\in\!\!{\left\{1,\ldots,n-1\right\}}$ such that $\hat{F}_{y,cal}\left(y_{p}\right)\leq \alpha$, $\hat{F}_{y,cal}\left(y_{p+1}\right)> \alpha$ and $\hat{F}_{y,cal}$ is invertible at point $\hat{Q}_{y,cal,\alpha}$
+then the calibration estimator $\hat{Q}_{y,cal,\alpha}$ of quantile $Q_{y,\alpha}$ of order $\alpha \in \left(0,1\right)$ can be expressed as $\hat{Q}_{y,cal,\alpha}=y_{p}+\frac{N\alpha-\sum_{i=1}^{p}{w_{i}}}{w_{p+1}}\left(y_{p+1}-y_{p}\right)$.
+
+# Joint calibration of totals and quantiles
+
+We propose a simple method that jointly calibrates weights for totals and quantiles. The resulting calibrated weights $w_{k}$ will allow us to retrieve known population totals and quantiles of auxiliary variables simultaneously. In the case of a single scalar auxiliary variable $x$, the final calibration estimator based on weights $w_{k}$ delivers an exact population total and quantile for variable $y$ when the relationship between $y$ and $x$ is exactly linear i.e. when $y_{k}=\beta x_{k}$ for all $k\in U$.
+
+Let us assume that we are interested in estimating a population total $\tau_{y}$ and/or quantile $Q_{y,\alpha}$ of order $\alpha$, where $\alpha \in \left(0,1\right)$ for variable of interest $y$. Let $\bx_{k}=\left(\begin{smallmatrix}\bx_{k}^{\circ}\\1\\\bx_{k}^{*}\end{smallmatrix}\right)$ be a $J+1$-dimensional vector of auxiliary variables, where $J=J_{1}+J_{2}$. We assume that for $J_{1}$ variables a vector of population totals $\tau_{\bx}$ is known and for $J_{2}$ variables a vector $\bQ_{\bx,\alpha}$ of population quantiles is known. In practice it may happen that for the same auxiliary variable we know its population total and quantile. We do not require that the complete auxiliary information described by the vector $\bx_{k}$ is known for all $k\in U$; however, for some auxiliary variables unit-population data would be necessary, because accurate quantiles are not likely to be known from other sources [@sarndal2007calibration]. 
+
+Our main aim is to find new calibration weights $w_{k}$ which are as close as possible to original design weights $d_{k}$ and for some auxiliary variables reproduce known population totals and for the remaining benchmark variables -- reproduce known population quantiles exactly. In our joint approach we are looking for a vector $\bw=\left(w_{1},\ldots,w_{n}\right)^{T}$ which is a solution of the optimization problem $D\left(\bd,\bv\right)=\sum _{k\in s}d_{k}\hspace{2pt} G\hspace{0pt}\left(\frac{v_{k}}{d_{k}}\right) \to \textrm{min}$ subject to the calibration constraints $\sum_{k\in s}v_{k}=N$, $\sum_{k\in s}v_{k}\bx_{k}^{\circ} = \tau_{\bx}$ and  $\hat{\bQ}_{\bx,cal,\alpha}=\bQ_{\bx,\alpha}$. In general, $J+1$ calibration equations have to be fulfilled. Alternatively, calibration equations can be expressed as $\sum_{k\in s}v_{k}\bx_{k}^{\circ} = \tau_{\bx}$ and $\sum_{k\in s}v_{k}\ba_{k}=\mathbf{T_{a}}$ with possible boundary constraints on calibration weights. 
+
+Assuming a quadratic metric $D\left(\cdot\right)$, which is based on $G\left(x\right)=\frac{\left(x-1\right)^{2}}{2}$ function, an explicit solution of the above optimization problem can be derived. This solution is similar to the calibration weights for totals and quantiles. Let $\bh_{\bx}=\binom{\tau_{\bx}}{\mathbf{T_{a}}}$ and $\hat{\bh}_{\bx}=\binom{\sum_{k\in s}d_{k}\bx_{k}^{\circ}}{\sum_{k\in s}d_{k}\ba_{k}}$. Then the vector of calibration weights $\bw=\left(w_{1},\ldots,w_{n}\right)^{T}$ which solves the above optimization problem satisfies the relation:
+
+\begin{equation}
+w_{k}=d_{k}+d_{k}\left(\bh_{\bx}-\hat{\bh}_{\bx}\right)^{T}\left(\sum_{j\in s}{d_{j}}\bx_{j}\bx_{j}^{T}\right)^{-1}\bx_{k}.
+\end{equation}
+
+*Remark 1*: In our proposed method we assume that we reproduce known population totals and known population quantiles for a set of benchmark variables simultaneously. This approach can be easily extended by assuming that for estimated totals or quantiles are reproduced for some auxiliary variables. Moreover, we assumed that the process of calibration is based on a particular quantile (of order $\alpha$). For instance, it could be a median i.e. $\alpha=0.5$. Nothing stands in the way of searching for calibration weights which reproduce population totals and a set of population quantiles (for example quartiles) for a chosen set of auxiliary variables. Moreover, the proposed method can be easily extended for the generalized calibration, in particular, for not missing at random non-response [@kott2010using], or empirical likelihood by adding additional constraints on quantiles, i.e. $\sum_{k \in s} p_{k}a_{kj} = \frac{\alpha}{N}$, where $j=1,\ldots,J_{2}$ and $p_{k}$ are elements of the vector $\bp=\left(p_{1},\ldots,p_{n}\right)^{T}$ which is is a discrete probability measure over the sample $s$ [@wu2020sampling]. 
+
+*Remark 2*: In our approach we use an interpolated distribution function $H_{y,s}$, which is a simple modification of the Heavyside function defined in (\ref{H}). From a practical point of view a smooth approximation to the step function, based on the logistic function can be used i.e. $H\left(x\right)\approx\frac{1}{2}+\frac{1}{2}\tanh{kx}=\frac{1}{1+e^{-2kx}}$, where a larger value of $k$ corresponds to a sharper transition at $x = 0$. 
+
+*Remark 3*: The proposed method can be easily applied to data from household surveys, where integrated calibration is applied, i.e. when the weights of particular household members should be equal. This can be in particularly useful in the case of EU-SILC, where information from administrative data can be used to provide population distributions for auxiliary variables.
+
+
+
+# References
+
+

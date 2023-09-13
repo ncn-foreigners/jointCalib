@@ -1,0 +1,28 @@
+---
+title: "Calibration of quantiles and a joint calibration of totals and quanitles for surveys"
+author: "Maciej Beręsewicz"
+output: 
+    html_vignette:
+        df_print: kable
+        toc: true
+        number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Calibration of quantiles and a joint calibration of totals and quanitles for surveys}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: references.bib
+link-citations: true
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(jointCalib)
+```
