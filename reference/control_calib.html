@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">jointCalib</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,9 +51,12 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">control_calib</span><span class="op">(</span></span>
 <span>  interpolation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"logit"</span>, <span class="st">"linear"</span><span class="op">)</span>,</span>
 <span>  logit_const <span class="op">=</span> <span class="op">-</span><span class="fl">1000</span>,</span>
+<span>  sum_to_sample <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sum_to_one <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  survey_sparse <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ebal_constraint_tolerance <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  ebal_print_level <span class="op">=</span> <span class="fl">0</span></span>
+<span>  ebal_print_level <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  el_att <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -67,16 +70,28 @@
 <dd><p>constant for <code>logit</code> interpolation,</p></dd>
 
 
+<dt>sum_to_sample</dt>
+<dd><p>whether weights should sum to sample,</p></dd>
+
+
+<dt>sum_to_one</dt>
+<dd><p>whether weights should sum to one (aka normalized weights),</p></dd>
+
+
 <dt>survey_sparse</dt>
 <dd><p>whether to use sparse matrices via <code>Matrix</code> package in <code><a href="https://rdrr.io/pkg/survey/man/calibrate.html" class="external-link">survey::grake()</a></code> (currently not supported),</p></dd>
 
 
 <dt>ebal_constraint_tolerance</dt>
-<dd><p>This is the tolerance level used by ebalance to decide if the moments in the reweighted data are equal to the target moments (see <code><a href="https://rdrr.io/pkg/ebal/man/ebalance.html" class="external-link">ebal::ebalance()</a></code>),</p></dd>
+<dd><p>this is the tolerance level used by ebalance to decide if the moments in the reweighted data are equal to the target moments (see <code><a href="https://rdrr.io/pkg/ebal/man/ebalance.html" class="external-link">ebal::ebalance()</a></code>),</p></dd>
 
 
 <dt>ebal_print_level</dt>
-<dd><p>Controls the level of printing: 0 (normal printing), 2 (detailed), and 3 (very detailed) (see <code><a href="https://rdrr.io/pkg/ebal/man/ebalance.html" class="external-link">ebal::ebalance()</a></code>).</p></dd>
+<dd><p>controls the level of printing: 0 (normal printing), 2 (detailed), and 3 (very detailed) (see <code><a href="https://rdrr.io/pkg/ebal/man/ebalance.html" class="external-link">ebal::ebalance()</a></code>),</p></dd>
+
+
+<dt>el_att</dt>
+<dd><p>whether weights for control should sum up to treatment size (for <code>calib_el</code> function only).</p></dd>
 
 </dl></div>
     <div class="section level2">
