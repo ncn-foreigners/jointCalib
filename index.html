@@ -38,6 +38,9 @@
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -116,14 +119,14 @@
 <ul>
 <li>calibration of quantiles,</li>
 <li>calibration of quantiles and totals,</li>
-<li>calibration using standard calibration, empirical likelihood and entropy balancing method.</li>
+<li>calibration using standard calibration, empirical likelihood and entropy balancing method,</li>
+<li>covariate distribution balancing (ATT),</li>
+<li>covariate distribution balancing propensity score (ATE).</li>
 </ul>
 <p>Further plans:</p>
 <ul>
 <li>generalized calibration via <code><a href="https://rdrr.io/pkg/sampling/man/gencalib.html" class="external-link">sampling::gencalib</a></code>,</li>
-<li>calibrated / covariate balancing propensity score (see <a href="https://github.com/ncn-foreigners/jointCalib/tree/causal" class="external-link">causal</a> branch for initial development),</li>
 <li>calibration for Gini and other metrics,</li>
-<li>observational studies / causal inference (see <a href="https://github.com/ncn-foreigners/jointCalib/tree/causal" class="external-link">causal</a> branch for initial development)</li>
 <li>…</li>
 </ul>
 </div>
@@ -199,17 +202,17 @@
 <span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
 <span><span class="co">#&gt;  0.4562  0.6773  0.8180  1.0000  1.4500  2.4538 </span></span>
 <span><span class="co">#&gt; Totals and precision (abs diff: 4.574665e-10)</span></span>
-<span><span class="co">#&gt;       totals    precision</span></span>
-<span><span class="co">#&gt;  [1,]  1e+03 4.557705e-10</span></span>
-<span><span class="co">#&gt;  [2,]  1e-01 5.020984e-14</span></span>
-<span><span class="co">#&gt;  [3,]  2e-01 1.055545e-13</span></span>
-<span><span class="co">#&gt;  [4,]  3e-01 1.324496e-13</span></span>
-<span><span class="co">#&gt;  [5,]  4e-01 1.580958e-13</span></span>
-<span><span class="co">#&gt;  [6,]  5e-01 1.765255e-13</span></span>
-<span><span class="co">#&gt;  [7,]  6e-01 1.991740e-13</span></span>
-<span><span class="co">#&gt;  [8,]  7e-01 2.304823e-13</span></span>
-<span><span class="co">#&gt;  [9,]  8e-01 2.882139e-13</span></span>
-<span><span class="co">#&gt; [10,]  9e-01 3.552714e-13</span></span></code></pre></div>
+<span><span class="co">#&gt;        totals    precision</span></span>
+<span><span class="co">#&gt; N       1e+03 4.557705e-10</span></span>
+<span><span class="co">#&gt; x 0.10  1e-01 5.020984e-14</span></span>
+<span><span class="co">#&gt; x 0.20  2e-01 1.055545e-13</span></span>
+<span><span class="co">#&gt; x 0.30  3e-01 1.324496e-13</span></span>
+<span><span class="co">#&gt; x 0.40  4e-01 1.580958e-13</span></span>
+<span><span class="co">#&gt; x 0.50  5e-01 1.765255e-13</span></span>
+<span><span class="co">#&gt; x 0.60  6e-01 1.991740e-13</span></span>
+<span><span class="co">#&gt; x 0.70  7e-01 2.304823e-13</span></span>
+<span><span class="co">#&gt; x 0.80  8e-01 2.882139e-13</span></span>
+<span><span class="co">#&gt; x 0.90  9e-01 3.552714e-13</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>true <span class="op">=</span> <span class="va">quants_known</span><span class="op">$</span><span class="va">x</span>, est <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/laeken/man/weightedQuantile.html" class="external-link">weightedQuantile</a></span><span class="op">(</span><span class="va">df_resp</span><span class="op">$</span><span class="va">x</span>, <span class="va">result1</span><span class="op">$</span><span class="va">g</span><span class="op">*</span><span class="va">df_resp</span><span class="op">$</span><span class="va">d</span>, <span class="va">probs</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          true       est</span></span>
