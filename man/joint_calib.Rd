@@ -69,6 +69,9 @@ Returns a list with containing:\cr
 \description{
 \code{joint_calib} allows joint calibration of totals and quantiles. It provides a user-friendly interface that includes the specification of variables in formula notation, a vector of population totals, a list of quantiles, and a variety of backends and methods.
 }
+\details{
+Imports for the function
+}
 \examples{
 ## generate data based on Haziza and Lesage (2016)
 set.seed(123)

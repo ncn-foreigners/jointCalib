@@ -1,9 +1,13 @@
+#' Imports for the function
+#' @importFrom CBPS CBPS
+#' @importFrom CBPS hdCBPS
+#'
 #' @title Function to balance the covariate distributions using covariate balancing propensity score \code{CBPS}
 #' @author Maciej Beręsewicz
 #'
 #' @description
 #'
-#' \code{joint_calib_cbps} allows quantile or mean and quantile balancing of the covariate distributions of the control and treatment groups using the covariate balancing propensity score method (Imai & Ratkovic (2014)). CBPS::CBPS()] and [CBPS::hdCBPS()] are used a backend for estimating the parameters.
+#' \code{joint_calib_cbps} allows quantile or mean and quantile balancing of the covariate distributions of the control and treatment groups using the covariate balancing propensity score method (Imai & Ratkovic (2014)). [CBPS::CBPS()] and [CBPS::hdCBPS()] are used a backend for estimating the parameters.
 #' This function works in a similar way to the [jointCalib::joint_calib_att()] function, i.e. the user can specify variables for the balancing means as well as the quantiles.
 #'
 #' @param formula_means a formula with variables to be balanced at means,
@@ -128,8 +132,10 @@ joint_calib_cbps <-
       )
     }
 
-    A <- joint_calib_create_matrix(X_q = X_q, N=sum(treat),
-                                        pop_quantiles = pop_quantiles, control = control)
+    A <- joint_calib_create_matrix(X_q = X_q,
+                                   N=sum(treat),
+                                   pop_quantiles = pop_quantiles,
+                                   control = control)
 
     colnames(A) <- gsub("%", "", names(unlist(pop_quantiles)))
 

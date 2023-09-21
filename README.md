@@ -7,6 +7,8 @@
 [![CRAN-d](http://cranlogs.r-pkg.org/badges/grand-total/jointCalib?color=blue)](https://cran.r-project.org/package=jointCalib)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8355993.svg)](https://doi.org/10.5281/zenodo.8355993)
 [![Dependencies](https://tinyverse.netlify.com/badge/jointCalib)](https://cran.r-project.org/package=jointCalib)
+[![Mentioned in Awesome Official
+Statistics](https://awesome.re/mentioned-badge.svg)](http://www.awesomeofficialstatistics.org)
 
 <!-- badges: end -->
 
