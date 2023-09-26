@@ -6,6 +6,8 @@ output:
         df_print: kable
         toc: true
         number_sections: true
+        fig_width: 6
+        fig_height: 4
 vignette: >
   %\VignetteIndexEntry{Balancing distributions for observational studies}
   %\VignetteEncoding{UTF-8}
@@ -23,6 +25,131 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Packages
+
+Load packages for the example
+
 ```{r setup}
 library(jointCalib)
+library(CBPS)
+library(ebal)
+library(laeken)
 ```
+
+Read the the `LaLonde` data.
+
+```{r}
+data("LaLonde")
+head(LaLonde)
+```
+
+# ATT with entropy balancing and other methods
+
+## Single variable: `age`
+
+Consider balancing `age` variable.
+
+```{r}
+dens0 <- density(LaLonde$age[LaLonde$treat == 0])
+dens1 <- density(LaLonde$age[LaLonde$treat == 1])
+plot(dens0, main="Distribution of age", xlab="Age", ylim=c(0, max(dens0$y, dens1$y)))
+lines(dens1, lty=2, col="blue")
+legend("topright", legend=c("Control", "Treatment"), lty=c(1,2), col=c("black", "blue"))
+```
+
+Balancing using `ebal::ebalance` and `joint_calib_att` with method `eb` which uses `ebal` package as backend. For DEB we use deciles `probs = seq(0.1, 0.9, 0.1)` and balance mean as well (`formula_means = ~ age`). 
+
+```{r}
+bal_standard <- ebalance(LaLonde$treat, X = LaLonde[, "age"])
+bal_quant <- joint_calib_att(formula_means = ~ age, 
+                             formula_quantiles = ~ age, 
+                             treatment =  ~ treat, 
+                             data = LaLonde, 
+                             probs = seq(0.1, 0.9, 0.1),
+                             method = "eb")
+bal_quant
+```
+
+Compare weighted distributions with treatment group distribution.
+
+```{r}
+dens0 <- density(LaLonde$age[LaLonde$treat == 0], weights = bal_standard$w/sum(bal_standard$w))
+dens1 <- density(LaLonde$age[LaLonde$treat == 0], weights = bal_quant$g/sum(bal_quant$g))
+dens2 <- density(LaLonde$age[LaLonde$treat == 1])
+plot(dens0, main="Distribution of age", xlab="Age", ylim=c(0, max(dens0$y, dens1$y)))
+lines(dens1, lty=2, col="blue")
+lines(dens2, lty=3, col="red")
+legend("topright", 
+       legend=c("EB", "DEB", "Treatment"), 
+       lty=c(1,2, 3), 
+       col=c("black", "blue", "red"))
+```
+
+## More variables 
+
+Now, consider three variables: `married`, `age` and `educ`.
+
+```{r}
+dens0 <- density(LaLonde$educ[LaLonde$treat == 0])
+dens1 <- density(LaLonde$educ[LaLonde$treat == 1])
+plot(dens0, main="Distribution of education", xlab="Education", ylim=c(0, max(dens0$y, dens1$y)))
+lines(dens1, lty=2, col="blue")
+legend("topleft", legend=c("Control", "Treatment"), lty=c(1,2), col=c("black", "blue"))
+```
+
+```{r}
+bal_standard <- ebalance(LaLonde$treat, X = LaLonde[, c("married", "age", "educ")])
+bal_quant <- joint_calib_att(formula_means = ~ married + age + educ, 
+                             formula_quantiles = ~ age + educ, 
+                             treatment =  ~ treat, 
+                             data = LaLonde, 
+                             method = "eb")
+bal_quant
+```
+
+Compare education
+
+```{r}
+dens0 <- density(LaLonde$educ[LaLonde$treat == 0], weights = bal_standard$w/sum(bal_standard$w))
+dens1 <- density(LaLonde$educ[LaLonde$treat == 0], weights = bal_quant$g/sum(bal_quant$g))
+dens2 <- density(LaLonde$educ[LaLonde$treat == 1])
+plot(dens0, main="Distribution of Education", xlab="Education", ylim=c(0, max(dens0$y, dens1$y)))
+lines(dens1, lty=2, col="blue")
+lines(dens2, lty=3, col="red")
+legend("topleft", 
+       legend=c("EB", "DEB", "Treatment"), 
+       lty=c(1,2, 3), 
+       col=c("black", "blue", "red"))
+```
+
+Compare age
+
+```{r}
+dens0 <- density(LaLonde$age[LaLonde$treat == 0], weights = bal_standard$w/sum(bal_standard$w))
+dens1 <- density(LaLonde$age[LaLonde$treat == 0], weights = bal_quant$g/sum(bal_quant$g))
+dens2 <- density(LaLonde$age[LaLonde$treat == 1])
+plot(dens0, main="Distribution of age", xlab="Age", ylim=c(0, max(dens0$y, dens1$y)))
+lines(dens1, lty=2, col="blue")
+lines(dens2, lty=3, col="red")
+legend("topright", 
+       legend=c("EB", "DEB", "Treatment"), 
+       lty=c(1,2, 3), 
+       col=c("black", "blue", "red"))
+```
+
+Compare estimates of ATT using EB and DEB
+
+```{r}
+c(EB = with(LaLonde, mean(re74[treat == 1]) - weighted.mean(re74[treat == 0], bal_standard$w)),
+  DEB = with(LaLonde, mean(re74[treat == 1]) - weighted.mean(re74[treat == 0], bal_quant$g)))
+```
+
+Compare QTT(0.5) using EB and DEB
+
+```{r}
+c(EB = with(LaLonde, median(re74[treat == 1]) - weightedMedian(re74[treat == 0], bal_standard$w)),
+  DEB = with(LaLonde, median(re74[treat == 1]) - weightedMedian(re74[treat == 0], bal_quant$g)))
+```
+
+# ATT with CBPS and DPS
+

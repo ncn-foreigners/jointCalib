@@ -25,4 +25,40 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(jointCalib)
+library(laeken)
 ```
+
+Basic example
+
+```{r}
+set.seed(123)
+N <- 100
+x1 <- rbinom(n = 100, prob = 0.7, size = 1)
+x2 <- rlnorm(n = 100)*1000
+pop<-data.frame(x1, x2)
+sample_df <- pop[sample(1:N, 20), ]
+sample_df$d <- as.integer(N/nrow(sample_df))
+colSums(sample_df[, c("x1", "x2")]*sample_df$d)
+with(sample_df, weightedMedian(x2, d))
+```
+
+```{r}
+res <- joint_calib(formula_totals = ~ x1 + x2,
+                   formula_quantiles = ~ x2,
+                   data = sample_df,
+                   dweights = as.numeric(sample_df$d),
+                   N = 100,
+                   pop_totals = c(x1=sum(x1), x2=sum(x2)),
+                   pop_quantiles = list(x2=quantile(x2,0.5)),
+                   method = "linear",
+                   control = control_calib(interpolation = "linear"))
+
+for_example <- res$Xs[, c(3,4,2)] |> as.data.frame()
+for_example$w <- sample_df$d * res$g
+for_example
+```
+
+```{r}
+weightedQuantile(sample_df$x2, res$g, 0.5)
+```
+
