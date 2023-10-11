@@ -1,3 +1,13 @@
+#' Imports for the function
+#' @importFrom sampling calib
+#' @importFrom laeken calibWeights
+#' @importFrom survey grake
+#' @importFrom survey cal.linear
+#' @importFrom survey cal.raking
+#' @importFrom survey cal.logit
+#' @importFrom survey cal.sinh
+#' @importFrom ebal eb
+#'
 #' @title Function for the joint calibration of totals and quantiles
 #' @author Maciej Beręsewicz
 #'

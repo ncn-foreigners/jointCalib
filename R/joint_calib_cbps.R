@@ -1,9 +1,13 @@
+#' Imports for the function
+#' @importFrom CBPS CBPS
+#' @importFrom CBPS hdCBPS
+#'
 #' @title Function to balance the covariate distributions using covariate balancing propensity score \code{CBPS}
 #' @author Maciej Beręsewicz
 #'
 #' @description
 #'
-#' \code{joint_calib_cbps} allows quantile or mean and quantile balancing of the covariate distributions of the control and treatment groups using the covariate balancing propensity score method (Imai & Ratkovic (2014)). CBPS::CBPS()] and [CBPS::hdCBPS()] are used a backend for estimating the parameters.
+#' \code{joint_calib_cbps} allows quantile or mean and quantile balancing of the covariate distributions of the control and treatment groups using the covariate balancing propensity score method (Imai & Ratkovic (2014)). [CBPS::CBPS()] and [CBPS::hdCBPS()] are used a backend for estimating the parameters.
 #' This function works in a similar way to the [jointCalib::joint_calib_att()] function, i.e. the user can specify variables for the balancing means as well as the quantiles.
 #'
 #' @param formula_means a formula with variables to be balanced at means,
@@ -91,7 +95,6 @@ joint_calib_cbps <-
     ## split data by treatment
     treat <- stats::model.frame(treatment, data)
     id_treatment <- which(treat == 1)
-    id_control <- which(treat == 0)
 
     ## calculate totals
     if (is.null(formula_means)) {
@@ -108,10 +111,11 @@ joint_calib_cbps <-
     ## check quantiles
     ## list of quantiles
     if (inherits(probs, "list")) {
-      pop_quantiles <- lapply(colnames(X_q), FUN = function(x) stats::quantile(X_q[id_treatment, x], probs = probs[[x]]))
+      pop_quantiles <- lapply(colnames(X_q), FUN = function(x) stats::quantile(X_q[id_treatment, x],
+                                                                               probs = probs[[x]]))
       names(pop_quantiles) <- colnames(X_q)
     } else {
-      pop_quantiles <- lapply(X_q[id_treatment, ], stats::quantile, probs = probs)
+      pop_quantiles <- lapply(X_q[id_treatment, , drop = FALSE], stats::quantile, probs = probs)
     }
 
     ## check for unique values
@@ -129,14 +133,10 @@ joint_calib_cbps <-
       )
     }
 
-    A_treat <- joint_calib_create_matrix(X_q = X_q[id_treatment,], N = NROW(X_q[id_treatment, ]),
-                                         pop_quantiles = pop_quantiles, control = control)
-    A_control <- joint_calib_create_matrix(X_q = X_q[id_control,], N = NROW(X_q[id_treatment, ]),
-                                           pop_quantiles = pop_quantiles, control = control)
-
-    A <- matrix(0, nrow = NROW(X_q), ncol = NCOL(A_control))
-    A[id_treatment, ] <- A_treat
-    A[id_control, ] <- A_control
+    A <- joint_calib_create_matrix(X_q = X_q,
+                                   N = sum(treat),
+                                   pop_quantiles = pop_quantiles,
+                                   control = control)
 
     colnames(A) <- gsub("%", "", names(unlist(pop_quantiles)))
 

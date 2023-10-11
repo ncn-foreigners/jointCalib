@@ -45,8 +45,11 @@ joint_calib_cbps(
 Returns a \code{CBPS} or a \code{list} object as a result of the \code{hdCBPS} function.
 }
 \description{
-\code{joint_calib_cbps} allows quantile or mean and quantile balancing of the covariate distributions of the control and treatment groups using the covariate balancing propensity score method (Imai & Ratkovic (2014)). CBPS::CBPS()] and \code{\link[CBPS:hdCBPS]{CBPS::hdCBPS()}} are used a backend for estimating the parameters.
+\code{joint_calib_cbps} allows quantile or mean and quantile balancing of the covariate distributions of the control and treatment groups using the covariate balancing propensity score method (Imai & Ratkovic (2014)). \code{\link[CBPS:CBPS]{CBPS::CBPS()}} and \code{\link[CBPS:hdCBPS]{CBPS::hdCBPS()}} are used a backend for estimating the parameters.
 This function works in a similar way to the \code{\link[=joint_calib_att]{joint_calib_att()}} function, i.e. the user can specify variables for the balancing means as well as the quantiles.
+}
+\details{
+Imports for the function
 }
 \examples{
 
