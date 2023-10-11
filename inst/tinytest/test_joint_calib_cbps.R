@@ -44,6 +44,15 @@ expect_error(
                    data = dat)
 )
 
+## check one x for quantiles
+expect_silent(
+  result <- joint_calib_cbps(formula_means = ~ X1,
+                             formula_quantiles = ~ X1,
+                             treatment = ~ D,
+                             data = dat)
+)
+
+
 ## test variable selection
 
 expect_error(
@@ -63,5 +72,7 @@ expect_silent(
                           variable_selection = TRUE,
                           target = ~ Y)
 )
+
+
 
 

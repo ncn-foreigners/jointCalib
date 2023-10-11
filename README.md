@@ -16,9 +16,9 @@ Statistics](https://awesome.re/mentioned-badge.svg)](http://www.awesomeofficials
 
 ## Details
 
-A small package for joint calibration of totals and quantiles (see
-[Beręsewicz and Szymkowiak (2023)](https://arxiv.org/abs/2308.13281)
-working paper for details). The package combines the following
+A small package for joint calibration of totals and quantiles for
+probability and non-probability surveys as well as causal inference
+based on observational data. The package combines the following
 approaches:
 
 - Deville, J. C., and Särndal, C. E. (1992). [Calibration estimators in
@@ -60,18 +60,27 @@ Currently supports:
 
 - calibration of quantiles,
 - calibration of quantiles and totals,
-- calibration using standard calibration, empirical likelihood and
-  entropy balancing method,
+- calibration using standard calibration (i.e. Deville and Särndal,
+  1992), empirical likelihood and entropy balancing method,
 - covariate distribution entropy balancing for ATT and QTT
-  (distributional entropy balancing; DEB),
+  (distributional entropy balancing; DEB) via the
+  [ebal](https://CRAN.R-project.org/package=ebal) package,
 - covariate distribution balancing propensity score for ATE and QTE
-  (distributional propensity score; DPS).
+  (distributional propensity score; DPS) via the
+  [CBPS](https://CRAN.R-project.org/package=CBPS) package.
 
 Further plans:
 
 - generalized calibration via `sampling::gencalib`,
 - calibration for Gini and other metrics,
 - …
+
+For details see:
+
+- Beręsewicz M, and Szymkowiak, M. (2023). [A note on joint calibration
+  estimators for totals and
+  quantiles](https://arxiv.org/abs/2308.13281), working paper (arxiv
+  2308.13281).
 
 ## Funding
 

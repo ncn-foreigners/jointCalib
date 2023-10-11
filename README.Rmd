@@ -28,8 +28,7 @@ knitr::opts_chunk$set(
 
 ## Details
 
-A small package for joint calibration of totals and quantiles (see [Beręsewicz and Szymkowiak (2023)](https://arxiv.org/abs/2308.13281) working paper for details). The
-package combines the following approaches:
+A small package for joint calibration of totals and quantiles for probability and non-probability surveys as well as causal inference based on observational data. The package combines the following approaches:
 
 -   Deville, J. C., and Särndal, C. E. (1992). [Calibration estimators
     in survey
@@ -46,6 +45,7 @@ package combines the following approaches:
     Encompassing Survey Sampling, Missing Data Analysis and Causal
     Inference](https://onlinelibrary.wiley.com/doi/10.1111/insr.12518),
     International Statistical Review 91, 165--192.
+
 
 which allows to calibrate weights to known (or estimated) totals and
 quantiles jointly. As an backend for calibration
@@ -70,10 +70,10 @@ Currently supports:
 
 -   calibration of quantiles,
 -   calibration of quantiles and totals,
--   calibration using standard calibration, empirical likelihood and
+-   calibration using standard calibration (i.e. Deville and Särndal, 1992), empirical likelihood and
     entropy balancing method,
--   covariate distribution entropy balancing for ATT and QTT (distributional entropy balancing; DEB),
--   covariate distribution balancing propensity score for ATE and QTE (distributional propensity score; DPS).
+-   covariate distribution entropy balancing for ATT and QTT (distributional entropy balancing; DEB) via the [ebal](https://CRAN.R-project.org/package=ebal) package,
+-   covariate distribution balancing propensity score for ATE and QTE (distributional propensity score; DPS) via the [CBPS](https://CRAN.R-project.org/package=CBPS) package.
 
 Further plans:
 
@@ -81,6 +81,11 @@ Further plans:
 -   calibration for Gini and other metrics,
 -   ...
 
+For details see:
+
+-   Beręsewicz M, and Szymkowiak, M. (2023). [A note on joint calibration estimators for 
+    totals and quantiles](https://arxiv.org/abs/2308.13281), working paper (arxiv 2308.13281).
+    
 ## Funding
 
 Work on this package is supported by the the National Science Centre,
