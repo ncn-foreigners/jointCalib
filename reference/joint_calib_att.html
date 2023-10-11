@@ -12,7 +12,7 @@ joint_calib_att uses joint_calib function, so the user can apply different metho
     
     <a class="navbar-brand me-2" href="../index.html">jointCalib</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,15 @@ joint_calib_att uses joint_calib function, so the user can apply different metho
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/a_theory.html">Joint calibration estimators for totals and quantiles</a>
+    <a class="dropdown-item" href="../articles/b_survey.html">Calibration of quantiles and a joint calibration of totals and quanitles for surveys</a>
+    <a class="dropdown-item" href="../articles/c_nonprob.html">Calibration and inverse probability weighting for non-probability samples</a>
+    <a class="dropdown-item" href="../articles/d_causal.html">Balancing distributions for observational studies</a>
+  </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
@@ -165,13 +174,13 @@ Political Analysis, 31(3), 457-464. <a href="https://doi.org/10.1017/pan.2022.12
 <span class="r-out co"><span class="r-pr">#&gt;</span> Totals and precision (abs diff: 9.097514e-06)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           totals     precision</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> N       272.0000  4.706215e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.25   0.2500  9.885192e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.25   0.2500  9.885191e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.50   0.5000  1.235785e-08</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.75   0.7500  1.436596e-08</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.25   0.2500  9.738133e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.50   0.5000  1.221405e-08</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.75   0.7500  1.402932e-08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1      123.2252 -9.227299e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1      123.2252 -9.227300e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2      130.8188 -1.066397e-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X3      126.0000  2.329582e-06</span>
 <span class="r-in"><span></span></span>
@@ -202,7 +211,7 @@ Political Analysis, 31(3), 457-464. <a href="https://doi.org/10.1017/pan.2022.12
 <span class="r-out co"><span class="r-pr">#&gt;</span> X1      123.22524 -3.321686e-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2      130.81875 -1.204567e-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X3      126.00000  3.198817e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1:X3    23.06458 -9.726807e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1:X3    23.06458 -9.726806e-07</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## As noted in the documentation, the probs argument can be a named list of different orders</span></span></span>
 <span class="r-in"><span><span class="co">## In this example, we specify that X1 should be balanced at the mean,</span></span></span>
@@ -225,13 +234,13 @@ Political Analysis, 31(3), 457-464. <a href="https://doi.org/10.1017/pan.2022.12
 <span class="r-out co"><span class="r-pr">#&gt;</span> Totals and precision (abs diff: 5.695273e-06)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            totals     precision</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> N       272.00000  3.214904e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.50   0.50000  7.916962e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.50   0.50000  7.916963e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.25   0.25000  8.242246e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.75   0.75000  1.067702e-08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1      123.22524  3.830914e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1      123.22524  3.830925e-08</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2      130.81875 -1.362999e-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X3      126.00000  1.025260e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1:X3    23.06458 -2.696434e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1:X3    23.06458 -2.696433e-08</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Finally, we specify an order of quantile for the interaction</span></span></span>
 <span class="r-in"><span><span class="va">results4</span> <span class="op">&lt;-</span> <span class="fu">joint_calib_att</span><span class="op">(</span></span></span>
@@ -251,13 +260,13 @@ Political Analysis, 31(3), 457-464. <a href="https://doi.org/10.1017/pan.2022.12
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.008147 0.083688 0.149140 0.221498 0.276006 2.340755 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Totals and precision (abs diff: 1.554366e-06)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              totals     precision</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> N          272.0000  7.408542e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> N          272.0000  7.408541e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.50      0.5000  1.721413e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.25      0.2500  2.127525e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.50      0.5000  2.367036e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X1:X3 0.75   0.7500  2.147864e-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1         123.2252  2.995708e-08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2         130.8188 -3.915527e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1         123.2252  2.995701e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2         130.8188 -3.915528e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X3         126.0000  3.836380e-07</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

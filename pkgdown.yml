@@ -1,8 +1,12 @@
 pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
-articles: {}
-last_built: 2023-09-13T19:15Z
+articles:
+  a_theory: a_theory.html
+  b_survey: b_survey.html
+  c_nonprob: c_nonprob.html
+  d_causal: d_causal.html
+last_built: 2023-10-11T10:00Z
 urls:
   reference: https://ncn-foreigners.github.io/jointCalib/reference
   article: https://ncn-foreigners.github.io/jointCalib/articles

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">jointCalib</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,6 +20,15 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/a_theory.html">Joint calibration estimators for totals and quantiles</a>
+    <a class="dropdown-item" href="../articles/b_survey.html">Calibration of quantiles and a joint calibration of totals and quanitles for surveys</a>
+    <a class="dropdown-item" href="../articles/c_nonprob.html">Calibration and inverse probability weighting for non-probability samples</a>
+    <a class="dropdown-item" href="../articles/d_causal.html">Balancing distributions for observational studies</a>
+  </div>
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
@@ -48,10 +57,17 @@
 <h2 class="pkg-version" data-toc-text="development version" id="jointcalib-development-version">jointCalib (development version)<a class="anchor" aria-label="anchor" href="#jointcalib-development-version"></a></h2>
 </div>
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.2" id="jointcalib-012">jointCalib 0.1.2<a class="anchor" aria-label="anchor" href="#jointcalib-012"></a></h2>
+<ul><li>initial version of vignette with the theory</li>
+<li>bug fix in <code>joint_calib_cbps</code>
+</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.1" id="jointcalib-011">jointCalib 0.1.1<a class="anchor" aria-label="anchor" href="#jointcalib-011"></a></h2>
 <ul><li>initial functionalities for causal inference via <code>joint_calib_att</code> and <code>joint_calib_cbps</code>
 </li>
-<li>some bugfixes</li>
+<li>bugfixes and simplifications</li>
+<li>additional tests added</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="jointcalib-010">jointCalib 0.1.0<a class="anchor" aria-label="anchor" href="#jointcalib-010"></a></h2><p class="text-muted">CRAN release: 2023-09-07</p>
