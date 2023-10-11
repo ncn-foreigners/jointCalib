@@ -88,6 +88,12 @@ OPUS 22 grant no. 2020/39/B/HS4/00941.
 
 ## Installation
 
+You can install CRAN version of the package using
+
+```{r, eval = FALSE}
+install.packages("jointCalib")
+```
+
 You can install the development version of `jointCalib` from GitHub
 with:
 
