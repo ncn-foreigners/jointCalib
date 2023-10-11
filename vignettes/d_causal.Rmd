@@ -25,6 +25,108 @@ knitr::opts_chunk$set(
 )
 ```
 
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bh}{\mathbf{h}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bp}{\mathbf{p}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bW}{\mathbf{W}}
+\newcommand{\bd}{\mathbf{d}}
+\newcommand{\bZ}{\mathbf{Z}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bQ}{\mathbf{Q}}
+\newcommand{\bq}{\mathbf{q}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\HT}{\text{\rm HT}}
+
+\newcommand{\bbeta}{\mathbf{\beta}}
+\newcommand{\balpha}{\mathbf{\alpha}}
+\newcommand{\btau}{\mathbf{\tau}}
+\newcommand{\bgamma}{\mathbf{\gamma}}
+\newcommand{\btheta}{\mathbf{\theta}}
+\newcommand{\bSigma}{\mathbf{\Sigma}}
+
+\newcommand{\colvec}{\operatorname{colvec}}
+\newcommand{\logit}{\operatorname{logit}}
+\newcommand{\Exp}{\operatorname{Exp}}
+\newcommand{\Ber}{\operatorname{Bernoulli}}
+\newcommand{\Uni}{\operatorname{Uniform}}
+\newcommand{\Mvn}{\operatorname{MVN}}
+\newcommand{\argmin}{\operatorname{argmin}}
+
+\newcommand{\bOne}{\mathbf{1}}
+\newcommand{\bZero}{\mathbf{0}}
+
+\newcommand{\mD}{\mathcal{D}}
+\newcommand{\md}{\mathcal{d}}
+
+# Theory
+
+## Distributional entropy balancing
+
+
+Our proposal, which leads to distributional entropy balancing (hereinafter DEB), is based on extending the original idea by adding additional constraint(s) on the weights on $\ba_k$, as presented below.
+
+$$
+\begin{aligned} 
+\max _{w} H(w)=- & \sum_{k \in s_0} v_{k} \log \left(v_{k} / q_{k}\right), \\
+\text { s.t. } & \sum_{k \in s_0} v_{k} G_{k j}=m_{k} \text { for } j \in 1, \ldots, J_1, \\ 
+& \sum_{k \in s_0} v_{k} a_{k j}=\frac{\alpha_{j}}{n_1} \text { for } j \in 1, \ldots, J_2, \\ 
+& \sum_{k \in s_0} v_{k}=1 \text { and } v \geq 0 \text { for all } k \in s_0.
+\end{aligned}
+$$
+
+
+## Distributional propensity score method
+
+@imai2014covariate proposed covariate balancing propensity score (CBPS) to estimate the @eqref{eq-ate}, where unknown parameters of the propensity score model $\bgamma$ are estimated using the generalized method of moments as
+
+$$
+\mathbb{E}\left[\left(\frac{\mD}{p\left(\bX ; \bgamma\right)}-\frac{1-\mD}{1-p\left(\bX ; \bgamma\right)}\right) f(\bX)\right]=\bZero,
+\label{eq-cbps}
+$$
+
+\noindent where $p()$ is the propensity score. This balances means of the the $\bX$ variables, which may not be sufficient if the variables are highly skewed or we are interested in estimating DTE or QTE. 
+
+We propose a simple approach based on the specification of moments and $\alpha$-quantiles to be balanced. Instead of using the matrix $\bX$, we propose to use the matrix $\mathcal{X}$, which is constructed as follows
+
+$$
+\mathcal{X} =
+\begin{bmatrix}
+\bOne^1 & \bX^1 & \bA^1\\
+\bOne^0 & \bX^0 & \bA^0\\
+\end{bmatrix},
+$$
+
+\noindent where $\bX^0, \bX^1$ are matrices of size $n_0 \times J_1$ and $n_1 \times J_1$ with $J_1$ covariates to be balanced at the means, and $\bA^1, \bA^0$ are matrices with are based on $J_2$ covariates with elements defined as follows
+
+$$
+a^1_{kj}=\left\{\begin{array}{lll} 
+n_1^{-1},& \quad x_{kj}^1\leq L_{x_{j},1}\left(q^1_{x_{j},\alpha}\right),\\
+n_1^{-1}\beta_{x_{j},1}\left(q^1_{x_{j},\alpha}\right), & \quad x_{kj}^1=U_{x_{j},1}\left(q^1_{x_{j},\alpha}\right),\\
+0,& \quad x^1_{kj}> U_{x_{j},1}\left(q^1_{x_{j},\alpha}\right),\\
+\end{array} \right.
+$$
+
+\noindent and 
+
+$$
+a^0_{kj}=\left\{\begin{array}{lll} 
+n_1^{-1},& \quad x_{kj}^0\leq L_{x_{j},0}\left(q^1_{x_{j},\alpha}\right),\\
+n_1^{-1}\beta_{x_{j},0}\left(q^1_{x_{j},\alpha}\right), & \quad x_{kj}^0=U_{x_{j},0}\left(q^1_{x_{j},\alpha}\right),\\
+0,& \quad x^0_{kj}> U_{x_{j},0}\left(q^1_{x_{j},\alpha}\right),\\
+\end{array} \right.
+$$
+
+\noindent where $n_1$ is the size of the treatment group, or alternatively the logistic function \eqref{eq-logistic-a} can be used.
+
+
 # Packages
 
 Load packages for the example
@@ -36,10 +138,10 @@ library(ebal)
 library(laeken)
 ```
 
-Read the the `LaLonde` data.
+Read the the `LaLonde` data from the `CBPS` package.
 
 ```{r}
-data("LaLonde")
+data("LaLonde", package = "CBPS")
 head(LaLonde)
 ```
 
@@ -47,17 +149,24 @@ head(LaLonde)
 
 ## Single variable: `age`
 
-Consider balancing `age` variable.
+First, we start with the `age` variable. Below we can find the distribution of age in the control and treatment group.
 
 ```{r}
 dens0 <- density(LaLonde$age[LaLonde$treat == 0])
 dens1 <- density(LaLonde$age[LaLonde$treat == 1])
-plot(dens0, main="Distribution of age", xlab="Age", ylim=c(0, max(dens0$y, dens1$y)))
-lines(dens1, lty=2, col="blue")
-legend("topright", legend=c("Control", "Treatment"), lty=c(1,2), col=c("black", "blue"))
+plot(dens0, main="Distribution of age", xlab="Age", ylim=c(0, max(dens0$y, dens1$y)), col = "blue")
+lines(dens1, lty=2, col="red")
+legend("topright", legend=c("Control", "Treatment"), lty=c(1,2), col=c("blue", "red"))
 ```
 
-Balancing using `ebal::ebalance` and `joint_calib_att` with method `eb` which uses `ebal` package as backend. For DEB we use deciles `probs = seq(0.1, 0.9, 0.1)` and balance mean as well (`formula_means = ~ age`). 
+Basic descriptive statistics are given below.
+
+```{r}
+aggregate(age ~ treat, data = LaLonde, FUN = quantile)
+```
+
+
+Nowe, let's use `ebal::ebalance` and `jointCalib::joint_calib_att` with method `eb` (it uses uses `ebal` package as backend). For DEB we use deciles `probs = seq(0.1, 0.9, 0.1)` and balance mean as well (`formula_means = ~ age`). The output informs that about the target (`totals`) quantiles and difference between balanced and the target quantities (column `precision`).
 
 ```{r}
 bal_standard <- ebalance(LaLonde$treat, X = LaLonde[, "age"])
@@ -85,6 +194,16 @@ legend("topright",
        col=c("black", "blue", "red"))
 ```
 
+Compare balancing weights.
+
+```{r}
+plot(x = bal_standard$w,
+     y = bal_quant$g, 
+     xlab = "EB", ylab = "DEB", main = "Comparison of EB and DEB weights",
+     xlim = c(0, 0.7), ylim = c(0, 0.7))
+```
+
+
 ## More variables 
 
 Now, consider three variables: `married`, `age` and `educ`.
@@ -92,10 +211,12 @@ Now, consider three variables: `married`, `age` and `educ`.
 ```{r}
 dens0 <- density(LaLonde$educ[LaLonde$treat == 0])
 dens1 <- density(LaLonde$educ[LaLonde$treat == 1])
-plot(dens0, main="Distribution of education", xlab="Education", ylim=c(0, max(dens0$y, dens1$y)))
-lines(dens1, lty=2, col="blue")
-legend("topleft", legend=c("Control", "Treatment"), lty=c(1,2), col=c("black", "blue"))
+plot(dens0, main="Distribution of education", xlab="Education", ylim=c(0, max(dens0$y, dens1$y)), col = "blue")
+lines(dens1, lty=2, col="red")
+legend("topleft", legend=c("Control", "Treatment"), lty=c(1,2), col=c("blue", "red"))
 ```
+
+The code below balances control and treatment group on age and educ means and quantiles.
 
 ```{r}
 bal_standard <- ebalance(LaLonde$treat, X = LaLonde[, c("married", "age", "educ")])
@@ -107,7 +228,7 @@ bal_quant <- joint_calib_att(formula_means = ~ married + age + educ,
 bal_quant
 ```
 
-Compare education
+Compare distribution education (`educ`) variable.
 
 ```{r}
 dens0 <- density(LaLonde$educ[LaLonde$treat == 0], weights = bal_standard$w/sum(bal_standard$w))
@@ -122,7 +243,7 @@ legend("topleft",
        col=c("black", "blue", "red"))
 ```
 
-Compare age
+Compare distribution age (`age`) variable.
 
 ```{r}
 dens0 <- density(LaLonde$age[LaLonde$treat == 0], weights = bal_standard$w/sum(bal_standard$w))
@@ -137,19 +258,102 @@ legend("topright",
        col=c("black", "blue", "red"))
 ```
 
-Compare estimates of ATT using EB and DEB
+Compare balancing weights.
 
 ```{r}
-c(EB = with(LaLonde, mean(re74[treat == 1]) - weighted.mean(re74[treat == 0], bal_standard$w)),
-  DEB = with(LaLonde, mean(re74[treat == 1]) - weighted.mean(re74[treat == 0], bal_quant$g)))
+plot(x = bal_standard$w,
+     y = bal_quant$g, 
+     xlab = "EB", ylab = "DEB", main = "Comparison of EB and DEB weights",
+     xlim = c(0, 3), ylim = c(0, 3))
 ```
 
-Compare QTT(0.5) using EB and DEB
+## More variables: all variables
+
+Now consider all variables available in the `LaLonde` dataset.
 
 ```{r}
-c(EB = with(LaLonde, median(re74[treat == 1]) - weightedMedian(re74[treat == 0], bal_standard$w)),
-  DEB = with(LaLonde, median(re74[treat == 1]) - weightedMedian(re74[treat == 0], bal_quant$g)))
+bal_standard <- ebalance(LaLonde$treat, 
+                         X = model.matrix(~ -1 + age + educ + black + hisp + married + nodegr + re74 + re75, 
+                                          LaLonde))
+
+bal_quant <- joint_calib_att(formula_means = ~ age + educ + black + hisp + married + nodegr + re74 + re75, 
+                             formula_quantiles = ~ age + re74 + re75,
+                             probs = 0.5, 
+                             treatment =  ~ treat, 
+                             data = LaLonde, 
+                             method = "eb")
+bal_quant
 ```
 
-# ATT with CBPS and DPS
+Compare re74
+
+```{r}
+dens0 <- density(LaLonde$re74[LaLonde$treat == 0], weights = bal_standard$w/sum(bal_standard$w))
+dens1 <- density(LaLonde$re74[LaLonde$treat == 0], weights = bal_quant$g/sum(bal_quant$g))
+dens2 <- density(LaLonde$re74[LaLonde$treat == 1])
+plot(dens0, main="Distribution of re74", xlab="Age", ylim=c(0, max(dens0$y, dens1$y)))
+lines(dens1, lty=2, col="blue")
+lines(dens2, lty=3, col="red")
+legend("topright", 
+       legend=c("EB", "DEB", "Treatment"), 
+       lty=c(1,2, 3), 
+       col=c("black", "blue", "red"))
+```
+
+Compare balancing weights.
+
+```{r}
+plot(x = bal_standard$w,
+     y = bal_quant$g, 
+     xlab = "EB", ylab = "DEB", main = "Comparison of EB and DEB weights",
+     xlim = c(0, 1.2), ylim = c(0, 1.2))
+```
+
+
+Compare estimates of ATT using EB and DEB.
+
+```{r}
+c(EB = with(LaLonde, mean(re78[treat == 1]) - weighted.mean(re78[treat == 0], bal_standard$w)),
+  DEB = with(LaLonde, mean(re78[treat == 1]) - weighted.mean(re78[treat == 0], bal_quant$g)))
+```
+
+Compare QTT(0.5) using EB and DEB.
+
+```{r}
+c(EB = with(LaLonde, median(re78[treat == 1]) - weightedMedian(re78[treat == 0], bal_standard$w)),
+  DEB = with(LaLonde, median(re78[treat == 1]) - weightedMedian(re78[treat == 0], bal_quant$g)))
+```
+
+Compare QTT($\alpha$) where $\alpha \in \{0.1, ..., 0.9\}$.
+
+```{r}
+probs_qtt <- seq(0.1, 0.9, 0.1)
+data.frame(
+  EB = with(LaLonde, 
+            quantile(re78[treat == 1], probs_qtt) - weightedQuantile(re78[treat == 0], bal_standard$w, probs_qtt)),
+  DEB = with(LaLonde, 
+            quantile(re78[treat == 1], probs_qtt) - weightedQuantile(re78[treat == 0], bal_quant$g, probs_qtt))
+)
+```
+
+
+# ATT with CBPS and DPS [work in progress]
+
+```{r}
+m0 <- CBPS(formula = treat ~ age + educ + black + hisp + married + nodegr + re74,
+           data = LaLonde)
+```
+
+```{r}
+m1 <- joint_calib_cbps(formula_means = ~ age + educ + black + hisp + married + nodegr,
+                       formula_quantiles = ~ re74, 
+                       probs = 0.5,
+                       treatment =  ~ treat,
+                       data = LaLonde)
+```
+
+
+
+
+
 

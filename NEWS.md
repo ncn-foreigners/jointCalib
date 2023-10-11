@@ -3,6 +3,7 @@
 # jointCalib 0.1.2
 
 - initial version of vignette with the theory
+- bug fix in `joint_calib_cbps`
 
 # jointCalib 0.1.1
 

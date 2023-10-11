@@ -111,10 +111,11 @@ joint_calib_cbps <-
     ## check quantiles
     ## list of quantiles
     if (inherits(probs, "list")) {
-      pop_quantiles <- lapply(colnames(X_q), FUN = function(x) stats::quantile(X_q[id_treatment, x], probs = probs[[x]]))
+      pop_quantiles <- lapply(colnames(X_q), FUN = function(x) stats::quantile(X_q[id_treatment, x],
+                                                                               probs = probs[[x]]))
       names(pop_quantiles) <- colnames(X_q)
     } else {
-      pop_quantiles <- lapply(X_q[id_treatment, ], stats::quantile, probs = probs)
+      pop_quantiles <- lapply(X_q[id_treatment, , drop = FALSE], stats::quantile, probs = probs)
     }
 
     ## check for unique values
@@ -133,7 +134,7 @@ joint_calib_cbps <-
     }
 
     A <- joint_calib_create_matrix(X_q = X_q,
-                                   N=sum(treat),
+                                   N = sum(treat),
                                    pop_quantiles = pop_quantiles,
                                    control = control)
 
