@@ -81,6 +81,10 @@ For details see:
   estimators for totals and
   quantiles](https://arxiv.org/abs/2308.13281), working paper (arxiv
   2308.13281).
+- Beręsewicz M (2023). [Survey calibration for causal inference: a
+  simple method to balance covariate
+  distributions](https://arxiv.org/abs/2310.11969), working paper (arxiv
+  2310.11969).
 
 ## Funding
 
