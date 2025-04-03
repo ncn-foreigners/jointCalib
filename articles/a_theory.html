@@ -5,67 +5,51 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="jointCalib">
 <title>Joint calibration estimators for totals and quantiles • jointCalib</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Joint calibration estimators for totals and quantiles">
-<meta property="og:description" content="jointCalib">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Joint calibration estimators for totals and quantiles">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">jointCalib</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/a_theory.html">Joint calibration estimators for totals and quantiles</a>
-    <a class="dropdown-item" href="../articles/b_survey.html">Calibration of quantiles and a joint calibration of totals and quanitles for surveys</a>
-    <a class="dropdown-item" href="../articles/c_nonprob.html">Calibration and inverse probability weighting for non-probability samples</a>
-    <a class="dropdown-item" href="../articles/d_causal.html">Balancing distributions for observational studies</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/a_theory.html">Joint calibration estimators for totals and quantiles</a></li>
+    <li><a class="dropdown-item" href="../articles/b_survey.html">Calibration of quantiles and a joint calibration of totals and quanitles for surveys</a></li>
+    <li><a class="dropdown-item" href="../articles/c_nonprob.html">Calibration and inverse probability weighting for non-probability samples</a></li>
+    <li><a class="dropdown-item" href="../articles/d_causal.html">Balancing distributions for observational studies</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/ncn-foreigners/jointCalib/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ncn-foreigners/jointCalib/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -74,12 +58,13 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Joint calibration estimators for totals and quantiles</h1>
+
+      <h1>Joint calibration estimators for totals and quantiles</h1>
                         <h4 data-toc-skip class="author">Maciej
 Beręsewicz and Marcin Szymkowiak</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ncn-foreigners/jointCalib/blob/HEAD/vignettes/a_theory.Rmd" class="external-link"><code>vignettes/a_theory.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ncn-foreigners/jointCalib/blob/main/vignettes/a_theory.Rmd" class="external-link"><code>vignettes/a_theory.Rmd</code></a></small>
       <div class="d-none name"><code>a_theory.Rmd</code></div>
     </div>
 
@@ -90,12 +75,11 @@ Beręsewicz and Marcin Szymkowiak</h4>
 </h2>
 <p>Calibration weighting is a method commonly used in survey sampling to
 adjust original design weights for sampled elements to reproduce known
-population totals for all auxiliary variables <span class="citation">(<a href="#ref-deville1992calibration" role="doc-biblioref">Deville and
-Särndal 1992</a>)</span>. Following the calibration paradigm, it can
-also be used to reproduce known population quantiles for all benchmark
-variables <span class="citation">(<a href="#ref-harms2006calibration" role="doc-biblioref">Harms and Duchesne 2006</a>)</span>. This technique
-is also used in surveys to compensate for nonsampling errors, such as
-nonresponse or coverage errors <span class="citation">(<a href="#ref-sarndal2005estimation" role="doc-biblioref">Särndal and
+population totals for all auxiliary variables <span class="citation">(<a href="#ref-deville1992calibration">Deville and Särndal 1992</a>)</span>.
+Following the calibration paradigm, it can also be used to reproduce
+known population quantiles for all benchmark variables <span class="citation">(<a href="#ref-harms2006calibration">Harms and Duchesne
+2006</a>)</span>. This technique is also used in surveys to compensate
+for nonsampling errors, such as nonresponse or coverage errors <span class="citation">(<a href="#ref-sarndal2005estimation">Särndal and
 Lundström 2005</a>)</span>. By appropriately adjusting the weights, it
 is not only possible to ensure consistency with known structures for key
 variables from other data sources, such as censuses or registers, but
@@ -104,15 +88,20 @@ also to reduce the bias and improve the precision of final estimates.
 features have asymmetric distributions (in the presence of outliers) to
 compensate for their negative impact on the final estimates: calibration
 weights provide robustness while meeting constraints on the calibration
-variables and the weights <span class="citation">(<a href="#ref-duchesne1999robust" role="doc-biblioref">Duchesne
-1999</a>)</span>.</p>
+variables and the weights <span class="citation">(<a href="#ref-duchesne1999robust">Duchesne 1999</a>)</span>.</p>
 <p>In this article, we propose a joint calibration approach to estimate
-the total or quantile of order <span class="math inline">\(\alpha\)</span> for the variable of interest <span class="math inline">\(y\)</span>. Final calibration weights <span class="math inline">\(w_{k}\)</span> reproduce known population totals
-and quantiles for all auxiliary variables. At the same time, they help
-to reduce the bias and improve the precision of estimates. The proposed
-method is based on the classic approach to calibration and
-simultaneously takes into account calibration equations for totals and
-quantiles of all auxiliary variables.</p>
+the total or quantile of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+for the variable of interest
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>.
+Final calibration weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+reproduce known population totals and quantiles for all auxiliary
+variables. At the same time, they help to reduce the bias and improve
+the precision of estimates. The proposed method is based on the classic
+approach to calibration and simultaneously takes into account
+calibration equations for totals and quantiles of all auxiliary
+variables.</p>
 <!-- 
 The paper has the following structure. In section \ref{sec-basic} we introduce the basic setup: notation, calibration for totals and quantiles. In section \ref{sec-proposed} we describe the procedure of joint calibration of totals and quantiles. In section \ref{sec-sims} we describe results of a simulation study based on \citet{chen2020doubly}. Section \ref{sec-summary} summarises the paper. 
 -->
@@ -121,227 +110,374 @@ The paper has the following structure. In section \ref{sec-basic} we introduce t
 <h2 id="calibration-estimator-for-a-total">Calibration estimator for a total<a class="anchor" aria-label="anchor" href="#calibration-estimator-for-a-total"></a>
 </h2>
 <p>In most applications the goal is to estimate a finite population
-total <span class="math inline">\(\tau_{y}=\sum_{k\in U}y_{k}\)</span>
-or the mean <span class="math inline">\(\bar{\tau}_{y}=\tau_{y}/N\)</span> of the variable
-of interest <span class="math inline">\(y\)</span>, where <span class="math inline">\(U\)</span> is the population of size <span class="math inline">\(N\)</span>. The well-known estimator of a finite
-population total is the Horvitz-Thompson estimator, which is expressed
-as <span class="math inline">\(\hat{\tau}_{y\pi}=\sum_{k=1}^{n}d_{k}y_{k}=\sum_{k\in
-s}{d_{k}y_{k}}\)</span>, where <span class="math inline">\(s\)</span>
-denotes a probability sample of size <span class="math inline">\(n\)</span>, <span class="math inline">\(d_{k}=1/\pi_{k}\)</span> is a design weight and
-<span class="math inline">\(\pi_{k}\)</span> is the first-order
-inclusion probability of the <span class="math inline">\(i\)</span>-th
-element of the population <span class="math inline">\(U\)</span>. This
-estimator is unbiased for <span class="math inline">\(\tau_{Y}\)</span>
-i.e. <span class="math inline">\(E\left(\hat{\tau}_{y\pi}\right)=\tau_{Y}\)</span>.</p>
-<p>Let <span class="math inline">\(\mathbf{x}_{k}^{\circ}\)</span> be a
-<span class="math inline">\(J_{1}\)</span>-dimensional vector of
-auxiliary variables (benchmark variables) for which <span class="math inline">\(\tau_{\mathbf{x}}=\sum_{k\in
-U}\mathbf{x}_{k}^{\circ}=\left(\sum_{k\in U}x_{k1},\ldots,\sum_{k\in
-U}x_{kJ_{1}}\right)^T\)</span> is assumed to be known. In most cases in
-practice the <span class="math inline">\(d_{k}\)</span> weights do not
-reproduce known population totals for benchmark variables <span class="math inline">\(\mathbf{x}_{k}^{\circ}\)</span>. It means that the
-resulting estimate <span class="math inline">\(\hat{\tau}_{\mathbf{x}\pi}=\sum_{k\in
-s}{d_{k}\mathbf{x}_{k}^{\circ}}\)</span> is not equal to <span class="math inline">\(\tau_{\mathbf{x}}\)</span>. The main idea of
-calibration is to look for new calibration weights <span class="math inline">\(w_{k}\)</span> which are as close as possible to
-original design weights <span class="math inline">\(d_{k}\)</span> and
-reproduce known population totals <span class="math inline">\(\tau_{\mathbf{x}}\)</span> exactly. In other
-words, in order to find new calibration weights <span class="math inline">\(w_{k}\)</span> we have to minimise a distance
-function <span class="math inline">\(D\left(\mathbf{d},\mathbf{v}\right)=\sum _{k\in
-s}d_{k}\hspace{2pt} G\hspace{0pt}\left(\frac{v_{k}}{d_{k}}\right) \to
-\textrm{min}\)</span> to fulfil calibration equations <span class="math inline">\(\sum_{k\in s}v_{k}\mathbf{x}_{k}^{\circ} =
-\sum_{k\in U}\mathbf{x}_{k}^{\circ}\)</span>, where <span class="math inline">\(\mathbf{d}=\left(d_{1},\ldots,d_{n}\right)^T\)</span>,
-<span class="math inline">\(\mathbf{v}=\left(v_{1},\ldots,v_{n}\right)^T\)</span>
-and <span class="math inline">\(G\left(\cdot\right)\)</span> is a
-function which must satisfy some regularity conditions: <span class="math inline">\(G\left(\cdot\right)\)</span> is strictly convex
-and twice continuously differentiable, <span class="math inline">\(G\left(\cdot\right)\geq 0\)</span>, <span class="math inline">\(G\left(1\right)=0\)</span>, <span class="math inline">\(G'\left(1\right)=0\)</span> and <span class="math inline">\(G''\left(1\right)=1\)</span>. Examples of
-<span class="math inline">\(G\left(\cdot\right)\)</span> functions are
-given by <span class="citation">Deville and Särndal (<a href="#ref-deville1992calibration" role="doc-biblioref">1992</a>)</span>. For instance, if <span class="math inline">\(G\left(x\right)=\frac{\left(x-1\right)^{2}}{2}\)</span>,
+total
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>τ</mi><mi>y</mi></msub><mo>=</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>U</mi></mrow></msub><msub><mi>y</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">\tau_{y}=\sum_{k\in U}y_{k}</annotation></semantics></math>
+or the mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>τ</mi><mo accent="true">‾</mo></mover><mi>y</mi></msub><mo>=</mo><msub><mi>τ</mi><mi>y</mi></msub><mi>/</mi><mi>N</mi></mrow><annotation encoding="application/x-tex">\bar{\tau}_{y}=\tau_{y}/N</annotation></semantics></math>
+of the variable of interest
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>
+is the population of size
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>.
+The well-known estimator of a finite population total is the
+Horvitz-Thompson estimator, which is expressed as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>τ</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mi>π</mi></mrow></msub><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><msub><mi>d</mi><mi>k</mi></msub><msub><mi>y</mi><mi>k</mi></msub><mo>=</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><mrow><msub><mi>d</mi><mi>k</mi></msub><msub><mi>y</mi><mi>k</mi></msub></mrow></mrow><annotation encoding="application/x-tex">\hat{\tau}_{y\pi}=\sum_{k=1}^{n}d_{k}y_{k}=\sum_{k\in s}{d_{k}y_{k}}</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+denotes a probability sample of size
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>k</mi></msub><mo>=</mo><mn>1</mn><mi>/</mi><msub><mi>π</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">d_{k}=1/\pi_{k}</annotation></semantics></math>
+is a design weight and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>π</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\pi_{k}</annotation></semantics></math>
+is the first-order inclusion probability of the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>-th
+element of the population
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>.
+This estimator is unbiased for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>τ</mi><mi>Y</mi></msub><annotation encoding="application/x-tex">\tau_{Y}</annotation></semantics></math>
+i.e. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>τ</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mi>π</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>τ</mi><mi>Y</mi></msub></mrow><annotation encoding="application/x-tex">E\left(\hat{\tau}_{y\pi}\right)=\tau_{Y}</annotation></semantics></math>.</p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup><annotation encoding="application/x-tex">\mathbf{x}_{k}^{\circ}</annotation></semantics></math>
+be a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mn>1</mn></msub><annotation encoding="application/x-tex">J_{1}</annotation></semantics></math>-dimensional
+vector of auxiliary variables (benchmark variables) for which
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>τ</mi><mi>𝐱</mi></msub><mo>=</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>U</mi></mrow></msub><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>U</mi></mrow></msub><msub><mi>x</mi><mrow><mi>k</mi><mn>1</mn></mrow></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>U</mi></mrow></msub><msub><mi>x</mi><mrow><mi>k</mi><msub><mi>J</mi><mn>1</mn></msub></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\tau_{\mathbf{x}}=\sum_{k\in U}\mathbf{x}_{k}^{\circ}=\left(\sum_{k\in U}x_{k1},\ldots,\sum_{k\in U}x_{kJ_{1}}\right)^T</annotation></semantics></math>
+is assumed to be known. In most cases in practice the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mi>k</mi></msub><annotation encoding="application/x-tex">d_{k}</annotation></semantics></math>
+weights do not reproduce known population totals for benchmark variables
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup><annotation encoding="application/x-tex">\mathbf{x}_{k}^{\circ}</annotation></semantics></math>.
+It means that the resulting estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>τ</mi><mo accent="true">̂</mo></mover><mrow><mi>𝐱</mi><mi>π</mi></mrow></msub><mo>=</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><mrow><msub><mi>d</mi><mi>k</mi></msub><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup></mrow></mrow><annotation encoding="application/x-tex">\hat{\tau}_{\mathbf{x}\pi}=\sum_{k\in s}{d_{k}\mathbf{x}_{k}^{\circ}}</annotation></semantics></math>
+is not equal to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>τ</mi><mi>𝐱</mi></msub><annotation encoding="application/x-tex">\tau_{\mathbf{x}}</annotation></semantics></math>.
+The main idea of calibration is to look for new calibration weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+which are as close as possible to original design weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mi>k</mi></msub><annotation encoding="application/x-tex">d_{k}</annotation></semantics></math>
+and reproduce known population totals
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>τ</mi><mi>𝐱</mi></msub><annotation encoding="application/x-tex">\tau_{\mathbf{x}}</annotation></semantics></math>
+exactly. In other words, in order to find new calibration weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+we have to minimise a distance function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐝</mi><mo>,</mo><mi>𝐯</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>d</mi><mi>k</mi></msub><mspace width="0.167em"></mspace><mi>G</mi><mspace width="0.0em"></mspace><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>v</mi><mi>k</mi></msub><msub><mi>d</mi><mi>k</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>→</mo><mtext mathvariant="normal">min</mtext></mrow><annotation encoding="application/x-tex">D\left(\mathbf{d},\mathbf{v}\right)=\sum _{k\in s}d_{k}\hspace{2pt} G\hspace{0pt}\left(\frac{v_{k}}{d_{k}}\right) \to \textrm{min}</annotation></semantics></math>
+to fulfil calibration equations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>v</mi><mi>k</mi></msub><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup><mo>=</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>U</mi></mrow></msub><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup></mrow><annotation encoding="application/x-tex">\sum_{k\in s}v_{k}\mathbf{x}_{k}^{\circ} = \sum_{k\in U}\mathbf{x}_{k}^{\circ}</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐝</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>d</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>d</mi><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{d}=\left(d_{1},\ldots,d_{n}\right)^T</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐯</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>v</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>v</mi><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{v}=\left(v_{1},\ldots,v_{n}\right)^T</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G\left(\cdot\right)</annotation></semantics></math>
+is a function which must satisfy some regularity conditions:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G\left(\cdot\right)</annotation></semantics></math>
+is strictly convex and twice continuously differentiable,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">G\left(\cdot\right)\geq 0</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">G\left(1\right)=0</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>′</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">G'\left(1\right)=0</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>″</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">G''\left(1\right)=1</annotation></semantics></math>.
+Examples of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G\left(\cdot\right)</annotation></semantics></math>
+functions are given by <span class="citation">Deville and Särndal (<a href="#ref-deville1992calibration">1992</a>)</span>. For instance, if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">G\left(x\right)=\frac{\left(x-1\right)^{2}}{2}</annotation></semantics></math>,
 then using the method of Lagrange multipliers the final calibration
-weights <span class="math inline">\(w_{k}\)</span> can be expressed as
-<span class="math inline">\(w_{k}=d_{k}+d_{k}\left(\tau_{\mathbf{x}}-\hat{\tau}_{\mathbf{x}\pi}\right)^T\left(\sum_{j\in
-s}d_{j}\mathbf{x}_{j}^{\circ}\mathbf{x}_{j}^{\circ
-T}\right)^{-1}\mathbf{x}_{k}^{\circ}\)</span>. It is worth adding that
-in order to avoid negative or large <span class="math inline">\(w_{k}\)</span> weights in the process of
-minimising the <span class="math inline">\(D\left(\cdot\right)\)</span>
-function, one can consider some boundary constraints <span class="math inline">\(L\leq \frac{w_{k}}{d_{k}}\leq U\)</span>, where
-<span class="math inline">\(\ 0\leq L\leq 1 \leq
-U,\  k=1,\ldots,n\)</span>. The final calibration estimator of a
-population total <span class="math inline">\(\tau_{y}\)</span> can be
-expressed as <span class="math inline">\(\hat{\tau}_{y\mathbf{x}}=\sum_{k\in
-s}w_{k}y_{k}\)</span>, where <span class="math inline">\(w_{k}\)</span>
-are calibration weights obtained under a specific chosen <span class="math inline">\(G\left(\cdot\right)\)</span> function.</p>
+weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+can be expressed as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>k</mi></msub><mo>=</mo><msub><mi>d</mi><mi>k</mi></msub><mo>+</mo><msub><mi>d</mi><mi>k</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>τ</mi><mi>𝐱</mi></msub><mo>−</mo><msub><mover><mi>τ</mi><mo accent="true">̂</mo></mover><mrow><mi>𝐱</mi><mi>π</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>d</mi><mi>j</mi></msub><msubsup><mi>𝐱</mi><mi>j</mi><mo>∘</mo></msubsup><msubsup><mi>𝐱</mi><mi>j</mi><mrow><mo>∘</mo><mi>T</mi></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup></mrow><annotation encoding="application/x-tex">w_{k}=d_{k}+d_{k}\left(\tau_{\mathbf{x}}-\hat{\tau}_{\mathbf{x}\pi}\right)^T\left(\sum_{j\in s}d_{j}\mathbf{x}_{j}^{\circ}\mathbf{x}_{j}^{\circ T}\right)^{-1}\mathbf{x}_{k}^{\circ}</annotation></semantics></math>.
+It is worth adding that in order to avoid negative or large
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+weights in the process of minimising the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">D\left(\cdot\right)</annotation></semantics></math>
+function, one can consider some boundary constraints
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>≤</mo><mfrac><msub><mi>w</mi><mi>k</mi></msub><msub><mi>d</mi><mi>k</mi></msub></mfrac><mo>≤</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">L\leq \frac{w_{k}}{d_{k}}\leq U</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mspace width="0.222em"></mspace><mn>0</mn><mo>≤</mo><mi>L</mi><mo>≤</mo><mn>1</mn><mo>≤</mo><mi>U</mi><mo>,</mo><mspace width="0.222em"></mspace><mi>k</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">\ 0\leq L\leq 1 \leq U,\  k=1,\ldots,n</annotation></semantics></math>.
+The final calibration estimator of a population total
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>τ</mi><mi>y</mi></msub><annotation encoding="application/x-tex">\tau_{y}</annotation></semantics></math>
+can be expressed as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>τ</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mi>𝐱</mi></mrow></msub><mo>=</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>w</mi><mi>k</mi></msub><msub><mi>y</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">\hat{\tau}_{y\mathbf{x}}=\sum_{k\in s}w_{k}y_{k}</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+are calibration weights obtained under a specific chosen
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G\left(\cdot\right)</annotation></semantics></math>
+function.</p>
 </div>
 <div class="section level2">
 <h2 id="calibration-estimator-for-a-quantile">Calibration estimator for a quantile<a class="anchor" aria-label="anchor" href="#calibration-estimator-for-a-quantile"></a>
 </h2>
-<p><span class="citation">Harms and Duchesne (<a href="#ref-harms2006calibration" role="doc-biblioref">2006</a>)</span>
-considered the estimation of quantiles using the calibration approach in
-a way very similar to the what <span class="citation">Deville and
-Särndal (<a href="#ref-deville1992calibration" role="doc-biblioref">1992</a>)</span> proposed for a finite population
-total <span class="math inline">\(\tau_{y}\)</span>. By analogy, in
-their approach it is not necessary to know values for all auxiliary
-variables for all units in the population. It is enough to know the
-corresponding quantiles for the benchmark variables. We will briefly
-discuss the problem of finding calibration weights in this setup.</p>
-<p>We want to estimate a quantile <span class="math inline">\(Q_{y,\alpha}\)</span> of order <span class="math inline">\(\alpha \in \left(0,1\right)\)</span> of the
-variable of interest <span class="math inline">\(y\)</span>, which can
-be expressed as <span class="math inline">\(Q_{y,\alpha}=\mathrm{inf}\left\{t\left|F_{y}\left(t\right)\geq
-\alpha \right.\right\}\)</span>, where <span class="math inline">\(F_{y}\left(t\right)=N^{-1}\sum_{k\in
-U}H\left(t-y_{k}\right)\)</span> and the Heavyside function is given
-by</p>
-<p><span class="math display">\[\begin{equation}\label{eq:H}
+<p><span class="citation">Harms and Duchesne (<a href="#ref-harms2006calibration">2006</a>)</span> considered the
+estimation of quantiles using the calibration approach in a way very
+similar to the what <span class="citation">Deville and Särndal (<a href="#ref-deville1992calibration">1992</a>)</span> proposed for a
+finite population total
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>τ</mi><mi>y</mi></msub><annotation encoding="application/x-tex">\tau_{y}</annotation></semantics></math>.
+By analogy, in their approach it is not necessary to know values for all
+auxiliary variables for all units in the population. It is enough to
+know the corresponding quantiles for the benchmark variables. We will
+briefly discuss the problem of finding calibration weights in this
+setup.</p>
+<p>We want to estimate a quantile
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>y</mi><mo>,</mo><mi>α</mi></mrow></msub><annotation encoding="application/x-tex">Q_{y,\alpha}</annotation></semantics></math>
+of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\alpha \in \left(0,1\right)</annotation></semantics></math>
+of the variable of interest
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>,
+which can be expressed as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi>y</mi><mo>,</mo><mi>α</mi></mrow></msub><mo>=</mo><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">f</mi></mrow><mrow><mo stretchy="true" form="prefix">{</mo><mi>t</mi><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>F</mi><mi>y</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>≥</mo><mi>α</mi></mrow><mo stretchy="true" form="postfix">}</mo></mrow></mrow><annotation encoding="application/x-tex">Q_{y,\alpha}=\mathrm{inf}\left\{t\left|F_{y}\left(t\right)\geq \alpha \right.\right\}</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>y</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>N</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>U</mi></mrow></msub><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_{y}\left(t\right)=N^{-1}\sum_{k\in U}H\left(t-y_{k}\right)</annotation></semantics></math>
+and the Heavyside function is given by</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mn>1</mn><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mspace width="0.222em"></mspace><mi>t</mi><mo>≥</mo><msub><mi>y</mi><mi>k</mi></msub><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>0</mn><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mspace width="0.222em"></mspace><mi>t</mi><mo>&lt;</mo><msub><mi>y</mi><mi>k</mi></msub><mi>.</mi></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">\begin{equation}\label{eq:H}
 H\left(t-y_{k}\right)=\left\{ \begin{array}{ll}
 1, &amp; \ t \geq y_{k},\\
 0, &amp; \ t&lt;y_{k}.\\
 \end{array} \right.
-\end{equation}\]</span></p>
-<p>We assume that <span class="math inline">\(\mathbf{Q}_{\mathbf{x},\alpha}=\left(Q_{x_{1},\alpha},\ldots,Q_{x_{J_{2}},\alpha}\right)^{T}\)</span>
-is a vector of known population quantiles of order <span class="math inline">\(\alpha\)</span> for a vector of auxiliary
-variables <span class="math inline">\(\mathbf{x}_{k}^{*}\)</span>, where
-<span class="math inline">\(\alpha \in \left(0,1\right)\)</span> and
-<span class="math inline">\(\mathbf{x}_{k}^{*}\)</span> is a <span class="math inline">\(J_{2}\)</span>-dimensional vector of auxiliary
-variables. It is worth noting that, in general, the numbers <span class="math inline">\(J_{1}\)</span> and <span class="math inline">\(J_{2}\)</span> of the auxiliary variables are
-different. It may happen that for a specific auxiliary variable its
-population total and the corresponding quantile of order <span class="math inline">\(\alpha\)</span> will be known. However, in most
-cases quantiles will be known for continuous auxiliary variables, unlike
-totals, which will generally be known for categorical variables. In
-order to find new calibration weights <span class="math inline">\(w_{k}\)</span> which reproduce known population
-quantiles in a vector <span class="math inline">\(Q_{\mathbf{x},\alpha}\)</span>, an interpolated
-distribution function estimator of <span class="math inline">\(F_{y}\left(t\right)\)</span> is defined as <span class="math inline">\(\hat{F}_{y,cal}(t)=\frac{\sum_{k \in s} w_{k}
-H_{y, s}\left(t, y_{k}\right)}{\sum_{k \in s} w_{k}}\)</span>, where the
-Heavyside function in formula (<span class="math inline">\(\ref{eq:H}\)</span>) is replaced by the modified
-function <span class="math inline">\(H_{y, s}\left(t,
-y_{k}\right)\)</span> given by</p>
-<p><span class="math display">\[\begin{equation}
+\end{equation}</annotation></semantics></math></p>
+<p>We assume that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐐</mi><mrow><mi>𝐱</mi><mo>,</mo><mi>α</mi></mrow></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Q</mi><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mi>α</mi></mrow></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>Q</mi><mrow><msub><mi>x</mi><msub><mi>J</mi><mn>2</mn></msub></msub><mo>,</mo><mi>α</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{Q}_{\mathbf{x},\alpha}=\left(Q_{x_{1},\alpha},\ldots,Q_{x_{J_{2}},\alpha}\right)^{T}</annotation></semantics></math>
+is a vector of known population quantiles of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+for a vector of auxiliary variables
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>𝐱</mi><mi>k</mi><mo>*</mo></msubsup><annotation encoding="application/x-tex">\mathbf{x}_{k}^{*}</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\alpha \in \left(0,1\right)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>𝐱</mi><mi>k</mi><mo>*</mo></msubsup><annotation encoding="application/x-tex">\mathbf{x}_{k}^{*}</annotation></semantics></math>
+is a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mn>2</mn></msub><annotation encoding="application/x-tex">J_{2}</annotation></semantics></math>-dimensional
+vector of auxiliary variables. It is worth noting that, in general, the
+numbers
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mn>1</mn></msub><annotation encoding="application/x-tex">J_{1}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mn>2</mn></msub><annotation encoding="application/x-tex">J_{2}</annotation></semantics></math>
+of the auxiliary variables are different. It may happen that for a
+specific auxiliary variable its population total and the corresponding
+quantile of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+will be known. However, in most cases quantiles will be known for
+continuous auxiliary variables, unlike totals, which will generally be
+known for categorical variables. In order to find new calibration
+weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+which reproduce known population quantiles in a vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>𝐱</mi><mo>,</mo><mi>α</mi></mrow></msub><annotation encoding="application/x-tex">Q_{\mathbf{x},\alpha}</annotation></semantics></math>,
+an interpolated distribution function estimator of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>y</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_{y}\left(t\right)</annotation></semantics></math>
+is defined as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>w</mi><mi>k</mi></msub><msub><mi>H</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>w</mi><mi>k</mi></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">\hat{F}_{y,cal}(t)=\frac{\sum_{k \in s} w_{k} H_{y, s}\left(t, y_{k}\right)}{\sum_{k \in s} w_{k}}</annotation></semantics></math>,
+where the Heavyside function in formula () is replaced by the modified
+function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">H_{y, s}\left(t, y_{k}\right)</annotation></semantics></math>
+given by</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>y</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mn>1</mn><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><msub><mi>y</mi><mi>k</mi></msub><mo>≤</mo><msub><mi>L</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><msub><mi>β</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><msub><mi>y</mi><mi>k</mi></msub><mo>=</mo><msub><mi>U</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>0</mn><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><msub><mi>y</mi><mi>k</mi></msub><mo>&gt;</mo><msub><mi>U</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">\begin{equation}
 H_{y, s}\left(t, y_{k}\right)=\left\{
 \begin{array}{ll}
-1, &amp; y_{k} \leqslant L_{y, s}(t), \\
-\beta_{y, s}\left(t\right), &amp; y_{k}=U_{y, s}\left(t\right), \\
+1, &amp; y_{k} \leqslant L_{y, s}(t), \\ 
+\beta_{y, s}\left(t\right), &amp; y_{k}=U_{y, s}\left(t\right), \\ 
 0, &amp; y_{k}&gt;U_{y, s}\left(t\right),
 \end{array}\right.
-\end{equation}\]</span></p>
-<p>where <span class="math inline">\(L_{y, s}\left(t\right)=\max
-\left\{\left\{y_{k}, k \in s \mid y_{k} \leqslant t\right\}
-\cup\{-\infty\}\right\}\)</span>, <span class="math inline">\(U_{y,
-s}\left(t\right)=\min \left\{\left\{y_{k}, k \in s \mid
-y_{k}&gt;t\right\} \cup\{\infty\}\right\}\)</span> and <span class="math inline">\(\beta_{y, s}\left(t\right)=\frac{t-L_{y,
-s}\left(t\right)}{U_{y, s}\left(t\right)-L_{y,
-s}\left(t\right)}\)</span> for <span class="math inline">\(k=1,\ldots,n\)</span>, <span class="math inline">\(t \in \mathbb{R}\)</span>. A calibration estimator
-of quantile <span class="math inline">\(Q_{y,\alpha}\)</span> of order
-<span class="math inline">\(\alpha\)</span> for variable <span class="math inline">\(y\)</span> is defined as <span class="math inline">\(\hat{Q}_{y,cal,\alpha}=\hat{F}_{y,cal}^{-1}(\alpha)\)</span>,
-where a vector <span class="math inline">\(\mathbf{w}=\left(w_{1},\ldots,w_{n}\right)^{T}\)</span>
-is a solution of optimization problem <span class="math inline">\(D\left(\mathbf{d},\mathbf{v}\right)=\sum _{k\in
-s}d_{k}\hspace{2pt} G\hspace{0pt}\left(\frac{v_{k}}{d_{k}}\right) \to
-\textrm{min}\)</span> subject to the calibration constraints <span class="math inline">\(\sum_{k\in s}v_{k}=N\)</span> and <span class="math inline">\(\hat{\mathbf{Q}}_{\mathbf{x},cal,\alpha}=\left(\hat{Q}_{x_{1},cal,\alpha},\ldots,\hat{Q}_{x_{J_{2}},cal,\alpha}\right)^{T}=\mathbf{Q}_{\mathbf{x},\alpha}\)</span>
-or equivalently <span class="math inline">\(\hat{F}_{x_{j},cal}\left(Q_{x_{j},\alpha}\right)=\alpha\)</span>,
-where <span class="math inline">\(j=1,\ldots,J_{2}\)</span>.</p>
-<p>As in the previous case, if <span class="math inline">\(G\left(x\right)=\frac{\left(x-1\right)^{2}}{2}\)</span>
+\end{equation}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>max</mo><mrow><mo stretchy="true" form="prefix">{</mo><mrow><mo stretchy="true" form="prefix">{</mo><msub><mi>y</mi><mi>k</mi></msub><mo>,</mo><mi>k</mi><mo>∈</mo><mi>s</mi><mo>∣</mo><msub><mi>y</mi><mi>k</mi></msub><mo>≤</mo><mi>t</mi><mo stretchy="true" form="postfix">}</mo></mrow><mo>∪</mo><mo stretchy="false" form="prefix">{</mo><mo>−</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo><mo stretchy="true" form="postfix">}</mo></mrow></mrow><annotation encoding="application/x-tex">L_{y, s}\left(t\right)=\max \left\{\left\{y_{k}, k \in s \mid y_{k} \leqslant t\right\} \cup\{-\infty\}\right\}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">{</mo><mrow><mo stretchy="true" form="prefix">{</mo><msub><mi>y</mi><mi>k</mi></msub><mo>,</mo><mi>k</mi><mo>∈</mo><mi>s</mi><mo>∣</mo><msub><mi>y</mi><mi>k</mi></msub><mo>&gt;</mo><mi>t</mi><mo stretchy="true" form="postfix">}</mo></mrow><mo>∪</mo><mo stretchy="false" form="prefix">{</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo><mo stretchy="true" form="postfix">}</mo></mrow></mrow><annotation encoding="application/x-tex">U_{y, s}\left(t\right)=\min \left\{\left\{y_{k}, k \in s \mid y_{k}&gt;t\right\} \cup\{\infty\}\right\}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mi>t</mi><mo>−</mo><msub><mi>L</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>U</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>L</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">\beta_{y, s}\left(t\right)=\frac{t-L_{y, s}\left(t\right)}{U_{y, s}\left(t\right)-L_{y, s}\left(t\right)}</annotation></semantics></math>
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">k=1,\ldots,n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>∈</mo><mi>ℝ</mi></mrow><annotation encoding="application/x-tex">t \in \mathbb{R}</annotation></semantics></math>.
+A calibration estimator of quantile
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>y</mi><mo>,</mo><mi>α</mi></mrow></msub><annotation encoding="application/x-tex">Q_{y,\alpha}</annotation></semantics></math>
+of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+for variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
+is defined as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Q</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi><mo>,</mo><mi>α</mi></mrow></msub><mo>=</mo><msubsup><mover><mi>F</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\hat{Q}_{y,cal,\alpha}=\hat{F}_{y,cal}^{-1}(\alpha)</annotation></semantics></math>,
+where a vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐰</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>w</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>w</mi><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{w}=\left(w_{1},\ldots,w_{n}\right)^{T}</annotation></semantics></math>
+is a solution of optimization problem
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐝</mi><mo>,</mo><mi>𝐯</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>d</mi><mi>k</mi></msub><mspace width="0.167em"></mspace><mi>G</mi><mspace width="0.0em"></mspace><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>v</mi><mi>k</mi></msub><msub><mi>d</mi><mi>k</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>→</mo><mtext mathvariant="normal">min</mtext></mrow><annotation encoding="application/x-tex">D\left(\mathbf{d},\mathbf{v}\right)=\sum _{k\in s}d_{k}\hspace{2pt} G\hspace{0pt}\left(\frac{v_{k}}{d_{k}}\right) \to \textrm{min}</annotation></semantics></math>
+subject to the calibration constraints
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>v</mi><mi>k</mi></msub><mo>=</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">\sum_{k\in s}v_{k}=N</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>𝐐</mi><mo accent="true">̂</mo></mover><mrow><mi>𝐱</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi><mo>,</mo><mi>α</mi></mrow></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>Q</mi><mo accent="true">̂</mo></mover><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi><mo>,</mo><mi>α</mi></mrow></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mover><mi>Q</mi><mo accent="true">̂</mo></mover><mrow><msub><mi>x</mi><msub><mi>J</mi><mn>2</mn></msub></msub><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi><mo>,</mo><mi>α</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><mo>=</mo><msub><mi>𝐐</mi><mrow><mi>𝐱</mi><mo>,</mo><mi>α</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\hat{\mathbf{Q}}_{\mathbf{x},cal,\alpha}=\left(\hat{Q}_{x_{1},cal,\alpha},\ldots,\hat{Q}_{x_{J_{2}},cal,\alpha}\right)^{T}=\mathbf{Q}_{\mathbf{x},\alpha}</annotation></semantics></math>
+or equivalently
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Q</mi><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>α</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>α</mi></mrow><annotation encoding="application/x-tex">\hat{F}_{x_{j},cal}\left(Q_{x_{j},\alpha}\right)=\alpha</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>J</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">j=1,\ldots,J_{2}</annotation></semantics></math>.</p>
+<p>As in the previous case, if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">G\left(x\right)=\frac{\left(x-1\right)^{2}}{2}</annotation></semantics></math>
 then using the method of Lagrange multipliers the final calibration
-weights <span class="math inline">\(w_{k}\)</span> can be expressed as
-<span class="math inline">\(w_{k}=d_{k}+d_{k}\left(\mathbf{T_{a}}-\sum_{k\in
-s}{d_{k}\mathbf{a}_{k}}\right)^{T}\left(\sum_{j\in
-s}{d_{j}}\mathbf{a}_{j}\mathbf{a}_{j}^{T}\right)^{-1}\mathbf{a}_{k}\)</span>,
-where <span class="math inline">\(\mathbf{T_{a}}=\left(N,\alpha,\ldots,\alpha\right)^{T}\)</span>
-and the elements of <span class="math inline">\(\mathbf{a}_{k}=\left(1,a_{k1},\ldots,a_{kJ_{2}}\right)^{T}\)</span>
+weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+can be expressed as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>k</mi></msub><mo>=</mo><msub><mi>d</mi><mi>k</mi></msub><mo>+</mo><msub><mi>d</mi><mi>k</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐓</mi><mi>𝐚</mi></msub><mo>−</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><mrow><msub><mi>d</mi><mi>k</mi></msub><msub><mi>𝐚</mi><mi>k</mi></msub></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>d</mi><mi>j</mi></msub><msub><mi>𝐚</mi><mi>j</mi></msub><msubsup><mi>𝐚</mi><mi>j</mi><mi>T</mi></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup><msub><mi>𝐚</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">w_{k}=d_{k}+d_{k}\left(\mathbf{T_{a}}-\sum_{k\in s}{d_{k}\mathbf{a}_{k}}\right)^{T}\left(\sum_{j\in s}{d_{j}}\mathbf{a}_{j}\mathbf{a}_{j}^{T}\right)^{-1}\mathbf{a}_{k}</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐓</mi><mi>𝐚</mi></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>,</mo><mi>α</mi><mo>,</mo><mi>…</mi><mo>,</mo><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{T_{a}}=\left(N,\alpha,\ldots,\alpha\right)^{T}</annotation></semantics></math>
+and the elements of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐚</mi><mi>k</mi></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><msub><mi>a</mi><mrow><mi>k</mi><mn>1</mn></mrow></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>a</mi><mrow><mi>k</mi><msub><mi>J</mi><mn>2</mn></msub></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{a}_{k}=\left(1,a_{k1},\ldots,a_{kJ_{2}}\right)^{T}</annotation></semantics></math>
 are given by</p>
-<p><span class="math display">\[\begin{equation}
-a_{kj}=\left\{\begin{array}{lll}
-N^{-1},&amp; \quad x_{kj}\leq
-L_{x_{j},s}\left(Q_{x_{j},\alpha}\right),\\
-N^{-1}\beta_{x_{j},s}\left(Q_{x_{j},\alpha}\right), &amp; \quad
-x_{kj}=U_{x_{j},s}\left(Q_{x_{j},\alpha}\right),\\
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><msup><mi>N</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mspace width="1.0em"></mspace><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>L</mi><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Q</mi><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>α</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><msup><mi>N</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><msub><mi>β</mi><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Q</mi><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>α</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mspace width="1.0em"></mspace><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>U</mi><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Q</mi><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>α</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>0</mn><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mspace width="1.0em"></mspace><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>&gt;</mo><msub><mi>U</mi><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>s</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Q</mi><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>,</mo><mi>α</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">\begin{equation}
+a_{kj}=\left\{\begin{array}{lll} 
+N^{-1},&amp; \quad x_{kj}\leq L_{x_{j},s}\left(Q_{x_{j},\alpha}\right),\\
+N^{-1}\beta_{x_{j},s}\left(Q_{x_{j},\alpha}\right), &amp; \quad x_{kj}=U_{x_{j},s}\left(Q_{x_{j},\alpha}\right),\\
 0,&amp; \quad x_{kj}&gt; U_{x_{j},s}\left(Q_{x_{j},\alpha}\right),\\
 \end{array} \right.
-\end{equation}\]</span></p>
-<p>with <span class="math inline">\(j=1,\ldots,J_{2}\)</span>.</p>
-<p>Assuming that <span class="math inline">\(y_{1}\leq y_{2}\ldots \leq
-y_{n}\)</span> it can be shown that if there exists <span class="math inline">\(p\!\in\!\!{\left\{1,\ldots,n-1\right\}}\)</span>
-such that <span class="math inline">\(\hat{F}_{y,cal}\left(y_{p}\right)\leq
-\alpha\)</span>, <span class="math inline">\(\hat{F}_{y,cal}\left(y_{p+1}\right)&gt;
-\alpha\)</span> and <span class="math inline">\(\hat{F}_{y,cal}\)</span>
-is invertible at point <span class="math inline">\(\hat{Q}_{y,cal,\alpha}\)</span> then the
-calibration estimator <span class="math inline">\(\hat{Q}_{y,cal,\alpha}\)</span> of quantile <span class="math inline">\(Q_{y,\alpha}\)</span> of order <span class="math inline">\(\alpha \in \left(0,1\right)\)</span> can be
-expressed as <span class="math inline">\(\hat{Q}_{y,cal,\alpha}=y_{p}+\frac{N\alpha-\sum_{i=1}^{p}{w_{i}}}{w_{p+1}}\left(y_{p+1}-y_{p}\right)\)</span>.</p>
+\end{equation}</annotation></semantics></math></p>
+<p>with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>J</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">j=1,\ldots,J_{2}</annotation></semantics></math>.</p>
+<p>Assuming that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mn>1</mn></msub><mo>≤</mo><msub><mi>y</mi><mn>2</mn></msub><mi>…</mi><mo>≤</mo><msub><mi>y</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">y_{1}\leq y_{2}\ldots \leq y_{n}</annotation></semantics></math>
+it can be shown that if there exists
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mspace width="-0.167em"></mspace><mo>∈</mo><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mrow><mo stretchy="true" form="prefix">{</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>n</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">}</mo></mrow></mrow><annotation encoding="application/x-tex">p\!\in\!\!{\left\{1,\ldots,n-1\right\}}</annotation></semantics></math>
+such that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mi>p</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>≤</mo><mi>α</mi></mrow><annotation encoding="application/x-tex">\hat{F}_{y,cal}\left(y_{p}\right)\leq \alpha</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>p</mi><mo>+</mo><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><mi>α</mi></mrow><annotation encoding="application/x-tex">\hat{F}_{y,cal}\left(y_{p+1}\right)&gt; \alpha</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi></mrow></msub><annotation encoding="application/x-tex">\hat{F}_{y,cal}</annotation></semantics></math>
+is invertible at point
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>Q</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi><mo>,</mo><mi>α</mi></mrow></msub><annotation encoding="application/x-tex">\hat{Q}_{y,cal,\alpha}</annotation></semantics></math>
+then the calibration estimator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>Q</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi><mo>,</mo><mi>α</mi></mrow></msub><annotation encoding="application/x-tex">\hat{Q}_{y,cal,\alpha}</annotation></semantics></math>
+of quantile
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>y</mi><mo>,</mo><mi>α</mi></mrow></msub><annotation encoding="application/x-tex">Q_{y,\alpha}</annotation></semantics></math>
+of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\alpha \in \left(0,1\right)</annotation></semantics></math>
+can be expressed as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Q</mi><mo accent="true">̂</mo></mover><mrow><mi>y</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi><mo>,</mo><mi>α</mi></mrow></msub><mo>=</mo><msub><mi>y</mi><mi>p</mi></msub><mo>+</mo><mfrac><mrow><mi>N</mi><mi>α</mi><mo>−</mo><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>p</mi></msubsup><msub><mi>w</mi><mi>i</mi></msub></mrow><msub><mi>w</mi><mrow><mi>p</mi><mo>+</mo><mn>1</mn></mrow></msub></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>p</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>−</mo><msub><mi>y</mi><mi>p</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\hat{Q}_{y,cal,\alpha}=y_{p}+\frac{N\alpha-\sum_{i=1}^{p}{w_{i}}}{w_{p+1}}\left(y_{p+1}-y_{p}\right)</annotation></semantics></math>.</p>
 </div>
 <div class="section level2">
 <h2 id="joint-calibration-of-totals-and-quantiles">Joint calibration of totals and quantiles<a class="anchor" aria-label="anchor" href="#joint-calibration-of-totals-and-quantiles"></a>
 </h2>
 <p>We propose a simple method that jointly calibrates weights for totals
-and quantiles. The resulting calibrated weights <span class="math inline">\(w_{k}\)</span> will allow us to retrieve known
-population totals and quantiles of auxiliary variables simultaneously.
-In the case of a single scalar auxiliary variable <span class="math inline">\(x\)</span>, the final calibration estimator based
-on weights <span class="math inline">\(w_{k}\)</span> delivers an exact
-population total and quantile for variable <span class="math inline">\(y\)</span> when the relationship between <span class="math inline">\(y\)</span> and <span class="math inline">\(x\)</span> is exactly linear i.e. when <span class="math inline">\(y_{k}=\beta x_{k}\)</span> for all <span class="math inline">\(k\in U\)</span>.</p>
+and quantiles. The resulting calibrated weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+will allow us to retrieve known population totals and quantiles of
+auxiliary variables simultaneously. In the case of a single scalar
+auxiliary variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>,
+the final calibration estimator based on weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+delivers an exact population total and quantile for variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
+when the relationship between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+is exactly linear i.e. when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>k</mi></msub><mo>=</mo><mi>β</mi><msub><mi>x</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">y_{k}=\beta x_{k}</annotation></semantics></math>
+for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>∈</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">k\in U</annotation></semantics></math>.</p>
 <p>Let us assume that we are interested in estimating a population total
-<span class="math inline">\(\tau_{y}\)</span> and/or quantile <span class="math inline">\(Q_{y,\alpha}\)</span> of order <span class="math inline">\(\alpha\)</span>, where <span class="math inline">\(\alpha \in \left(0,1\right)\)</span> for variable
-of interest <span class="math inline">\(y\)</span>. Let <span class="math inline">\(\mathbf{x}_{k}=\left(\begin{smallmatrix}\mathbf{x}_{k}^{\circ}\\1\\\mathbf{x}_{k}^{*}\end{smallmatrix}\right)\)</span>
-be a <span class="math inline">\(J+1\)</span>-dimensional vector of
-auxiliary variables, where <span class="math inline">\(J=J_{1}+J_{2}\)</span>. We assume that for <span class="math inline">\(J_{1}\)</span> variables a vector of population
-totals <span class="math inline">\(\tau_{\mathbf{x}}\)</span> is known
-and for <span class="math inline">\(J_{2}\)</span> variables a vector
-<span class="math inline">\(\mathbf{Q}_{\mathbf{x},\alpha}\)</span> of
-population quantiles is known. In practice it may happen that for the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>τ</mi><mi>y</mi></msub><annotation encoding="application/x-tex">\tau_{y}</annotation></semantics></math>
+and/or quantile
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>y</mi><mo>,</mo><mi>α</mi></mrow></msub><annotation encoding="application/x-tex">Q_{y,\alpha}</annotation></semantics></math>
+of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\alpha \in \left(0,1\right)</annotation></semantics></math>
+for variable of interest
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>.
+Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐱</mi><mi>k</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msubsup><mi>𝐱</mi><mi>k</mi><mo>*</mo></msubsup></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{x}_{k}=\left(\begin{smallmatrix}\mathbf{x}_{k}^{\circ}\\1\\\mathbf{x}_{k}^{*}\end{smallmatrix}\right)</annotation></semantics></math>
+be a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">J+1</annotation></semantics></math>-dimensional
+vector of auxiliary variables, where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><msub><mi>J</mi><mn>1</mn></msub><mo>+</mo><msub><mi>J</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">J=J_{1}+J_{2}</annotation></semantics></math>.
+We assume that for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mn>1</mn></msub><annotation encoding="application/x-tex">J_{1}</annotation></semantics></math>
+variables a vector of population totals
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>τ</mi><mi>𝐱</mi></msub><annotation encoding="application/x-tex">\tau_{\mathbf{x}}</annotation></semantics></math>
+is known and for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mn>2</mn></msub><annotation encoding="application/x-tex">J_{2}</annotation></semantics></math>
+variables a vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐐</mi><mrow><mi>𝐱</mi><mo>,</mo><mi>α</mi></mrow></msub><annotation encoding="application/x-tex">\mathbf{Q}_{\mathbf{x},\alpha}</annotation></semantics></math>
+of population quantiles is known. In practice it may happen that for the
 same auxiliary variable we know its population total and quantile. We do
 not require that the complete auxiliary information described by the
-vector <span class="math inline">\(\mathbf{x}_{k}\)</span> is known for
-all <span class="math inline">\(k\in U\)</span>; however, for some
-auxiliary variables unit-population data would be necessary, because
-accurate quantiles are not likely to be known from other sources <span class="citation">(<a href="#ref-sarndal2007calibration" role="doc-biblioref">Särndal 2007</a>)</span>.</p>
-<p>Our main aim is to find new calibration weights <span class="math inline">\(w_{k}\)</span> which are as close as possible to
-original design weights <span class="math inline">\(d_{k}\)</span> and
-for some auxiliary variables reproduce known population totals and for
-the remaining benchmark variables – reproduce known population quantiles
-exactly. In our joint approach we are looking for a vector <span class="math inline">\(\mathbf{w}=\left(w_{1},\ldots,w_{n}\right)^{T}\)</span>
-which is a solution of the optimization problem <span class="math inline">\(D\left(\mathbf{d},\mathbf{v}\right)=\sum _{k\in
-s}d_{k}\hspace{2pt} G\hspace{0pt}\left(\frac{v_{k}}{d_{k}}\right) \to
-\textrm{min}\)</span> subject to the calibration constraints <span class="math inline">\(\sum_{k\in s}v_{k}=N\)</span>, <span class="math inline">\(\sum_{k\in s}v_{k}\mathbf{x}_{k}^{\circ} =
-\tau_{\mathbf{x}}\)</span> and <span class="math inline">\(\hat{\mathbf{Q}}_{\mathbf{x},cal,\alpha}=\mathbf{Q}_{\mathbf{x},\alpha}\)</span>.
-In general, <span class="math inline">\(J+1\)</span> calibration
-equations have to be fulfilled. Alternatively, calibration equations can
-be expressed as <span class="math inline">\(\sum_{k\in
-s}v_{k}\mathbf{x}_{k}^{\circ} = \tau_{\mathbf{x}}\)</span> and <span class="math inline">\(\sum_{k\in
-s}v_{k}\mathbf{a}_{k}=\mathbf{T_{a}}\)</span> with possible boundary
-constraints on calibration weights.</p>
-<p>Assuming a quadratic metric <span class="math inline">\(D\left(\cdot\right)\)</span>, which is based on
-<span class="math inline">\(G\left(x\right)=\frac{\left(x-1\right)^{2}}{2}\)</span>
+vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐱</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\mathbf{x}_{k}</annotation></semantics></math>
+is known for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>∈</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">k\in U</annotation></semantics></math>;
+however, for some auxiliary variables unit-population data would be
+necessary, because accurate quantiles are not likely to be known from
+other sources <span class="citation">(<a href="#ref-sarndal2007calibration">Särndal 2007</a>)</span>.</p>
+<p>Our main aim is to find new calibration weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_{k}</annotation></semantics></math>
+which are as close as possible to original design weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mi>k</mi></msub><annotation encoding="application/x-tex">d_{k}</annotation></semantics></math>
+and for some auxiliary variables reproduce known population totals and
+for the remaining benchmark variables – reproduce known population
+quantiles exactly. In our joint approach we are looking for a vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐰</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>w</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>w</mi><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{w}=\left(w_{1},\ldots,w_{n}\right)^{T}</annotation></semantics></math>
+which is a solution of the optimization problem
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐝</mi><mo>,</mo><mi>𝐯</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>d</mi><mi>k</mi></msub><mspace width="0.167em"></mspace><mi>G</mi><mspace width="0.0em"></mspace><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>v</mi><mi>k</mi></msub><msub><mi>d</mi><mi>k</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>→</mo><mtext mathvariant="normal">min</mtext></mrow><annotation encoding="application/x-tex">D\left(\mathbf{d},\mathbf{v}\right)=\sum _{k\in s}d_{k}\hspace{2pt} G\hspace{0pt}\left(\frac{v_{k}}{d_{k}}\right) \to \textrm{min}</annotation></semantics></math>
+subject to the calibration constraints
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>v</mi><mi>k</mi></msub><mo>=</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">\sum_{k\in s}v_{k}=N</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>v</mi><mi>k</mi></msub><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup><mo>=</mo><msub><mi>τ</mi><mi>𝐱</mi></msub></mrow><annotation encoding="application/x-tex">\sum_{k\in s}v_{k}\mathbf{x}_{k}^{\circ} = \tau_{\mathbf{x}}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>𝐐</mi><mo accent="true">̂</mo></mover><mrow><mi>𝐱</mi><mo>,</mo><mi>c</mi><mi>a</mi><mi>l</mi><mo>,</mo><mi>α</mi></mrow></msub><mo>=</mo><msub><mi>𝐐</mi><mrow><mi>𝐱</mi><mo>,</mo><mi>α</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\hat{\mathbf{Q}}_{\mathbf{x},cal,\alpha}=\mathbf{Q}_{\mathbf{x},\alpha}</annotation></semantics></math>.
+In general,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">J+1</annotation></semantics></math>
+calibration equations have to be fulfilled. Alternatively, calibration
+equations can be expressed as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>v</mi><mi>k</mi></msub><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup><mo>=</mo><msub><mi>τ</mi><mi>𝐱</mi></msub></mrow><annotation encoding="application/x-tex">\sum_{k\in s}v_{k}\mathbf{x}_{k}^{\circ} = \tau_{\mathbf{x}}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>v</mi><mi>k</mi></msub><msub><mi>𝐚</mi><mi>k</mi></msub><mo>=</mo><msub><mi>𝐓</mi><mi>𝐚</mi></msub></mrow><annotation encoding="application/x-tex">\sum_{k\in s}v_{k}\mathbf{a}_{k}=\mathbf{T_{a}}</annotation></semantics></math>
+with possible boundary constraints on calibration weights.</p>
+<p>Assuming a quadratic metric
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">D\left(\cdot\right)</annotation></semantics></math>,
+which is based on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">G\left(x\right)=\frac{\left(x-1\right)^{2}}{2}</annotation></semantics></math>
 function, an explicit solution of the above optimization problem can be
 derived. This solution is similar to the calibration weights for totals
-and quantiles. Let <span class="math inline">\(\mathbf{h}_{\mathbf{x}}=\binom{\tau_{\mathbf{x}}}{\mathbf{T_{a}}}\)</span>
-and <span class="math inline">\(\hat{\mathbf{h}}_{\mathbf{x}}=\binom{\sum_{k\in
-s}d_{k}\mathbf{x}_{k}^{\circ}}{\sum_{k\in
-s}d_{k}\mathbf{a}_{k}}\)</span>. Then the vector of calibration weights
-<span class="math inline">\(\mathbf{w}=\left(w_{1},\ldots,w_{n}\right)^{T}\)</span>
+and quantiles. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐡</mi><mi>𝐱</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><msub><mi>τ</mi><mi>𝐱</mi></msub><msub><mi>𝐓</mi><mi>𝐚</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{h}_{\mathbf{x}}=\binom{\tau_{\mathbf{x}}}{\mathbf{T_{a}}}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>𝐡</mi><mo accent="true">̂</mo></mover><mi>𝐱</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>d</mi><mi>k</mi></msub><msubsup><mi>𝐱</mi><mi>k</mi><mo>∘</mo></msubsup></mrow><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>d</mi><mi>k</mi></msub><msub><mi>𝐚</mi><mi>k</mi></msub></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\hat{\mathbf{h}}_{\mathbf{x}}=\binom{\sum_{k\in s}d_{k}\mathbf{x}_{k}^{\circ}}{\sum_{k\in s}d_{k}\mathbf{a}_{k}}</annotation></semantics></math>.
+Then the vector of calibration weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐰</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>w</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>w</mi><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{w}=\left(w_{1},\ldots,w_{n}\right)^{T}</annotation></semantics></math>
 which solves the above optimization problem satisfies the relation:</p>
-<p><span class="math display">\[\begin{equation}
-w_{k}=d_{k}+d_{k}\left(\mathbf{h}_{\mathbf{x}}-\hat{\mathbf{h}}_{\mathbf{x}}\right)^{T}\left(\sum_{j\in
-s}{d_{j}}\mathbf{x}_{j}\mathbf{x}_{j}^{T}\right)^{-1}\mathbf{x}_{k}.
-\end{equation}\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>k</mi></msub><mo>=</mo><msub><mi>d</mi><mi>k</mi></msub><mo>+</mo><msub><mi>d</mi><mi>k</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐡</mi><mi>𝐱</mi></msub><mo>−</mo><msub><mover><mi>𝐡</mi><mo accent="true">̂</mo></mover><mi>𝐱</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><mi>s</mi></mrow></munder><msub><mi>d</mi><mi>j</mi></msub><msub><mi>𝐱</mi><mi>j</mi></msub><msubsup><mi>𝐱</mi><mi>j</mi><mi>T</mi></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup><msub><mi>𝐱</mi><mi>k</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">\begin{equation}
+w_{k}=d_{k}+d_{k}\left(\mathbf{h}_{\mathbf{x}}-\hat{\mathbf{h}}_{\mathbf{x}}\right)^{T}\left(\sum_{j\in s}{d_{j}}\mathbf{x}_{j}\mathbf{x}_{j}^{T}\right)^{-1}\mathbf{x}_{k}.
+\end{equation}</annotation></semantics></math></p>
 <p><em>Remark 1</em>: In our proposed method we assume that we reproduce
 known population totals and known population quantiles for a set of
 benchmark variables simultaneously. This approach can be easily extended
 by assuming that for estimated totals or quantiles are reproduced for
 some auxiliary variables. Moreover, we assumed that the process of
-calibration is based on a particular quantile (of order <span class="math inline">\(\alpha\)</span>). For instance, it could be a
-median i.e. <span class="math inline">\(\alpha=0.5\)</span>. Nothing
-stands in the way of searching for calibration weights which reproduce
-population totals and a set of population quantiles (for example
-quartiles) for a chosen set of auxiliary variables. Moreover, the
-proposed method can be easily extended for the generalized calibration,
-in particular, for not missing at random non-response <span class="citation">(<a href="#ref-kott2010using" role="doc-biblioref">Kott
-and Chang 2010</a>)</span>, or empirical likelihood by adding additional
-constraints on quantiles, i.e. <span class="math inline">\(\sum_{k \in
-s} p_{k}a_{kj} = \frac{\alpha}{N}\)</span>, where <span class="math inline">\(j=1,\ldots,J_{2}\)</span> and <span class="math inline">\(p_{k}\)</span> are elements of the vector <span class="math inline">\(\mathbf{p}=\left(p_{1},\ldots,p_{n}\right)^{T}\)</span>
-which is is a discrete probability measure over the sample <span class="math inline">\(s\)</span> <span class="citation">(<a href="#ref-wu2020sampling" role="doc-biblioref">Wu and Thompson
+calibration is based on a particular quantile (of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>).
+For instance, it could be a median
+i.e. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">\alpha=0.5</annotation></semantics></math>.
+Nothing stands in the way of searching for calibration weights which
+reproduce population totals and a set of population quantiles (for
+example quartiles) for a chosen set of auxiliary variables. Moreover,
+the proposed method can be easily extended for the generalized
+calibration, in particular, for not missing at random non-response <span class="citation">(<a href="#ref-kott2010using">Kott and Chang
+2010</a>)</span>, or empirical likelihood by adding additional
+constraints on quantiles,
+i.e. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>s</mi></mrow></msub><msub><mi>p</mi><mi>k</mi></msub><msub><mi>a</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><mi>α</mi><mi>N</mi></mfrac></mrow><annotation encoding="application/x-tex">\sum_{k \in s} p_{k}a_{kj} = \frac{\alpha}{N}</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>J</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">j=1,\ldots,J_{2}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>k</mi></msub><annotation encoding="application/x-tex">p_{k}</annotation></semantics></math>
+are elements of the vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐩</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>p</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>p</mi><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{p}=\left(p_{1},\ldots,p_{n}\right)^{T}</annotation></semantics></math>
+which is is a discrete probability measure over the sample
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math><span class="citation">(<a href="#ref-wu2020sampling">Wu and Thompson
 2020</a>)</span>.</p>
 <p><em>Remark 2</em>: In our approach we use an interpolated
-distribution function <span class="math inline">\(H_{y,s}\)</span>,
-which is a simple modification of the Heavyside function defined in
-(<span class="math inline">\(\ref{H}\)</span>). From a practical point
-of view a smooth approximation to the step function, based on the
-logistic function can be used i.e. <span class="math inline">\(H\left(x\right)\approx\frac{1}{2}+\frac{1}{2}\tanh{kx}=\frac{1}{1+e^{-2kx}}\)</span>,
-where a larger value of <span class="math inline">\(k\)</span>
-corresponds to a sharper transition at <span class="math inline">\(x =
-0\)</span>.</p>
+distribution function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mrow><mi>y</mi><mo>,</mo><mi>s</mi></mrow></msub><annotation encoding="application/x-tex">H_{y,s}</annotation></semantics></math>,
+which is a simple modification of the Heavyside function defined in ().
+From a practical point of view a smooth approximation to the step
+function, based on the logistic function can be used
+i.e. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>≈</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>tanh</mo><mrow><mi>k</mi><mi>x</mi></mrow><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>2</mn><mi>k</mi><mi>x</mi></mrow></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">H\left(x\right)\approx\frac{1}{2}+\frac{1}{2}\tanh{kx}=\frac{1}{1+e^{-2kx}}</annotation></semantics></math>,
+where a larger value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+corresponds to a sharper transition at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x = 0</annotation></semantics></math>.</p>
 <p><em>Remark 3</em>: The proposed method can be easily applied to data
 from household surveys, where integrated calibration is applied,
 i.e. when the weights of particular household members should be equal.
@@ -352,7 +488,7 @@ distributions for auxiliary variables.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-deville1992calibration" class="csl-entry">
 Deville, Jean-Claude, and Carl-Erik Särndal. 1992. <span>“Calibration
 Estimators in Survey Sampling.”</span> <em>Journal of the American
@@ -386,28 +522,26 @@ Practice</em>. Springer.
 </div>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by Maciej Beręsewicz.</p>
+  <p>Developed by Maciej Beręsewicz.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
