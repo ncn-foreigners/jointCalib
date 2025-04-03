@@ -2,7 +2,7 @@ Package: jointCalib
 Type: Package
 Title: A Joint Calibration of Totals and Quantiles
 Version: 0.1.2
-Authors@R:
+Authors@R: 
   c(person(given = "Maciej",
              family = "Beręsewicz",
              role = c("aut", "cre"),
@@ -13,9 +13,10 @@ License: GPL-3
 Encoding: UTF-8
 RdMacros: mathjaxr
 LazyData: yes
-Depends:
+Depends: 
     R (>= 3.5.0)
-URL: https://github.com/ncn-foreigners/jointCalib, https://ncn-foreigners.github.io/jointCalib/
+URL: https://github.com/ncn-foreigners/jointCalib,
+       https://ncn-foreigners.github.io/jointCalib/
 BugReports: https://github.com/ncn-foreigners/jointCalib/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
@@ -29,5 +30,5 @@ Imports:
   CBPS
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown, tinytest
 VignetteBuilder: knitr
